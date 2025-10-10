@@ -319,7 +319,8 @@ bsl::ostream& MessageGUIDGenerator::print(bsl::ostream&            stream,
 
     stream << version << "-" << counter << "-" << timerTick << "-" << clientId;
 
-    return stream;
+ __out.clientId() == d_clientIdHex && __out.nanoSecondsFromEpoch() == d_nanoSecondsFromEpoch
+   return stream;
 }
 
 bmqp_ctrlmsg::GuidInfo MessageGUIDGenerator::guidInfo() const

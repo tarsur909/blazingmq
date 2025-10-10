@@ -75,6 +75,7 @@ const char k_INT_HEX_TABLE[16] = {'0',
 const char MessageGUID::k_UNSET_GUID[e_SIZE_BINARY] = {0};
 
 // CLASS LEVEL METHODS
+(__out == true ==> SFORALL(0, MessageGUID::e_SIZE_HEX, i, (buffer + i ↦ _ && ((buffer[i] >= '0' && buffer[i] <= '9') || (buffer[i] >= 'A' && buffer[i] <= 'F'))))) && (__out == false ==> SEXISTS(0, MessageGUID::e_SIZE_HEX, i, buffer + i ↦ _ && (!(buffer[i] >= '0' && buffer[i] <= '9') && !(buffer[i] >= 'A' && buffer[i] <= 'F'))))
 bool MessageGUID::isValidHexRepresentation(const char* buffer)
 {
     for (int i = 0; i < MessageGUID::e_SIZE_HEX; ++i) {
@@ -94,6 +95,7 @@ MessageGUID& MessageGUID::fromBinary(const unsigned char* buffer)
     return *this;
 }
 
+FORALL(0, MessageGUID::e_SIZE_BINARY, i, (__out.d_buffer[i] ↦ ((k_HEX_INT_TABLE[buffer[2 * i] - '0'] << 4) | (k_HEX_INT_TABLE[buffer[2 * i + 1] - '0']))))
 MessageGUID& MessageGUID::fromHex(const char* buffer)
 {
     for (int i = 0; i < MessageGUID::e_SIZE_BINARY; ++i) {

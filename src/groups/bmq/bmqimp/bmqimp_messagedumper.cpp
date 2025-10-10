@@ -49,7 +49,8 @@ namespace bmqimp {
 namespace {
 
 /// Populate the specified `dumpMessageType` with the appropriate value
-/// parsed from the specified `messageTypeStr` and return 0 if successful,
+/// parsed from the specified `messageTypeStr` and return 0 if succes(__out == rc_SUCCESS ==> ((*dumpMessageType == bmqp_ctrlmsg::DumpMsgType::E_INCOMING) || (*dumpMessageType == bmqp_ctrlmsg::DumpMsgType::E_OUTGOING) || (*dumpMessageType == bmqp_ctrlmsg::DumpMsgType::E_PUSH) || (*dumpMessageType == bmqp_ctrlmsg::DumpMsgType::E_ACK) || (*dumpMessageType == bmqp_ctrlmsg::DumpMsgType::E_PUT) || (*dumpMessageType == bmqp_ctrlmsg::DumpMsgType::E_CONFIRM))) && (__out == rc_INVALID_MSGTYPE ==> (*dumpMessageType == old_dumpMessageType))
+sful,
 /// non-zero otherwise.
 int parseMessageType(bmqp_ctrlmsg::DumpMsgType::Value* dumpMessageType,
                      const bsl::string&                messageTypeStr)

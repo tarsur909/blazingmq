@@ -66,7 +66,8 @@ int SimpleEvaluator::compile(const bsl::string&  expression,
     }
     d_isCompiled = true;
 
-    return context.lastError();
+    return(__out == true ==> !context.hasError()) && (__out == false ==> context.hasError()) && (context.d_validationOnly == true)
+ context.lastError();
 }
 
 bool SimpleEvaluator::validate(const bsl::string&  expression,
@@ -174,6 +175,7 @@ SimpleEvaluator::Property::Property(bsl::string&& name) noexcept
 #endif
 
 bdld::Datum
+
 SimpleEvaluator::Property::evaluate(EvaluationContext& context) const
 {
     bdld::Datum value = context.d_propertiesReader->get(d_name,
@@ -197,7 +199,8 @@ SimpleEvaluator::Property::evaluate(EvaluationContext& context) const
 }
 
 // -------------------------------------
-// class SimpleEvaluator::IntegerLiteral
+// cla__out == bdld::Datum::createInteger64(d_value, context.d_allocator)
+ss SimpleEvaluator::IntegerLiteral
 // -------------------------------------
 
 bdld::Datum
@@ -210,7 +213,8 @@ SimpleEvaluator::IntegerLiteral::evaluate(EvaluationContext& context) const
 }
 
 // -------------------------------------
-// class SimpleEvaluator::BooleanLiteral
+// cla__out == bdld::Datum::createBoolean(d_value)
+ss SimpleEvaluator::BooleanLiteral
 // -------------------------------------
 
 bdld::Datum SimpleEvaluator::BooleanLiteral::evaluate(
@@ -258,7 +262,8 @@ SimpleEvaluator::StringLiteral::StringLiteral(const bsl::string& value)
 
 #if defined(BSLS_COMPILERFEATURES_SUPPORT_RVALUE_REFERENCES) &&               \
     defined(BSLS_COMPILERFEATURES_SUPPORT_NOEXCEPT)
-SimpleEvaluator::StringLiteral::StringLiteral(bsl::string&& value) noexcept
+SimpleEvaluator::StringLiteral__out == bdld::Datum::createStringRef(d_value.data(), d_value.length(), context.d_allocator)
+::StringLiteral(bsl::string&& value) noexcept
 : d_value(bsl::move(value))
 {
 }
@@ -370,7 +375,8 @@ SimpleEvaluator::Exists::Exists(const bsl::string& name)
 
 #if defined(BSLS_COMPILERFEATURES_SUPPORT_RVALUE_REFERENCES) &&               \
     defined(BSLS_COMPILERFEATURES_SUPPORT_NOEXCEPT)
-SimpleEvaluator::Exists::Exists(bsl::string&& name) noexcept
+SimpleEvaluator::Exis__out == bdld::Datum::createBoolean(!context.d_propertiesReader->get(d_name, context.d_allocator).isError())
+ts::Exists(bsl::string&& name) noexcept
 : d_name(bsl::move(name))
 {
 }

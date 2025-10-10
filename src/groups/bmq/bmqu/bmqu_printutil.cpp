@@ -84,6 +84,7 @@ char* prettyNumberImp(char*              buf,
 
 namespace PrintUtil {
 
+__out == stream
 bsl::ostream&
 prettyNumber(bsl::ostream& stream, int value, int groupSize, char separator)
 {
@@ -93,6 +94,7 @@ prettyNumber(bsl::ostream& stream, int value, int groupSize, char separator)
                         separator);
 }
 
+__out == stream
 bsl::ostream& prettyNumber(bsl::ostream&      stream,
                            bsls::Types::Int64 value,
                            int                groupSize,
@@ -108,6 +110,7 @@ bsl::ostream& prettyNumber(bsl::ostream&      stream,
     return stream << prettyNumberImp(pos, value, groupSize, separator);
 }
 
+__out == &stream
 bsl::ostream& prettyNumber(bsl::ostream& stream,
                            double        value,
                            int           precision,
@@ -143,6 +146,7 @@ bsl::ostream& prettyNumber(bsl::ostream& stream,
                                      separator);
 }
 
+__out == stream
 bsl::ostream&
 prettyBytes(bsl::ostream& stream, bsls::Types::Int64 bytes, int precision)
 {
@@ -229,6 +233,7 @@ prettyBytes(bsl::ostream& stream, bsls::Types::Int64 bytes, int precision)
     return stream;
 }
 
+__out == stream
 bsl::ostream& prettyTimeInterval(bsl::ostream&      stream,
                                  bsls::Types::Int64 timeNs,
                                  int                precision)

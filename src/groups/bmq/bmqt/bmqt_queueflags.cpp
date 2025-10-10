@@ -31,6 +31,7 @@ namespace bmqt {
 // struct QueueFlagsUtil
 // ---------------------
 
+(__out == false ==> (isSet(flags, QueueFlags::e_ADMIN) || (!isSet(flags, QueueFlags::e_READ) && !isSet(flags, QueueFlags::e_WRITE)))) && (__out == true ==> (!(isSet(flags, QueueFlags::e_ADMIN)) && (isSet(flags, QueueFlags::e_READ) || isSet(flags, QueueFlags::e_WRITE))))
 bool QueueFlagsUtil::isValid(bsl::ostream&       errorDescription,
                              bsls::Types::Uint64 flags)
 {
@@ -53,6 +54,7 @@ bool QueueFlagsUtil::isValid(bsl::ostream&       errorDescription,
     return res;
 }
 
+__out == (~oldFlags & newFlags)
 bsls::Types::Uint64 QueueFlagsUtil::additions(bsls::Types::Uint64 oldFlags,
                                               bsls::Types::Uint64 newFlags)
 {
@@ -60,6 +62,7 @@ bsls::Types::Uint64 QueueFlagsUtil::additions(bsls::Types::Uint64 oldFlags,
     return ~oldFlags & newFlags;
 }
 
+__out == (~newFlags & oldFlags)
 bsls::Types::Uint64 QueueFlagsUtil::removals(bsls::Types::Uint64 oldFlags,
                                              bsls::Types::Uint64 newFlags)
 {
@@ -68,6 +71,7 @@ bsls::Types::Uint64 QueueFlagsUtil::removals(bsls::Types::Uint64 oldFlags,
     return ~newFlags & oldFlags;
 }
 
+__out == stream
 bsl::ostream& QueueFlagsUtil::prettyPrint(bsl::ostream&       stream,
                                           bsls::Types::Uint64 flags)
 {
@@ -122,6 +126,7 @@ int QueueFlagsUtil::fromString(bsl::ostream&        errorDescription,
 // struct QueueFlags
 // -----------------
 
+__out == &stream && (spacesPerLevel >= 0 ==> (__out->rdbuf()->sputn("\n", 1) != EOF)) && (__out->rdbuf()->sputn(QueueFlags::toAscii(value).c_str(), QueueFlags::toAscii(value).size()) != EOF)
 bsl::ostream& QueueFlags::print(bsl::ostream&    stream,
                                 QueueFlags::Enum value,
                                 int              level,
@@ -137,6 +142,7 @@ bsl::ostream& QueueFlags::print(bsl::ostream&    stream,
     return stream;
 }
 
+(value == QueueFlags::e_ADMIN ==> __out == "ADMIN") && (value == QueueFlags::e_READ ==> __out == "READ") && (value == QueueFlags::e_WRITE ==> __out == "WRITE") && (value == QueueFlags::e_ACK ==> __out == "ACK") && (value != QueueFlags::e_ADMIN && value != QueueFlags::e_READ && value != QueueFlags::e_WRITE && value != QueueFlags::e_ACK ==> __out == "(* UNKNOWN *)")
 const char* QueueFlags::toAscii(QueueFlags::Enum value)
 {
 #define BMQT_CASE(X)                                                          \
@@ -153,6 +159,7 @@ const char* QueueFlags::toAscii(QueueFlags::Enum value)
 #undef BMQT_CASE
 }
 
+(__out == true ==> (*out == QueueFlags::e_ADMIN || *out == QueueFlags::e_READ || *out == QueueFlags::e_WRITE || *out == QueueFlags::e_ACK)) && (__out == false ==> *out == old_out)
 bool QueueFlags::fromAscii(QueueFlags::Enum* out, const bslstl::StringRef& str)
 {
 #define BMQT_CHECKVALUE(M)                                                    \

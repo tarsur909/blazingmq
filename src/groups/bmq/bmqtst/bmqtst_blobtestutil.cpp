@@ -31,6 +31,7 @@ namespace bmqtst {
 // -------------------
 
 // CLASS METHODS
+(__out == *blob) && (blob->length() == format.size() - numX)
 bdlbb::Blob& BlobTestUtil::fromString(bdlbb::Blob*             blob,
                                       const bslstl::StringRef& format,
                                       bslma::Allocator*        allocator)
@@ -80,6 +81,7 @@ bdlbb::Blob& BlobTestUtil::fromString(bdlbb::Blob*             blob,
     return *blob;
 }
 
+(__out == *str) && (str->size() == blob.totalSize())
 bsl::string& BlobTestUtil::toString(bsl::string*       str,
                                     const bdlbb::Blob& blob,
                                     bool               toFormat)

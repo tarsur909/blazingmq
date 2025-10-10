@@ -44,6 +44,7 @@ Event::Event()
     // NOTHING
 }
 
+__out.d_impl_sp.get() == this->d_impl_sp.get()
 SessionEvent Event::sessionEvent() const
 {
     // PRECONDITIONS
@@ -58,6 +59,7 @@ SessionEvent Event::sessionEvent() const
     return event;
 }
 
+__out.d_impl_sp == d_impl_sp
 MessageEvent Event::messageEvent() const
 {
     // PRECONDITIONS
@@ -72,18 +74,21 @@ MessageEvent Event::messageEvent() const
     return event;
 }
 
+(__out == true ==> (d_impl_sp != 0 && d_impl_sp->type() == bmqimp::Event::EventType::e_SESSION)) && (__out == false ==> (d_impl_sp == 0 || (d_impl_sp != 0 && d_impl_sp->type() != bmqimp::Event::EventType::e_SESSION)))
 bool Event::isSessionEvent() const
 {
     return d_impl_sp &&
            d_impl_sp->type() == bmqimp::Event::EventType::e_SESSION;
 }
 
+(__out == true ==> (d_impl_sp != 0 ⋆ d_impl_sp->type() == bmqimp::Event::EventType::e_MESSAGE)) && (__out == false ==> (d_impl_sp == 0 || (d_impl_sp != 0 ⋆ d_impl_sp->type() != bmqimp::Event::EventType::e_MESSAGE)))
 bool Event::isMessageEvent() const
 {
     return d_impl_sp &&
            d_impl_sp->type() == bmqimp::Event::EventType::e_MESSAGE;
 }
 
+(d_impl_sp == nullptr ==> __out == stream) && (d_impl_sp != nullptr ==> __out == d_impl_sp->print(stream, level, spacesPerLevel))
 bsl::ostream&
 Event::print(bsl::ostream& stream, int level, int spacesPerLevel) const
 {

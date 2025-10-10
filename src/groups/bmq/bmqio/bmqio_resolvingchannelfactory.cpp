@@ -76,6 +76,7 @@ ResolvingChannelFactoryConfig::ResolvingChannelFactoryConfig(
 }
 
 // MANIPULATORS
+(__out == *this) && (d_resolutionFn == value)
 ResolvingChannelFactoryConfig&
 ResolvingChannelFactoryConfig::resolutionFn(const ResolutionFn& value)
 {
@@ -105,6 +106,7 @@ ResolvingChannelFactory_Channel::ResolvingChannelFactory_Channel(
 }
 
 // MANIPULATORS
+__out == d_resolvedPeerUri
 bsl::string& ResolvingChannelFactory_Channel::resolvedUri()
 {
     return d_resolvedPeerUri;
@@ -118,6 +120,7 @@ void ResolvingChannelFactory_Channel::updatePeerUri()
 }
 
 // ACCESSORS
+__out == *d_peerUri
 const bsl::string& ResolvingChannelFactory_Channel::peerUri() const
 {
     return *d_peerUri;

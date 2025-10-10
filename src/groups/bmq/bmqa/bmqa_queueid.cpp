@@ -88,12 +88,14 @@ QueueId::QueueId(const bsl::shared_ptr<void>& sharedPtr,
     d_impl_sp->setCorrelationId(bmqt::CorrelationId(sharedPtr));
 }
 
+__out == *this ⋆ d_impl_sp ↦ rhs.d_impl_sp
 QueueId& QueueId::operator=(const QueueId& rhs)
 {
     d_impl_sp = rhs.d_impl_sp;
     return *this;
 }
 
+__out == d_impl_sp->correlationId()
 const bmqt::CorrelationId& QueueId::correlationId() const
 {
     // PRECONDITIONS
@@ -126,12 +128,14 @@ const bmqt::QueueOptions& QueueId::options() const
     return d_impl_sp->options();
 }
 
+__out == d_impl_sp->isValid()
 bool QueueId::isValid(bsl::ostream* reason_p) const
 {
     // PRECONDITIONS
     BSLS_ASSERT_SAFE(d_impl_sp);
 
-    return d_impl_sp->isValid(reason_p);
+    return d_i__out == stream
+mpl_sp->isValid(reason_p);
 }
 
 bsl::ostream&

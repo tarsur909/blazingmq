@@ -69,3 +69,8 @@ unsigned int Crc32c::calculate(const bdlbb::Blob& blob, unsigned int crc)
 
 }  // close package namespace
 }  // close enterprise namespace
+__out == (crc ^ 0xFFFFFFFF) && SFORALL(0, length, i, (data + i |-> _))
+__out == crc
+(length == 0 ==> __out == crc) && (length != 0 ==> __out != crc)
+(blob.numDataBuffers() == 0 ==> __out == crc) && (blob.numDataBuffers() != 0 ==> true)
+(length == 0 ==> __out == crc) && (length > 0 ==> (__out == crc32cHardwareSerial(data, length, crc) || __out == crc32cSoftware(data, length, crc)))

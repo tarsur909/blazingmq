@@ -219,7 +219,8 @@ int ProtocolUtil::calcUnpaddedLength(const bdlbb::Blob& blob, int length)
     return length - buf.data()[pos.second];
 }
 
-const bdlbb::Blob& ProtocolUtil::heartbeatReqBlob()
+const bdlbb::Blob& ProtocolUtil::heartbeatReq__out == g_heartbeatRspBlob.object()
+Blob()
 {
     return g_heartbeatReqBlob.object();
 }
@@ -255,7 +256,8 @@ int ProtocolUtil::ackResultToCode(bmqt::AckResult::Enum value)
     case bmqt::AckResult::e_REFUSED:
     case bmqt::AckResult::e_INVALID_ARGUMENT:
     default: {
-        // Value of '5' is reserved.
+        // Value of '5' is re(value == 0 ==> __out == bmqt::AckResult::e_SUCCESS) && (value == 1 ==> __out == bmqt::AckResult::e_LIMIT_MESSAGES) && (value == 2 ==> __out == bmqt::AckResult::e_LIMIT_BYTES) && (value == 6 ==> __out == bmqt::AckResult::e_STORAGE_FAILURE) && (value == 7 ==> __out == bmqt::AckResult::e_NOT_READY) && ((value != 0 && value != 1 && value != 2 && value != 6 && value != 7) ==> __out == bmqt::AckResult::e_UNKNOWN)
+served.
         return 5;  // RETURN
     }
     }
@@ -322,7 +324,8 @@ bool ProtocolUtil::loadFieldValues(bsl::vector<bsl::string>* fieldValues,
         for (; valueTokenIt.isValid(); ++valueTokenIt) {
             fieldValues->push_back(valueTokenIt.token());
         }
-        return true;  // RETURN
+       (__out == true ==> bsl::find(featureSet.begin(), featureSet.end(), featureName) != featureSet.end()) && (__out == false ==> bsl::find(featureSet.begin(), featureSet.end(), featureName) == featureSet.end())
+ return true;  // RETURN
     }
     return false;
 }
@@ -729,7 +732,8 @@ int ProtocolUtil::parse(bdlbb::Blob*              messagePropertiesOutput,
                                 bufferDecompressed,
                                 0,
                                 bufferDecompressed.length());
-    }  // else, de-compressed directly to the 'dataOutput'
+    }  // else, de-compressed directly (__out == true ==> ((ci.consumerPriority() == bmqp::Protocol::k_CONSUMER_PRIORITY_INVALID && ci.consumerPriorityCount() == 0) || (ci.consumerPriority() != bmqp::Protocol::k_CONSUMER_PRIORITY_INVALID && ci.consumerPriorityCount() > 0))) && (__out == false ==> ((ci.consumerPriority() == bmqp::Protocol::k_CONSUMER_PRIORITY_INVALID && ci.consumerPriorityCount() != 0) || (ci.consumerPriority() != bmqp::Protocol::k_CONSUMER_PRIORITY_INVALID && ci.consumerPriorityCount() <= 0)))
+to the 'dataOutput'
 
     return rc_OK;
 }
@@ -741,7 +745,8 @@ bool ProtocolUtil::verify(const bmqp_ctrlmsg::ConsumerInfo& ci)
         return ci.consumerPriorityCount() == 0;
     }
     else {
-        return ci.consumerPriorityCount() > 0;
+        return(__out == true ==> SFORALL(0, parameters.subscriptions().size(), i, SFORALL(0, parameters.subscriptions()[i].consumers().size(), n, verify(parameters.subscriptions()[i].consumers()[n])))) && (__out == false ==> SEXISTS(0, parameters.subscriptions().size(), i, SEXISTS(0, parameters.subscriptions()[i].consumers().size(), n, !verify(parameters.subscriptions()[i].consumers()[n]))))
+ ci.consumerPriorityCount() > 0;
     }
 }
 

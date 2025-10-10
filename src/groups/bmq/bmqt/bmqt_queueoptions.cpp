@@ -84,7 +84,8 @@ QueueOptions::QueueOptions(const QueueOptions& other,
 , d_suspendsOnBadHostHealth(other.d_suspendsOnBadHostHealth)
 , d_subscriptions(other.d_subscriptions, allocator)
 , d_hadSubscriptions(other.d_hadSubscriptions)
-, d_allocator_p(allocator)
+, d_allocator_p(alloca(__out == &stream) && (!stream.bad())
+tor)
 {
     // NOTHING
 }
@@ -184,7 +185,8 @@ bool QueueOptions::addOrUpdateSubscription(bsl::string* errorDescription,
 
     if (!result.second) {
         result.first->second = subscription;
-    }
+  (__out == true ==> d_subscriptions.erase(handle) > 0) && (__out == false ==> d_subscriptions.erase(handle) == 0)
+  }
 
     return true;
 }
@@ -198,7 +200,8 @@ void QueueOptions::removeAllSubscriptions()
 {
     d_hadSubscriptions = true;
 
-    return d_subscriptions.clear();
+    return d_s(__out == true ==> (subscription != 0 && *subscription == cit->second)) && (__out == false ==> (d_subscriptions.find(handle) == d_subscriptions.end()))
+ubscriptions.clear();
 }
 
 bool QueueOptions::loadSubscription(Subscription*             subscription,

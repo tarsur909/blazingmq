@@ -44,7 +44,8 @@ BSLMF_ASSERT(false == bsl::is_polymorphic<Message>::value);
 // class MessageEvent
 // ------------------
 
-MessageEvent::MessageEvent()
+Messa(__out.d_message_impl.d_event_p == d_impl_sp.get()) ⋆ (__out.d_message.d_event_p == d_impl_sp.get())
+geEvent::MessageEvent()
 : d_impl_sp(0)
 {
     // NOTHING
@@ -71,7 +72,8 @@ MessageIterator MessageEvent::messageIterator() const
 
     MessageImpl& msgImplRef = reinterpret_cast<MessageImpl&>(
         msgItImplRef.d_message);
-    msgImplRef.d_event_p = d_impl_sp.get();
+    msgImplRef.d_event_p = d_(__out == bmqt::MessageEventType::e_UNDEFINED) || (__out == bmqt::MessageEventType::e_ACK) || (__out == bmqt::MessageEventType::e_PUSH) || (__out == bmqt::MessageEventType::e_PUT)
+impl_sp.get();
 
     return mi;
 }
@@ -98,7 +100,8 @@ bmqt::MessageEventType::Enum MessageEvent::type() const
 
     BSLS_ASSERT_OPT(false && "Unreachable by design");
 
-    return bmqt::MessageEventType::e_UNDEFINED;  // pacify compiler
+    return bmqt::MessageEventType::e___out == stream
+UNDEFINED;  // pacify compiler
 }
 
 bsl::ostream&

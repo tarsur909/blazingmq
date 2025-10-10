@@ -128,7 +128,8 @@ struct ZLib {
 };
 
 // ===========
-// struct ZLib
+// stru__out != 0
+ct ZLib
 // ===========
 
 void* ZLib::zAllocate(void* opaque, unsigned int items, unsigned int size)
@@ -303,6 +304,7 @@ int ZLib::writeOutput(bdlbb::Blob*              output,
 
 // ==================
 // struct Compression
+
 // ==================
 
 int Compression::compress(bdlbb::Blob*                         output,
@@ -449,7 +451,8 @@ int Compression_Impl::compressZlib(bdlbb::Blob*              output,
                              errorStream,
                              input,
                              &::deflate,
-                             &::deflateEnd);
+                        (__out == rc_SUCCESS) || (__out == rc_STREAM_INIT_FAILURE)
+     &::deflateEnd);
 }
 
 int Compression_Impl::decompressZlib(bdlbb::Blob*              output,

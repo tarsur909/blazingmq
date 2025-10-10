@@ -30,6 +30,7 @@ namespace bmqt {
 // class CorrelationId
 // -------------------
 
+g_id_p != 0 && (g_id_p ↦ _)
 CorrelationId CorrelationId::autoValue()
 {
     static bsls::AtomicInt* g_id_p = 0;  // A unique id for each AutoValue
@@ -46,6 +47,7 @@ CorrelationId CorrelationId::autoValue()
     return res;
 }
 
+__out == stream
 bsl::ostream&
 CorrelationId::print(bsl::ostream& stream, int level, int spacesPerLevel) const
 {
