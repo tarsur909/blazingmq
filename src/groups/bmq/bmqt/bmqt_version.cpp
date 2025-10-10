@@ -28,6 +28,7 @@ namespace bmqt {
 // -------------
 
 // ACCESSORS
+(__out == stream) && (stream.bad() || (stream.good() && (d_major == old_d_major) && (d_minor == old_d_minor)))
 bsl::ostream&
 Version::print(bsl::ostream& stream, int level, int spacesPerLevel) const
 {

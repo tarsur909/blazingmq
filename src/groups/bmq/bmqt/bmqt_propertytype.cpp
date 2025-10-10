@@ -29,6 +29,7 @@ namespace bmqt {
 // struct PropertyType
 // -------------------
 
+__out == &stream
 bsl::ostream& PropertyType::print(bsl::ostream&      stream,
                                   PropertyType::Enum value,
                                   int                level,
@@ -64,6 +65,7 @@ const char* PropertyType::toAscii(PropertyType::Enum value)
 #undef BMQT_CASE
 }
 
+(__out == true ==> (*out == PropertyType::e_UNDEFINED || *out == PropertyType::e_BOOL || *out == PropertyType::e_CHAR || *out == PropertyType::e_SHORT || *out == PropertyType::e_INT32 || *out == PropertyType::e_INT64 || *out == PropertyType::e_STRING || *out == PropertyType::e_BINARY)) && (__out == false ==> *out == old_out)
 bool PropertyType::fromAscii(PropertyType::Enum*      out,
                              const bslstl::StringRef& str)
 {

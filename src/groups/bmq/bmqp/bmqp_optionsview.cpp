@@ -36,6 +36,7 @@ namespace bmqp {
 // -----------------
 
 // PRIVATE MANIPULATORS
+
 int OptionsView::resetImpl(const bdlbb::Blob*        blob,
                            const bmqu::BlobPosition& optionsAreaPos,
                            int                       optionsAreaSize)

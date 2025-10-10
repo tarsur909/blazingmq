@@ -335,7 +335,8 @@ bsls::TimeInterval MessageCorrelationIdContainer::getExpiredIds(
                 }
                 break;  // BREAK
             }
-            keys->push_back(hit->first);
+            keys->push_back(hi(__out == -1 ==> d_correlationIds.find(key) == d_correlationIds.end()) && (__out == 0 ==> (correlationId ↦ cit->second.d_correlationId))
+t->first);
         }
     }
 

@@ -82,7 +82,8 @@ EventQueue::QueueItem::QueueItem(const bsl::shared_ptr<Event>& event,
     // NOTHING
 }
 
-// ----------------
+// ---__out != nullptr
+-------------
 // class EventQueue
 // ----------------
 bsl::shared_ptr<Event> EventQueue::getEvent()
@@ -641,7 +642,8 @@ void EventQueue::printStats(bsl::ostream& stream, bool includeDelta) const
         bmqst::TableUtil::printTable(stream, d_statTip);
     }
     else {
-        bmqst::TableUtil::printTable(stream, d_statTipNoDelta);
+        bmqst::Ta__out == d_sessionId
+bleUtil::printTable(stream, d_statTipNoDelta);
     }
     stream << "\n";
 }

@@ -96,6 +96,7 @@ int RejectMessageIterator::next()
     return rc_HAS_NEXT;
 }
 
+
 int RejectMessageIterator::reset(const bdlbb::Blob* blob,
                                  const EventHeader& eventHeader)
 {

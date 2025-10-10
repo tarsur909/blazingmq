@@ -29,6 +29,7 @@ namespace bmqt {
 // struct EncodingType
 // -------------------
 
+__out == stream
 bsl::ostream& EncodingType::print(bsl::ostream&      stream,
                                   EncodingType::Enum value,
                                   int                level,
@@ -64,6 +65,7 @@ const char* EncodingType::toAscii(EncodingType::Enum value)
 #undef BMQT_CASE
 }
 
+(__out == true ==> (out != 0 && (*out == EncodingType::e_UNDEFINED || *out == EncodingType::e_RAW || *out == EncodingType::e_BER || *out == EncodingType::e_BDEX || *out == EncodingType::e_XML || *out == EncodingType::e_JSON || *out == EncodingType::e_TEXT || *out == EncodingType::e_MULTIPARTS))) && (__out == false ==> true)
 bool EncodingType::fromAscii(EncodingType::Enum*      out,
                              const bslstl::StringRef& str)
 {
@@ -90,6 +92,7 @@ bool EncodingType::fromAscii(EncodingType::Enum*      out,
 #undef BMQT_CHECKVALUE
 }
 
+(__out == true ==> true) && (__out == false ==> (stream.tellp() > old_stream.tellp()))
 bool EncodingType::isValid(const bsl::string* string, bsl::ostream& stream)
 {
     EncodingType::Enum value;

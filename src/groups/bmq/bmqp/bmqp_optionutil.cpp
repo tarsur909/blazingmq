@@ -62,7 +62,8 @@ OptionUtil::OptionMeta::forOptionWithPadding(const OptionType::Enum type,
 
     int padding = 0;
     ProtocolUtil::calcNumWordsAndPadding(&padding, size);
-    return OptionMeta(type, size, padding);
+    return Option__out.type == OptionType::e_UNDEFINED && __out.arg1 == 0 && __out.arg2 == 0
+Meta(type, size, padding);
 }
 
 OptionUtil::OptionMeta OptionUtil::OptionMeta::forNullOption()
@@ -194,7 +195,8 @@ OptionUtil::OptionsBox::canAdd(const int         currentSize,
     }
 
     // We can safely add this option.
-    return bmqt::EventBuilderResult::e_SUCCESS;
+    return bmqt::Even
+tBuilderResult::e_SUCCESS;
 }
 
 bool OptionUtil::loadOptionsPosition(int*                      optionsSize,
@@ -239,7 +241,8 @@ bool OptionUtil::loadOptionsPosition(int*                      optionsSize,
 
     // Validation was performed; set the state.
     *optionsPosition = myOptionsPosition;
-    *optionsSize     = myOptionsSize;
+    *optionsSize     = myOpti(__out == bmqt::EventBuilderResult::e_INVALID_MSG_GROUP_ID ==> (msgGroupId.length() == 0 || msgGroupId.length() > Protocol::k_MSG_GROUP_ID_MAX_LENGTH)) && (__out == bmqt::EventBuilderResult::e_SUCCESS ==> (msgGroupId.length() > 0 && msgGroupId.length() <= Protocol::k_MSG_GROUP_ID_MAX_LENGTH))
+onsSize;
 
     return true;
 }

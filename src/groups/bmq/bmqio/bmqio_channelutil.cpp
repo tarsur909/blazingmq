@@ -99,6 +99,7 @@ isValidPacketLength(int*                      packetLength,
 // struct ChannelUtil
 // ------------------
 
+
 int ChannelUtil::handleRead(bdlbb::Blob* outPacket,
                             int*         numNeeded,
                             bdlbb::Blob* inBlob)
@@ -213,6 +214,7 @@ int ChannelUtil::handleRead(bsl::vector<bdlbb::Blob>* outPackets,
     return 0;
 }
 
+(__out == true ==> host == bsl::string_view(bsl::to_string(s_localIpAddress))) && (__out == false ==> host != bsl::string_view(bsl::to_string(s_localIpAddress)))
 bool ChannelUtil::isLocalHost(const bsl::string_view& host)
 {
     static bsl::uint32_t s_localIpAddress;  // IPAddress of the localHost,
@@ -254,6 +256,7 @@ bool ChannelUtil::isLocalHost(const bsl::string_view& host)
     return (s_localIpAddress == ipAddress.value());
 }
 
+(__out == true ==> EXISTS(0, s_localAddresses_p->size(), i, ip == (*s_localAddresses_p)[i])) && (__out == false ==> SFORALL(0, s_localAddresses_p->size(), i, ip != (*s_localAddresses_p)[i]))
 bool ChannelUtil::isLocalHost(const ntsa::IpAddress& ip)
 {
     static bsl::vector<ntsa::IpAddress>* s_localAddresses_p = 0;

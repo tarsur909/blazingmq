@@ -112,13 +112,15 @@ SchemaLearner::SchemaLearner(bslma::Allocator* basicAllocator)
 SchemaLearner::~SchemaLearner()
 {
     // NOTHING
+__out.d_internal_context != 0 && (__out.d_internal_context->get() != 0) && (__out.d_internal_context->get()->d_flag == false ⋆ __out.d_internal_context->get()->d_allocator_p == d_allocator_p)
 }
 
 // PUBLIC MANIULATORS
 SchemaLearner::Context SchemaLearner::createContext()
 {
     Context context(new (*d_allocator_p) InternalContext(false, d_allocator_p),
-                    d_allocator_p);
+                    d_allocator_p);(d_servers.find(foreignId) == d_servers.end() ==> (d_servers.find(foreignId) != d_servers.end() && __out != nullptr)) && (d_servers.find(foreignId) != d_servers.end() ==> __out != nullptr)
+
 
     return context;
 }
@@ -299,7 +301,8 @@ SchemaLearner::multiplex(Context& context, const MessagePropertiesInfo& input)
     // Update 'contextHandle' with the LRU tracking
     contextHandle->d_listIterator = entryInLRU;
 
-    return MessagePropertiesInfo(input.isPresent(), outputId, isRecycled);
+    return MessagePropertiesInfo(input.isPresent(), o__out.isPresent() == input.isPresent(
+utputId, isRecycled);
 }
 
 MessagePropertiesInfo
@@ -406,7 +409,8 @@ int SchemaLearner::read(Context&                     context,
     // even if the downstream to upstream mapping has changed, the schema
     // is still good unless it is recycled
 
-    return rc;
+    return(__out == true ==> (schemaId > 0 && schemaId <= k_MAX_SCHEMA && schemaId != k_NO_SCHEMA)) && (__out == false ==> (schemaId <= 0 || schemaId > k_MAX_SCHEMA || schemaId == k_NO_SCHEMA))
+ rc;
 }
 
 // CLASS METHODS

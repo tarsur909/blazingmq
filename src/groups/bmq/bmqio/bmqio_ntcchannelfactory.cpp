@@ -460,3 +460,4 @@ bslstl::StringRef NtcChannelFactoryUtil::listenPortProperty()
 
 }  // close package namespace
 }  // close enterprise namespace
+__out != 0

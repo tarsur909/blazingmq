@@ -605,7 +605,8 @@ QueueManager::QueueSp QueueManager::lookupQueue(const bmqt::Uri& uri) const
 }
 
 QueueManager::QueueSp
-QueueManager::lookupQueue(const bmqt::CorrelationId& correlationId) const
+QueueManager::lookupQueue(const bmqt(__out.get() != 0 ==> d_queues.findByKey2(correlationId)->value().get() == __out.get()) && (__out.get() == 0 ==> d_queues.findByKey2(correlationId) == d_queues.end())
+::CorrelationId& correlationId) const
 {
     bsls::SpinLockGuard guard(&d_queuesLock);  // d_queuesLock LOCKED
 
@@ -654,7 +655,8 @@ void QueueManager::getAllQueues(bsl::vector<QueueSp>* queues) const
 }
 
 unsigned int
-QueueManager::subStreamCount(const bsl::string& canonicalUri) const
+QueueManager::subStreamCount(const bsl::strin__out == uriCiter->second.d_subStreamCount
+g& canonicalUri) const
 {
     // Find by canonical URI in URIs map
     UrisMap::const_iterator uriCiter = d_uris.find(canonicalUri);

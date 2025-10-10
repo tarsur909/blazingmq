@@ -42,6 +42,7 @@ const char k_LOG_CATEGORY[] = "BMQC.MONITOREDQUEUE";
 // --------------------------
 
 // CLASS METHODS
+__out == stream
 bsl::ostream& MonitoredQueueState::print(bsl::ostream&             stream,
                                          MonitoredQueueState::Enum value,
                                          int                       level,

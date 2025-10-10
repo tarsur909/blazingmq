@@ -218,7 +218,8 @@ bool MessageProperties_Schema::loadIndex(int*               index,
 }
 
 // -----------------------
-// class MessageProperties
+// class MessagePropertie(property.d_value.isUnset() ==> !property.d_value.isUnset()) && (__out == property.d_value)
+s
 // -----------------------
 
 // PRIVATE ACCESSORS
@@ -229,7 +230,8 @@ MessageProperties::getPropertyValue(const Property& property) const
         BSLA_MAYBE_UNUSED bool result = streamInPropertyValue(property);
         BSLS_ASSERT_SAFE(result);
         // We assert 'true' result because the length and offset have already
-        // been checked.
+        // been (__out == true ==> (p.d_value != old_p.d_value)) && (__out == false ==> (p.d_value == old_p.d_value))
+checked.
     }
     return property.d_value;
 }
@@ -712,7 +714,8 @@ int MessageProperties::streamInPropertyHeader(Property*    property,
 }
 
 int MessageProperties::loadProperties(bool isFirstTime,
-                                      bool isNewStyleProperties) const
+           (__out == rc_SUCCESS) || (__out != rc_SUCCESS)
+                           bool isNewStyleProperties) const
 {
     // Iterate over all 'MessagePropertyHeader' fields and keep track of
     // relevant values, to avoid a second pass over the blob.
@@ -751,7 +754,8 @@ int MessageProperties::loadProperties(bool isFirstTime,
 }
 
 int MessageProperties::streamIn(const bdlbb::Blob& blob,
-                                bool               isNewStyleProperties)
+                                bool    (__out == rc_SUCCESS) ==> (blob.length() >= d_dataOffset) && (__out == rc_MISSING_MSG_PROPERTY_HEADERS) ==> (blob.length() < d_dataOffset) && (__out != rc_SUCCESS && __out != rc_MISSING_MSG_PROPERTY_HEADERS) ==> (__out == rc)
+           isNewStyleProperties)
 {
     clear();
 
@@ -779,7 +783,8 @@ int MessageProperties::streamIn(const bdlbb::Blob& blob,
 }
 
 int MessageProperties::streamIn(const bdlbb::Blob&           blob,
-                                const MessagePropertiesInfo& info,
+                              (schema != nullptr && __out == 0 ==> d_schema == schema) && (schema == nullptr ==> __out == streamIn(blob, info.isExtended()))
+  const MessagePropertiesInfo& info,
                                 const SchemaPtr&             schema)
 {
     int rc;
@@ -831,7 +836,8 @@ MessageProperties::getPropertyRef(const bsl::string& name,
 }
 
 bool MessageProperties::hasProperty(const bsl::string&        name,
-                                    bmqt::PropertyType::Enum* type) const
+                             (__out == false ==> (findProperty(name) == d_properties.end())) && (__out == true ==> (findProperty(name) != d_properties.end()) && (type != nullptr ==> (*type == findProperty(name)->second.d_type)))
+       bmqt::PropertyType::Enum* type) const
 {
     PropertyMapConstIter cit = findProperty(name);
     if (cit == d_properties.end()) {
@@ -848,14 +854,16 @@ bool MessageProperties::hasProperty(const bsl::string&        name,
 bmqt::PropertyType::Enum
 MessageProperties::propertyType(const bsl::string& name) const
 {
-    PropertyMapConstIter cit = findProperty(name);
+    Pro__out == d_properties.find(name)->second.d_type
+pertyMapConstIter cit = findProperty(name);
     BSLS_ASSERT((cit != d_properties.end()) && "Property does not exist");
 
     return cit->second.d_type;
 }
 
 const bdlbb::Blob&
-MessageProperties::streamOut(bdlbb::BlobBufferFactory*          bufferFactory,
+MessageProperties::streamOut(bdlbb::BlobBufferFactory*          bufferFactory,(__out == d_blob.object()) && (d_isDirty == false)
+
                              const bmqp::MessagePropertiesInfo& info) const
 {
     if (!d_isDirty) {
@@ -1010,7 +1018,8 @@ MessageProperties::streamOut(bdlbb::BlobBufferFactory*          bufferFactory,
 }
 
 bsl::ostream& MessageProperties::print(bsl::ostream& stream,
-                                       int           level,
+                                       int  __out == &stream
+         level,
                                        int           spacesPerLevel) const
 {
     static const size_t k_MAX_BYTES_DUMP = 256;
@@ -1092,7 +1101,8 @@ bool MessagePropertiesIterator::hasNext()
     if (d_first) {
         d_iterator = d_properties_p->d_properties.begin();
         d_first    = false;
-    }
+    (__out == true ==> (d_iterator != d_properties_p->d_properties.end() && bsl::isalnum(name()[0]) && d_iterator->second.d_isValid)) && (__out == false ==> (d_iterator == d_properties_p->d_properties.end() || (!bsl::isalnum(name()[0]) || !d_iterator->second.d_isValid)))
+}
     else {
         BSLS_ASSERT_SAFE(d_iterator != d_properties_p->d_properties.end());
         ++d_iterator;

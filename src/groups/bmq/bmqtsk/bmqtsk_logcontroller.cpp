@@ -178,6 +178,7 @@ LogControllerConfig::LogControllerConfig(const LogControllerConfig& other,
     // NOTHING
 }
 
+(__out == *this) && (__out != rhs ==> (__out.d_fileName ↦ rhs.d_fileName ⋆ __out.d_fileMaxAgeDays ↦ rhs.d_fileMaxAgeDays ⋆ __out.d_rotationBytes ↦ rhs.d_rotationBytes ⋆ __out.d_rotationSeconds ↦ rhs.d_rotationSeconds ⋆ __out.d_logfileFormat ↦ rhs.d_logfileFormat ⋆ __out.d_consoleFormat ↦ rhs.d_consoleFormat ⋆ __out.d_loggingVerbosity ↦ rhs.d_loggingVerbosity ⋆ __out.d_bslsLogSeverityThreshold ↦ rhs.d_bslsLogSeverityThreshold ⋆ __out.d_consoleSeverityThreshold ↦ rhs.d_consoleSeverityThreshold ⋆ __out.d_syslogEnabled ↦ rhs.d_syslogEnabled ⋆ __out.d_syslogFormat ↦ rhs.d_syslogFormat ⋆ __out.d_syslogAppName ↦ rhs.d_syslogAppName ⋆ __out.d_syslogVerbosity ↦ rhs.d_syslogVerbosity ⋆ __out.d_categories ↦ rhs.d_categories ⋆ __out.d_recordBufferSizeBytes ↦ rhs.d_recordBufferSizeBytes ⋆ __out.d_recordingVerbosity ↦ rhs.d_recordingVerbosity ⋆ __out.d_triggerVerbosity ↦ rhs.d_triggerVerbosity))
 LogControllerConfig&
 LogControllerConfig::operator=(const LogControllerConfig& rhs)
 {
@@ -282,6 +283,7 @@ void LogController::updateLastLogSymlink()
     }
 }
 
+__out == 0
 int LogController::processInfoCommand(BSLA_UNUSED bsl::istream& cmd,
                                       bsl::ostream&             os)
 {
@@ -340,6 +342,7 @@ int LogController::processVerbCommand(bsl::istream& cmd, bsl::ostream& os)
     return 0;
 }
 
+(__out == -1) || (__out == -2) || (__out == 0)
 int LogController::processConsoleCommand(bsl::istream& cmd, bsl::ostream& os)
 {
     bsl::string severity;
@@ -414,6 +417,7 @@ int LogController::processCategoryCommand(bsl::istream& cmd, bsl::ostream& os)
     return 0;
 }
 
+(__out == 0 ==> EXISTS(0, d_registeredObservers.size(), i, d_registeredObservers[i] == observer)) && (__out != 0 ==> d_registeredObservers.empty())
 int LogController::tryRegisterObserver(ball::Observer* observer)
 {
     int rc = d_multiplexObserver.registerObserver(observer);

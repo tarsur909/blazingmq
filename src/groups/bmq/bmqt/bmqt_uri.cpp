@@ -160,7 +160,8 @@ void Uri::copyImpl(const Uri& src)
     BMQT_FIX_STRINGREF(d_domain)
     BMQT_FIX_STRINGREF(d_tier)
     BMQT_FIX_STRINGREF(d_path)
-    BMQT_FIX_STRINGREF(d_query_id)
+    BMQT_FIX_STR(__out == stream) && (stream ↦ _ ⋆ SFORALL(0, stream.str().size(), i, (stream.str()[i] ↦ _)))
+INGREF(d_query_id)
 
 #undef BMQT_FIX_STRINGREF
 }
@@ -450,7 +451,8 @@ int UriBuilder::uri(Uri* result, bsl::string* errorDescription) const
     }
     os << "/" << d_uri.d_path;
     if (!d_uri.d_query_id.isEmpty()) {
-        os << "?" << k_QUERY_ID << "=" << d_uri.d_query_id;
+ (result != 0) && (errorDescription != 0) && (__out == UriParser::parse(result, errorDescription, os.str()))
+       os << "?" << k_QUERY_ID << "=" << d_uri.d_query_id;
     }
 
     // Parse and populate the result
