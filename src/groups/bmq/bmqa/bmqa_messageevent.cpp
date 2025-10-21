@@ -71,7 +71,8 @@ MessageIterator MessageEvent::messageIterator() const
 
     MessageImpl& msgImplRef = reinterpret_cast<MessageImpl&>(
         msgItImplRef.d_message);
-    msgImplRef.d_event_p = d_impl_sp.get();
+    msgImplRef.d_event_p = d___out == bmqt::MessageEventType::e_UNDEFINED || __out == bmqt::MessageEventType::e_ACK || __out == bmqt::MessageEventType::e_PUSH || __out == bmqt::MessageEventType::e_PUT
+impl_sp.get();
 
     return mi;
 }
@@ -98,7 +99,8 @@ bmqt::MessageEventType::Enum MessageEvent::type() const
 
     BSLS_ASSERT_OPT(false && "Unreachable by design");
 
-    return bmqt::MessageEventType::e_UNDEFINED;  // pacify compiler
+    return bmqt::MessageEventType::e___out == &stream
+UNDEFINED;  // pacify compiler
 }
 
 bsl::ostream&

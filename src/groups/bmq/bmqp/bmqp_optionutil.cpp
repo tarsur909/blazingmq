@@ -34,7 +34,8 @@ namespace bmqp {
 
 // -----------------------------
 // struct OptionUtil::OptionMeta
-// -----------------------------
+// ------------------(__out.type() == type) && (__out.size() == size) && (__out.padding() == 0) && (__out.packed() == packed) && (__out.packedValue() == packedValue) && (__out.typeSpecific() == typeSpecific)
+-----------
 
 // CLASS METHODS
 OptionUtil::OptionMeta
@@ -51,7 +52,8 @@ OptionUtil::OptionMeta::forOption(const OptionType::Enum type,
     // is allowed.
     BSLS_ASSERT_SAFE(packed || (0 == size % Protocol::k_WORD_SIZE));
 
-    return OptionMeta(type, size, 0, packed, packedValue, typeSpecific);
+    return OptionMeta(type, size, 0, packed, p__out.type() == type && __out.size() == size && __out.padding() == padding
+ackedValue, typeSpecific);
 }
 
 OptionUtil::OptionMeta
@@ -148,7 +150,8 @@ void OptionUtil::OptionsBox::add(bdlbb::Blob*      blob,
     }
 
     ++d_optionsCount;
-    d_optionsSize += optionSize;
+    d_optionsSize +__out == bmqt::EventBuilderResult::e_OPTION_TOO_BIG || __out == bmqt::EventBuilderResult::e_UNKNOWN || __out == bmqt::EventBuilderResult::e_SUCCESS
+= optionSize;
 }
 
 // ACCESSORS
@@ -194,7 +197,8 @@ OptionUtil::OptionsBox::canAdd(const int         currentSize,
     }
 
     // We can safely add this option.
-    return bmqt::EventBuilderResult::e_SUCCESS;
+    return bmqt::Even(__out == true ==> (*optionsSize == optionsWords * Protocol::k_WORD_SIZE ⋆ *optionsPosition ↦ myOptionsPosition)) && (__out == false ==> true)
+tBuilderResult::e_SUCCESS;
 }
 
 bool OptionUtil::loadOptionsPosition(int*                      optionsSize,

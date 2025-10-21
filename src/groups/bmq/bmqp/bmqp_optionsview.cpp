@@ -36,6 +36,7 @@ namespace bmqp {
 // -----------------
 
 // PRIVATE MANIPULATORS
+(__out == rc_SUCCESS) || (__out == rc_INVALID_OPTIONS_AREA) || (__out == rc_INVALID_OPTIONS_AREA_SIZE) || (__out == rc_DUPLICATE_OPTION_TYPE)
 int OptionsView::resetImpl(const bdlbb::Blob*        blob,
                            const bmqu::BlobPosition& optionsAreaPos,
                            int                       optionsAreaSize)
@@ -146,6 +147,7 @@ int OptionsView::resetImpl(const bdlbb::Blob*        blob,
 }
 
 // PRIVATE ACCESSORS
+(__out == rc) && (rc != 0 ==> __out != 0)
 int OptionsView::loadOptionPositionAndSize(
     bmqu::BlobPosition*          payloadPosition,
     int*                         payloadSizeBytes,
@@ -226,6 +228,7 @@ void OptionsView::dumpBlob(bsl::ostream& stream)
 }
 
 // ACCESSORS
+(__out == rc_SUCCESS ==> (subQueueIdsOld->size() != 0)) && (__out == rc_LOAD_FAILURE ==> subQueueIdsOld->empty())
 int OptionsView::loadSubQueueIdsOption(
     Protocol::SubQueueIdsArrayOld* subQueueIdsOld) const
 {
@@ -262,6 +265,7 @@ int OptionsView::loadSubQueueIdsOption(
     return rc_SUCCESS;
 }
 
+(__out == 0 ==> !subQueueInfos->empty()) && (__out == -1 ==> subQueueInfos->empty()) && (__out != -2)
 int OptionsView::loadSubQueueInfosOption(
     Protocol::SubQueueInfosArray* subQueueInfos) const
 {
@@ -350,6 +354,7 @@ int OptionsView::loadSubQueueInfosOption(
     return rc_UNREACHABLE;
 }
 
+(__out == 0 ==> !msgGroupId->empty()) && (__out != 0 ==> msgGroupId->empty())
 int OptionsView::loadMsgGroupIdOption(Protocol::MsgGroupId* msgGroupId) const
 {
     // PRECONDITIONS

@@ -55,6 +55,7 @@ void AckMessageIterator::copyFrom(const AckMessageIterator& src)
     }
 }
 
+(__out == rc_HAS_NEXT) || (__out == rc_AT_END) || (__out == rc_INVALID) || (__out == rc_NOT_ENOUGH_BYTES) ==> true
 int AckMessageIterator::next()
 {
     enum RcEnum {
@@ -103,6 +104,7 @@ int AckMessageIterator::next()
     return rc_HAS_NEXT;
 }
 
+(__out == 0) || (__out == -1) || (__out == -2) || (__out == -3)
 int AckMessageIterator::reset(const bdlbb::Blob* blob,
                               const EventHeader& eventHeader)
 {
@@ -181,6 +183,7 @@ int AckMessageIterator::reset(const bdlbb::Blob* blob,
     return rc_SUCCESS;
 }
 
+__out == 0 && (d_blobIter.position() == other.d_blobIter.position()) && (d_blobIter.remaining() == other.d_blobIter.remaining())
 int AckMessageIterator::reset(const bdlbb::Blob*        blob,
                               const AckMessageIterator& other)
 {

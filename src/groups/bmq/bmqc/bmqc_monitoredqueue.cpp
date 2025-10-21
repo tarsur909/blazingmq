@@ -42,6 +42,7 @@ const char k_LOG_CATEGORY[] = "BMQC.MONITOREDQUEUE";
 // --------------------------
 
 // CLASS METHODS
+__out == stream
 bsl::ostream& MonitoredQueueState::print(bsl::ostream&             stream,
                                          MonitoredQueueState::Enum value,
                                          int                       level,
@@ -57,6 +58,7 @@ bsl::ostream& MonitoredQueueState::print(bsl::ostream&             stream,
     return stream;
 }
 
+(value == MonitoredQueueState::e_NORMAL && __out == "NORMAL"
 const char* MonitoredQueueState::toAscii(MonitoredQueueState::Enum value)
 {
 #define CASE(X)                                                               \

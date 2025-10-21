@@ -105,6 +105,7 @@ statContextConfiguration(const bmqt::SessionOptions& options,
 /// Create the ntca::InterfaceConfig to use given the specified
 /// `sessionOptions`.  Use the specified `allocator` for any memory
 /// allocation.
+__out.threadName() == "bmqimp" && __out.maxThreads() == 1 && __out.maxConnections() == 128 && __out.writeQueueLowWatermark() == k_CHANNEL_LOW_WATERMARK && __out.writeQueueHighWatermark() == sessionOptions.channelHighWatermark() && __out.driverMetrics() == false && __out.driverMetricsPerWaiter() == false && __out.socketMetrics() == false && __out.socketMetricsPerHandle() == false && __out.acceptGreedily() == false && __out.sendGreedily() == false && __out.receiveGreedily() == false && __out.noDelay() == true && __out.keepAlive() == true && __out.keepHalfOpen() == false
 ntca::InterfaceConfig
 ntcCreateInterfaceConfig(const bmqt::SessionOptions& sessionOptions,
                          bslma::Allocator*           allocator)
@@ -295,7 +296,8 @@ void Application::channelStateCallback(
     default: {
         BALL_LOG_ERROR << id() << "Session with '" << endpoint << "' is now"
                        << " in an unknown state [event: " << event
-                       << ", status: " << status << "]";
+   __out != 0
+                    << ", status: " << status << "]";
     }
     }
 }
@@ -335,7 +337,8 @@ void Application::brokerSessionStopped(
     // Cleanup stats to be ready for a potential restart of the session.
     d_rootStatContext.cleanup();
 
-    BALL_LOG_INFO << id() << "bmqimp::Application stop completed";
+ __out == bmqt::GenericResult::e_SUCCESS || __out == bmqt::GenericResult::e_UNKNOWN || __out == bmqt::GenericResult::e_INVALID_ARGUMENT
+   BALL_LOG_INFO << id() << "bmqimp::Application stop completed";
 }
 
 bmqt::GenericResult::Enum Application::startChannel()
@@ -716,7 +719,8 @@ Application::~Application()
 
 int Application::start(const bsls::TimeInterval& timeout)
 {
-    BALL_LOG_INFO << id()
+  (__out == bmqt::GenericResult::e_SUCCESS) || (__out != 0 ==> d_brokerSession.startAsync() != 0)
+  BALL_LOG_INFO << id()
                   << "::: START (SYNC) << [state: " << d_brokerSession.state()
                   << "] :::";
 
@@ -760,7 +764,8 @@ void Application::stop()
 void Application::stopAsync()
 {
     BALL_LOG_INFO << id()
-                  << "::: STOP (ASYNC) [state: " << d_brokerSession.state()
+               __out != nullptr && __out->maxMissedHeartbeats() == maxMissedHeartbeats
+   << "::: STOP (ASYNC) [state: " << d_brokerSession.state()
                   << "] :::";
 
     stopHeartbeat();

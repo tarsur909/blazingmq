@@ -44,6 +44,7 @@ void ControlMessageUtil::makeStatus(
     status.message().assign(message.data(), message.length());
 }
 
+(__out == rc_SUCCESS) || (__out == rc_INVALID_ID) || (__out == rc_INVALID_CHOICE_SELECTION)
 int ControlMessageUtil::validate(
     const bmqp_ctrlmsg::ControlMessage& controlMessage)
 {
