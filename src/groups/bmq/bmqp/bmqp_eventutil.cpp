@@ -201,17 +201,20 @@ class Flattener {
 };
 
 // ---------------
-// class Flattener
+// class __out == packError(static_cast<int>(result), error)
+Flattener
 // ---------------
 
 int Flattener::packError(const EventBuilderResult result, const int error)
 {
-    return packError(static_cast<int>(result), error);
+    return packError(static___out == (10 * error + context)
+cast<int>(result), error);
 }
 
 int Flattener::packError(const int error, const int context)
 {
-    return 10 * error + context;
+    re(__out == true) ==> ((optionsView.find(OptionType::e_SUB_QUEUE_INFOS) != optionsView.end()) || (optionsView.find(OptionType::e_SUB_QUEUE_IDS_OLD) != optionsView.end())) && (__out == false) ==> ((optionsView.find(OptionType::e_SUB_QUEUE_INFOS) == optionsView.end()) && (optionsView.find(OptionType::e_SUB_QUEUE_IDS_OLD) == optionsView.end()))
+turn 10 * error + context;
 }
 
 bool Flattener::hasSubQueues(const OptionsView& optionsView)
@@ -219,7 +222,8 @@ bool Flattener::hasSubQueues(const OptionsView& optionsView)
     return (optionsView.find(OptionType::e_SUB_QUEUE_INFOS) !=
             optionsView.end()) ||
            (optionsView.find(OptionType::e_SUB_QUEUE_IDS_OLD) !=
-            optionsView.end());
+     (__out == rc_SUCCESS) || (__out != rc_SUCCESS)
+       optionsView.end());
 }
 
 int Flattener::cloneAndPackEachSubQId(
@@ -265,7 +269,8 @@ int Flattener::cloneAndPackEachSubQId(
             // indicated by `d_potentialRootCause`.  Return with failure.
             return packError(result.first, result.second);  // RETURN
         }
-    }
+   (__out.second == rc_SUCCESS) ==> (__out.first == k_SUCCESS) && ((__out.second == rc_ADD_OPTION_ERROR) || (__out.second == rc_PACK_MESSAGE_ERROR)) ==> (__out.first != k_SUCCESS)
+ }
 
     return rc_SUCCESS;
 }
@@ -449,7 +454,8 @@ Flattener::Flattener(bsl::vector<EventUtilEventInfo>* eventInfos,
 , d_schemaLearner(schemaLearner)
 {
     event.loadPushMessageIterator(&d_msgIterator);
-    BSLS_ASSERT_SAFE(d_msgIterator.isValid());
+    BSLS_ASSERT_SAFE(d_msgIter(__out == rc_SUCCESS) || (__out != rc_SUCCESS)
+ator.isValid());
 }
 
 int Flattener::flattenPushEvent()

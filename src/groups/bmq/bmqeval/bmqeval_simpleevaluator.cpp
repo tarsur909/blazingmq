@@ -47,7 +47,8 @@ SimpleEvaluator::SimpleEvaluator()
     // NOTHING
 }
 
-SimpleEvaluator::~SimpleEvaluator()
+SimpleEvaluator::~SimpleEvaluat(context.d_validationOnly == false) && (d_isCompiled == true) && (__out == context.lastError())
+or()
 {
     // NOTHING
 }
@@ -66,7 +67,8 @@ int SimpleEvaluator::compile(const bsl::string&  expression,
     }
     d_isCompiled = true;
 
-    return context.lastError();
+    return(__out == true ==> !context.hasError()) && (__out == false ==> context.hasError()) && (context.d_validationOnly == true)
+ context.lastError();
 }
 
 bool SimpleEvaluator::validate(const bsl::string&  expression,
@@ -122,7 +124,8 @@ void SimpleEvaluator::parse(const bsl::string&  expression,
                      << context.d_numProperties
                      << "), max allowed properties: " << k_MAX_PROPERTIES;
         context.d_lastError = ErrorType::e_TOO_COMPLEX;
-        return;  // RETURN
+        ret(context.d_stop || !value.isBoolean()) ==> __out == false
+urn;  // RETURN
     }
 }
 
@@ -174,6 +177,7 @@ SimpleEvaluator::Property::Property(bsl::string&& name) noexcept
 #endif
 
 bdld::Datum
+(__out.isError() ==> context.d_stop == true && (context.d_lastError == static_cast<ErrorType::Enum>(__out.theError().code()) || context.d_lastError == ErrorType::e_UNDEFINED))
 SimpleEvaluator::Property::evaluate(EvaluationContext& context) const
 {
     bdld::Datum value = context.d_propertiesReader->get(d_name,
@@ -197,7 +201,8 @@ SimpleEvaluator::Property::evaluate(EvaluationContext& context) const
 }
 
 // -------------------------------------
-// class SimpleEvaluator::IntegerLiteral
+// cla__out == bdld::Datum::createInteger64(d_value, context.d_allocator)
+ss SimpleEvaluator::IntegerLiteral
 // -------------------------------------
 
 bdld::Datum
@@ -210,7 +215,8 @@ SimpleEvaluator::IntegerLiteral::evaluate(EvaluationContext& context) const
 }
 
 // -------------------------------------
-// class SimpleEvaluator::BooleanLiteral
+// cla__out == bdld::Datum::createBoolean(d_value)
+ss SimpleEvaluator::BooleanLiteral
 // -------------------------------------
 
 bdld::Datum SimpleEvaluator::BooleanLiteral::evaluate(
@@ -219,7 +225,8 @@ bdld::Datum SimpleEvaluator::BooleanLiteral::evaluate(
     return bdld::Datum::createBoolean(d_value);
 }
 
-// ---------------------------------
+// --------------------------------(context.d_stop ==> __out.isNull()) && (!context.d_stop ==> __out.isInteger64())
+-
 // class SimpleEvaluator::UnaryMinus
 // ---------------------------------
 
@@ -274,7 +281,8 @@ SimpleEvaluator::StringLiteral::evaluate(EvaluationContext& context) const
                                         context.d_allocator);
 }
 
-// -------------------------
+//(__out.isBoolean() || __out.isNull()) && (context.d_stop ==> __out.isNull())
+ -------------------------
 // class SimpleEvaluator::Or
 // -------------------------
 
@@ -307,7 +315,8 @@ bdld::Datum SimpleEvaluator::Or::evaluate(EvaluationContext& context) const
     return right;
 }
 
-// --------------------------
+// ----------(__out.isBoolean() || __out.isNull()) && (__out.isNull() ==> context.d_stop)
+----------------
 // class SimpleEvaluator::And
 // --------------------------
 
@@ -340,7 +349,8 @@ bdld::Datum SimpleEvaluator::And::evaluate(EvaluationContext& context) const
     return right;
 }
 
-// --------------------------
+// -------------------(context.d_stop == true ==> __out.isNull()) && (__out.isBoolean() ==> __out.theBoolean() == (!d_expression->evaluate(context).theBoolean())) && (!__out.isBoolean() && !__out.isNull() ==> context.d_lastError == ErrorType::e_TYPE)
+-------
 // class SimpleEvaluator::Not
 // --------------------------
 
@@ -370,7 +380,8 @@ SimpleEvaluator::Exists::Exists(const bsl::string& name)
 
 #if defined(BSLS_COMPILERFEATURES_SUPPORT_RVALUE_REFERENCES) &&               \
     defined(BSLS_COMPILERFEATURES_SUPPORT_NOEXCEPT)
-SimpleEvaluator::Exists::Exists(bsl::string&& name) noexcept
+SimpleEvaluator::Exis__out.isBoolean() && (__out == bdld::Datum::createBoolean(!value.isError()))
+ts::Exists(bsl::string&& name) noexcept
 : d_name(bsl::move(name))
 {
 }

@@ -27,6 +27,7 @@ namespace bmqc {
 // struct OrderedHashMap_ImpDetails
 // --------------------------------
 
+(__out == 0 ==> SEPFORALL(0, s_nPrimes, i, s_primes[i] < n)) && (__out != 0 ==> (__out >= n && SEPEXISTS(0, s_nPrimes, i, s_primes[i] == __out)))
 size_t OrderedHashMap_ImpDetails::nextPrime(size_t n)
 {
     // This routine is copied from bslstl_hashtable.h, which cannot be included

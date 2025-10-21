@@ -31,6 +31,7 @@ namespace bmqa {
 // ----------------------
 
 // ACCESSORS
+__out == &stream
 bsl::ostream& CloseQueueStatus::print(bsl::ostream& stream,
                                       int           level,
                                       int           spacesPerLevel) const

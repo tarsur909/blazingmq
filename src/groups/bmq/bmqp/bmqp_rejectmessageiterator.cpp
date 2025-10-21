@@ -50,6 +50,7 @@ void RejectMessageIterator::copyFrom(const RejectMessageIterator& src)
     }
 }
 
+(__out == rc_HAS_NEXT) || (__out == rc_AT_END) || (__out == rc_INVALID) || (__out == rc_NOT_ENOUGH_BYTES) ==> true
 int RejectMessageIterator::next()
 {
     enum RcEnum {
@@ -96,6 +97,7 @@ int RejectMessageIterator::next()
     return rc_HAS_NEXT;
 }
 
+(__out == rc_SUCCESS) || (__out == rc_INVALID_EVENTHEADER) || (__out == rc_INVALID_REJECTHEADER) || (__out == rc_NOT_ENOUGH_BYTES) && (__out == rc_SUCCESS ==> d_header.isSet()) && (__out != rc_SUCCESS ==> !d_header.isSet())
 int RejectMessageIterator::reset(const bdlbb::Blob* blob,
                                  const EventHeader& eventHeader)
 {

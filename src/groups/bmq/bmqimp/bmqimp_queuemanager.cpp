@@ -45,7 +45,8 @@ BSLMF_ASSERT(bmqp::QueueId::k_DEFAULT_SUBQUEUE_ID <
 
 // ------------------
 // class QueueManager
-// ------------------
+// -----------(__out == nullptr ==> !(d_queues.findByKey1(queueId) != d_queues.end())) && (__out != nullptr ==> (d_queues.findByKey1(queueId) != d_queues.end()))
+-------
 
 // PRIVATE ACCESSORS
 QueueManager::QueueSp
@@ -188,7 +189,8 @@ void QueueManager::insertQueue(const QueueSp& queue)
     BSLS_ASSERT_SAFE(addRet.second == QueuesMap::e_INSERTED);
 }
 
-QueueManager::QueueSp QueueManager::removeQueue(const Queue* queue)
+QueueManager::QueueSp Qu(queue->id() >= 0 && queue->subQueueId() >= 0) ==> (__out != QueueSp() || __out == QueueSp())
+eueManager::removeQueue(const Queue* queue)
 {
     // PRECONDITIONS
     BSLS_ASSERT_SAFE(queue);
@@ -566,7 +568,8 @@ void QueueManager::updateSubscriptions(
 }
 
 // ACCESSORS
-QueueManager::QueueSp QueueManager::lookupQueue(const bmqt::Uri& uri) const
+QueueManager::QueueSp QueueManager::lookupQueue(const bmqt(__out != nullptr ==> (__out->uri() == uri)) && (__out == nullptr ==> (d_uris.find(bsl::string(uri.canonical(), d_allocator_p)) == d_uris.end() || d_uris.find(bsl::string(uri.canonical(), d_allocator_p))->second.d_subQueueIdsMap.find(uri.id()) == d_uris.find(bsl::string(uri.canonical(), d_allocator_p))->second.d_subQueueIdsMap.end()))
+::Uri& uri) const
 {
     bsls::SpinLockGuard guard(&d_queuesLock);  // d_queuesLock LOCKED
 
@@ -605,7 +608,8 @@ QueueManager::QueueSp QueueManager::lookupQueue(const bmqt::Uri& uri) const
 }
 
 QueueManager::QueueSp
-QueueManager::lookupQueue(const bmqt::CorrelationId& correlationId) const
+QueueManager::lookupQueue(const bmqt(d_queues.findByKey2(correlationId) == d_queues.end() ==> __out.get() == nullptr) && (d_queues.findByKey2(correlationId) != d_queues.end() ==> __out.get() != nullptr)
+::CorrelationId& correlationId) const
 {
     bsls::SpinLockGuard guard(&d_queuesLock);  // d_queuesLock LOCKED
 
@@ -654,7 +658,8 @@ void QueueManager::getAllQueues(bsl::vector<QueueSp>* queues) const
 }
 
 unsigned int
-QueueManager::subStreamCount(const bsl::string& canonicalUri) const
+QueueManager::subStreamCount(const bsl::strin__out == uriCiter->second.d_subStreamCount
+g& canonicalUri) const
 {
     // Find by canonical URI in URIs map
     UrisMap::const_iterator uriCiter = d_uris.find(canonicalUri);

@@ -59,6 +59,7 @@ const unsigned int QueueId::k_UNASSIGNED_SUBQUEUE_ID;
 const unsigned int QueueId::k_DEFAULT_SUBQUEUE_ID;
 
 // FREE OPERATORS
+(__out == stream) && (stream.bad() == old_stream.bad())
 bsl::ostream&
 QueueId::print(bsl::ostream& stream, int level, int spacesPerLevel) const
 {
@@ -75,6 +76,7 @@ QueueId::print(bsl::ostream& stream, int level, int spacesPerLevel) const
     return stream;
 }
 
+__out == stream
 bsl::ostream& operator<<(bsl::ostream&                    stream,
                          const bmqp::QueueId::QueueIdInt& rhs)
 {
@@ -96,6 +98,7 @@ bsl::ostream& operator<<(bsl::ostream&                    stream,
     return stream;
 }
 
+__out == stream
 bsl::ostream& operator<<(bsl::ostream&                       stream,
                          const bmqp::QueueId::SubQueueIdInt& rhs)
 {

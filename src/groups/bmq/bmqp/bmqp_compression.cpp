@@ -128,7 +128,8 @@ struct ZLib {
 };
 
 // ===========
-// struct ZLib
+// stru__out != 0
+ct ZLib
 // ===========
 
 void* ZLib::zAllocate(void* opaque, unsigned int items, unsigned int size)
@@ -217,7 +218,8 @@ void ZLib::advanceOutput(bdlbb::Blob*              output,
 
         const ptrdiff_t offset = outBuffer->size() - stream->avail_out;
         stream->next_out = reinterpret_cast<unsigned char*>(outBuffer->data() +
-                                                            offset);
+                                                      (__out == rc_SUCCESS) || (__out == rc_STREAM_INIT_FAILURE) || (__out == rc_STREAM_PROCESS_FAILURE) || (__out == rc_STREAM_END_FAILURE)
+      offset);
     }
 }
 
@@ -413,7 +415,8 @@ int Compression::decompress(bdlbb::Blob*                         output,
 
 // ======================
 // struct CompressionImpl
-// ======================
+// (__out == rc_SUCCESS || __out == rc_STREAM_INIT_FAILURE) && (__out == rc_STREAM_INIT_FAILURE ==> __out != Z_OK)
+======================
 
 int Compression_Impl::compressZlib(bdlbb::Blob*              output,
                                    bdlbb::BlobBufferFactory* factory,
@@ -449,7 +452,8 @@ int Compression_Impl::compressZlib(bdlbb::Blob*              output,
                              errorStream,
                              input,
                              &::deflate,
-                             &::deflateEnd);
+                        (__out == rc_SUCCESS) ==> (output != nullptr) && (output != old_output) && (factory != nullptr) && (errorStream != nullptr) && (allocator != nullptr) && (input != old_input) && (__out != rc_SUCCESS) ==> (output == old_output)
+     &::deflateEnd);
 }
 
 int Compression_Impl::decompressZlib(bdlbb::Blob*              output,

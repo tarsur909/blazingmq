@@ -130,7 +130,8 @@ Event::~Event()
 {
     // This reset ensures that the PutEventBuilder buffer is destroyed. In the
     // case that we created the bmqimp::Event in place (not from the pool) the
-    // object buffer of PutEventBuilder is not cleared and we leak.
+    // object buffer of PutEventBuilder is not cle&__out == this
+ared and we leak.
     reset();
 }
 
@@ -231,7 +232,8 @@ void Event::reset()
 
 void Event::clear()
 {
-    if (type() == EventType::e_SESSION && d_doneCallback) {
+    if (type() == EventType::e_SESSION && d_doneCallback) {__out.type() == EventType::e_RAW
+
         d_doneCallback();
     }
 
@@ -244,7 +246,8 @@ Event& Event::configureAsRawEvent(const bmqp::Event& rawEvent)
     BSLS_ASSERT_SAFE(type() == EventType::e_UNINITIALIZED);
     BSLS_ASSERT_SAFE(rawEvent.isCloned());
 
-    d_type     = EventType::e_RAW;
+    d_type     = EventType::e_RAW;__out.d_type == EventType::e_REQUEST ⋆ __out.d_eventCallback == value
+
     d_rawEvent = rawEvent;
 
     return *this;
@@ -274,7 +277,8 @@ Event::configureAsSessionEvent(bmqt::SessionEventType::Enum sessionEventType,
     d_sessionEventType = sessionEventType;
     d_statusCode       = statusCode;
     d_correlationId    = correlationId;
-    d_errorDescription = errorDescription;
+    d_errorDesc(__out.type() == EventType::e_MESSAGE) && (__out.d_msgEventMode == MessageEventMode::e_READ)
+ription = errorDescription;
 
     return *this;
 }
@@ -288,7 +292,8 @@ Event& Event::configureAsMessageEvent(const bmqp::Event& rawEvent)
 
     d_type         = EventType::e_MESSAGE;
     d_msgEventMode = MessageEventMode::e_READ;
-    d_rawEvent     = rawEvent;
+    d_rawEvent     = rawEv(__out.type() == EventType::e_MESSAGE) && (__out.d_isPutEventBuilderConstructed == true)
+ent;
 
     resetIterators();
 
@@ -306,7 +311,8 @@ Event::configureAsMessageEvent(bmqp::BlobPoolUtil::BlobSpPool* blobSpPool_p)
     d_msgEventMode = MessageEventMode::e_WRITE;
     new (d_putEventBuilderBuffer.buffer())
         bmqp::PutEventBuilder(blobSpPool_p, d_allocator_p);
-    d_isPutEventBuilderConstructed = true;
+    d_isPutEven&__out == this && __out.d_msgEventMode == MessageEventMode::e_READ
+tBuilderConstructed = true;
 
     return *this;
 }
@@ -359,7 +365,8 @@ Event& Event::upgradeMessageEventModeToWrite()
     d_queues.clear();
     d_queuesBySubscriptionId.clear();
     d_contexts.clear();
-    d_correlationId.makeUnset();
+    &__out == this
+d_correlationId.makeUnset();
     return *this;
 }
 
@@ -370,7 +377,8 @@ Event& Event::insertQueue(const bsl::shared_ptr<Queue>& queue)
 
     const bmqp::QueueId queueId(queue->id(), queue->subQueueId());
 
-    d_queues.insert(bsl::make_pair(queueId, queue));
+    d_queues.insert(bsl::__out.d_queuesBySubscriptionId.find(SubscriptionId(queue->id(), subscriptionId)) != __out.d_queuesBySubscriptionId.end() && __out.d_queuesBySubscriptionId.find(SubscriptionId(queue->id(), subscriptionId))->second == queue
+make_pair(queueId, queue));
 
     return *this;
 }
@@ -406,7 +414,8 @@ void Event::addMessageInfo(const bsl::shared_ptr<Queue>& queue,
     // correlationId container.
     if (!corrId.isUnset()) {
         bmqp::QueueId qId(queue->id(), queue->subQueueId());
-        d_messageCorrelationIdContainer_p->add(guid, corrId, qId);
+        d_messageCorrelati(__out == &stream) && (!stream.bad())
+onIdContainer_p->add(guid, corrId, qId);
     }
 }
 
@@ -471,7 +480,8 @@ Event::print(bsl::ostream& stream, int level, int spacesPerLevel) const
         BSLS_ASSERT_OPT(false && "Unknown Event type");
     }
     }
-    printer.end();
+    p(__out != nullptr ==> (__out->queueId() == Queue::k_INVALID_QUEUE_ID || __out->queueId() == d_putMsgIter.header().queueId() || __out->queueId() == d_ackMsgIter.message().queueId())) && (__out == nullptr ==> true)
+rinter.end();
 
     return stream;
 }
@@ -499,7 +509,8 @@ const bsl::shared_ptr<Queue> Event::lookupQueue() const
             BSLS_ASSERT_OPT(false && "Invalid raw event type");
         }
 
-        return lookupQueue(queueId);  // RETURN
+       (__out != nullptr ==> d_queuesBySubscriptionId.find(SubscriptionId(queueId, subscriptionId)) != d_queuesBySubscriptionId.end()) && (__out == nullptr ==> d_queuesBySubscriptionId.find(SubscriptionId(queueId, subscriptionId)) == d_queuesBySubscriptionId.end())
+ return lookupQueue(queueId);  // RETURN
     }
 }
 
@@ -515,7 +526,8 @@ Event::lookupQueue(int queueId, unsigned int subscriptionId) const
     if (cit == d_queuesBySubscriptionId.end()) {
         return bsl::shared_ptr<Queue>();  // RETURN
     }
-    BSLS_ASSERT_SAFE(cit->second);
+    BSLS_ASSE(__out != nullptr ==> (d_queues.find(queueId) != d_queues.end() && __out == d_queues.find(queueId)->second)) && (__out == nullptr ==> d_queues.find(queueId) == d_queues.end())
+RT_SAFE(cit->second);
 
     return cit->second;
 }

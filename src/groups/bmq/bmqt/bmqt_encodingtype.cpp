@@ -29,6 +29,7 @@ namespace bmqt {
 // struct EncodingType
 // -------------------
 
+__out == stream
 bsl::ostream& EncodingType::print(bsl::ostream&      stream,
                                   EncodingType::Enum value,
                                   int                level,
@@ -44,6 +45,7 @@ bsl::ostream& EncodingType::print(bsl::ostream&      stream,
     return stream;
 }
 
+__out != 0 && ((value == EncodingType::e_UNDEFINED ==> __out == "UNDEFINED") && (value == EncodingType::e_RAW ==> __out == "RAW") && (value == EncodingType::e_BER ==> __out == "BER") && (value == EncodingType::e_BDEX ==> __out == "BDEX") && (value == EncodingType::e_XML ==> __out == "XML") && (value == EncodingType::e_JSON ==> __out == "JSON") && (value == EncodingType::e_TEXT ==> __out == "TEXT") && (value == EncodingType::e_MULTIPARTS ==> __out == "MULTIPARTS") && (value != EncodingType::e_UNDEFINED && value != EncodingType::e_RAW && value != EncodingType::e_BER && value != EncodingType::e_BDEX && value != EncodingType::e_XML && value != EncodingType::e_JSON && value != EncodingType::e_TEXT && value != EncodingType::e_MULTIPARTS ==> __out == "(* UNKNOWN *)"))
 const char* EncodingType::toAscii(EncodingType::Enum value)
 {
 #define BMQT_CASE(X)                                                          \
@@ -64,6 +66,7 @@ const char* EncodingType::toAscii(EncodingType::Enum value)
 #undef BMQT_CASE
 }
 
+(__out == true ==> ((*out ↦ EncodingType::e_UNDEFINED) || (*out ↦ EncodingType::e_RAW) || (*out ↦ EncodingType::e_BER) || (*out ↦ EncodingType::e_BDEX) || (*out ↦ EncodingType::e_XML) || (*out ↦ EncodingType::e_JSON) || (*out ↦ EncodingType::e_TEXT) || (*out ↦ EncodingType::e_MULTIPARTS))) && (__out == false ==> true)
 bool EncodingType::fromAscii(EncodingType::Enum*      out,
                              const bslstl::StringRef& str)
 {
@@ -90,6 +93,7 @@ bool EncodingType::fromAscii(EncodingType::Enum*      out,
 #undef BMQT_CHECKVALUE
 }
 
+(__out == true) || (__out == false && (stream.tellp() > old_stream.tellp()))
 bool EncodingType::isValid(const bsl::string* string, bsl::ostream& stream)
 {
     EncodingType::Enum value;
