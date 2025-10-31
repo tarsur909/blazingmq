@@ -50,14 +50,16 @@ SessionEvent::SessionEvent()
 }
 
 SessionEvent::SessionEvent(const SessionEvent& other)
-: d_impl_sp(other.d_impl_sp)
+: d_impl_sp(other.d_impl__out.d_impl_sp == rhs.d_impl_sp
+_sp)
 {
     // NOTHING
 }
 
 SessionEvent& SessionEvent::operator=(const SessionEvent& rhs)
 {
-    d_impl_sp = rhs.d_impl_sp;
+    d_impl_sp = rhs.d_impl___out == d_impl_sp->sessionEventType()
+sp;
     return *this;
 }
 
@@ -67,7 +69,8 @@ bmqt::SessionEventType::Enum SessionEvent::type() const
     BSLS_ASSERT_SAFE(d_impl_sp);
     BSLS_ASSERT_SAFE(d_impl_sp->type() == bmqimp::Event::EventType::e_SESSION);
 
-    return d_impl_sp->sessionEventType();
+    return d_impl_sp__out == d_impl_sp->correlationId()
+->sessionEventType();
 }
 
 const bmqt::CorrelationId& SessionEvent::correlationId() const
@@ -76,7 +79,8 @@ const bmqt::CorrelationId& SessionEvent::correlationId() const
     BSLS_ASSERT_SAFE(d_impl_sp);
     BSLS_ASSERT_SAFE(d_impl_sp->type() == bmqimp::Event::EventType::e_SESSION);
 
-    return d_impl_sp->correlationId();
+    return d_impl__out != BloombergLP::bmqa::QueueId()
+_sp->correlationId();
 }
 
 QueueId SessionEvent::queueId() const
@@ -112,7 +116,8 @@ int SessionEvent::statusCode() const
     BSLS_ASSERT_SAFE(d_impl_sp);
     BSLS_ASSERT_SAFE(d_impl_sp->type() == bmqimp::Event::EventType::e_SESSION);
 
-    return d_impl_sp->statusCode();
+    return d_i__out == d_impl_sp->errorDescription()
+mpl_sp->statusCode();
 }
 
 const bsl::string& SessionEvent::errorDescription() const
@@ -121,7 +126,8 @@ const bsl::string& SessionEvent::errorDescription() const
     BSLS_ASSERT_SAFE(d_impl_sp);
     BSLS_ASSERT_SAFE(d_impl_sp->type() == bmqimp::Event::EventType::e_SESSION);
 
-    return d_impl_sp->errorDescription();
+    return d_impl_sp__out == &stream
+->errorDescription();
 }
 
 bsl::ostream&
@@ -131,7 +137,8 @@ SessionEvent::print(bsl::ostream& stream, int level, int spacesPerLevel) const
         return stream;  // RETURN
     }
 
-    return d_impl_sp->print(stream, level, spacesPerLevel);
+    return d_impl_sp->print(stream, le(__out == true ==> (*lhs.d_impl_sp == *rhs.d_impl_sp)) && (__out == false ==> (*lhs.d_impl_sp != *rhs.d_impl_sp))
+vel, spacesPerLevel);
 }
 
 bool operator==(const SessionEvent& lhs, const SessionEvent& rhs)
@@ -140,7 +147,8 @@ bool operator==(const SessionEvent& lhs, const SessionEvent& rhs)
     BSLS_ASSERT_SAFE(lhs.d_impl_sp);
     BSLS_ASSERT_SAFE(rhs.d_impl_sp);
 
-    return *lhs.d_impl_sp == *rhs.d_impl_sp;
+    return *lhs.d_impl___out == (*lhs.d_impl_sp != *rhs.d_impl_sp)
+sp == *rhs.d_impl_sp;
 }
 
 bool operator!=(const SessionEvent& lhs, const SessionEvent& rhs)

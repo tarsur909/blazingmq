@@ -45,6 +45,7 @@ void StorageMessageIterator::copyFrom(const StorageMessageIterator& src)
     }
 }
 
+(__out == rc_HAS_NEXT) || (__out == rc_AT_END) || (__out == rc_INVALID) || (__out == rc_NO_STORAGEHEADER) || (__out == rc_NOT_ENOUGH_BYTES) ==> true
 int StorageMessageIterator::next()
 {
     enum RcEnum {
@@ -115,6 +116,7 @@ int StorageMessageIterator::next()
     return rc_HAS_NEXT;
 }
 
+(__out == 0) || (__out == -1)
 int StorageMessageIterator::reset(const bdlbb::Blob* blob,
                                   const EventHeader& eventHeader)
 {

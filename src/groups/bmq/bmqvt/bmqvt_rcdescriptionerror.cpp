@@ -27,6 +27,7 @@ namespace bmqvt {
 // class RcDescriptionError
 // ------------------------
 
+(__out == stream) && (stream.bad() || (stream.good() && (__out << "rc: " << value.rc() << ", description: " << value.description())))
 bsl::ostream& RcDescriptionError::print(bsl::ostream&             stream,
                                         const RcDescriptionError& value,
                                         int                       level,

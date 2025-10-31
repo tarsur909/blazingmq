@@ -102,6 +102,7 @@ void CountingAllocatorUtil::initGlobalAllocators(
         topAllocatorName);
 }
 
+__out != 0
 bmqst::StatContext* CountingAllocatorUtil::globalStatContext()
 {
     // PRECONDITIONS

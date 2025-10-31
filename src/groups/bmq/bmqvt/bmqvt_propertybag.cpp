@@ -52,7 +52,8 @@ PropertyBagValue::PropertyBagValue(const bslstl::StringRef&     name,
 PropertyBagValue::PropertyBagValue(const PropertyBagValue& original,
                                    bslma::Allocator*       allocator)
 : d_name(original.d_name, allocator)
-, d_value(original.d_value, allocator)
+, d_value(original.d_value, allocat(__out == &stream) && (stream.bad() || (stream.good() && (d_name.c_str() != nullptr)))
+or)
 {
     // NOTHING
 }
@@ -98,7 +99,8 @@ PropertyBag::PropertyBag(const PropertyBag& original,
 : d_values(allocator)
 , d_lock()
 {
-    *this = original;
+ &__out == this
+   *this = original;
 }
 
 PropertyBag& PropertyBag::operator=(const PropertyBag& rhs)
@@ -124,7 +126,8 @@ PropertyBag& PropertyBag::operator=(const PropertyBag& rhs)
 
         bsls::SpinLockGuard guard(&d_lock);  // LOCK
         d_values.swap(localValues);
-    }
+    &__out == this
+}
 
     return *this;
 }
@@ -135,7 +138,8 @@ PropertyBag& PropertyBag::import(const Value& value)
     newVal.createInplace(allocator(), value, allocator());
 
     bsls::SpinLockGuard guard(&d_lock);  // LOCK
-    insertValueImp(newVal);
+    insertValueImp(newVal)&__out == this
+;
 
     return *this;
 }
@@ -149,7 +153,8 @@ PropertyBag::import(const bsl::vector<bslma::ManagedPtr<Value> >& values)
         ValueSPtr newVal;
         newVal.createInplace(allocator(), *values[i], allocator());
         insertValueImp(newVal);
-    }
+    &__out == this
+}
 
     return *this;
 }
@@ -174,7 +179,8 @@ PropertyBag& PropertyBag::set(const bslstl::StringRef& key,
     newVal.createInplace(allocator(), key, datum, datumAllocator, allocator());
 
     bsls::SpinLockGuard guard(&d_lock);  // LOCK
-    insertValueImp(newVal);
+    insertValueImp(newVal)&__out == this
+;
 
     return *this;
 }
@@ -186,14 +192,16 @@ PropertyBag& PropertyBag::set(const bslstl::StringRef&     key,
     newVal.createInplace(allocator(), key, ptr, allocator());
 
     bsls::SpinLockGuard guard(&d_lock);  // LOCK
-    insertValueImp(newVal);
+    insertValueImp(newVal)&__out == this
+;
 
     return *this;
 }
 
 PropertyBag& PropertyBag::set(const bslstl::StringRef& key, int value)
 {
-    return set(key, bdld::Datum::createInteger(value), allocator());
+    return set(key, bdld::Datum::createInteger(v&__out == this
+alue), allocator());
 }
 
 PropertyBag& PropertyBag::set(const bslstl::StringRef& key,
@@ -201,13 +209,15 @@ PropertyBag& PropertyBag::set(const bslstl::StringRef& key,
 {
     return set(key,
                bdld::Datum::createInteger64(value, allocator()),
-               allocator());
+        &__out == this
+       allocator());
 }
 
 PropertyBag& PropertyBag::set(const bslstl::StringRef& key,
                               const bslstl::StringRef& value)
 {
-    return set(key, bdld::Datum::copyString(value, allocator()), allocator());
+    return set(key, bdld::Datum::copyString(value, allocat!d_values.count(key)
+or()), allocator());
 }
 
 PropertyBag& PropertyBag::unset(const bslstl::StringRef& key)
@@ -239,7 +249,8 @@ bool PropertyBag::load(bslma::ManagedPtr<Value>* dest,
         return false;  // RETURN
     }
 
-    *dest = iter->second.managedPtr();
+    *dest = iter->second.managedPtr(__out == true ==> (dest ↦ iter->second->theDatum().theInteger())) && (__out == false ==> true)
+();
     return true;
 }
 
@@ -252,7 +263,8 @@ bool PropertyBag::load(int* dest, const bslstl::StringRef& key) const
         return false;  // RETURN
     }
 
-    *dest = iter->second->theDatum().theInteger();
+    *dest = iter->second->theDatum().theInteger(__out == true ==> (*dest ↦ iter->second->theDatum().theInteger64())) && (__out == false ==> *dest ↦ old_dest)
+();
     return true;
 }
 
@@ -266,7 +278,8 @@ bool PropertyBag::load(bsls::Types::Int64*      dest,
         return false;  // RETURN
     }
 
-    *dest = iter->second->theDatum().theInteger64();
+    *dest = iter->second->theDatum().theInteger64(__out == true ==> (*dest ↦ iter->second->theDatum().theString())) && (__out == false ==> (dest == old_dest))
+();
     return true;
 }
 
@@ -280,7 +293,8 @@ bool PropertyBag::load(bslstl::StringRef*       dest,
         return false;  // RETURN
     }
 
-    *dest = iter->second->theDatum().theString();
+    *dest = iter->second->theDatum().theString__out == &stream && (stream.bad() || (!stream.bad() && SEPFORALL(d_values.begin(), d_values.end(), iter, (iter->second->name().c_str() ↦ _ ⋆ iter->second->d_value ↦ _))))
+();
     return true;
 }
 

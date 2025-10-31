@@ -136,7 +136,8 @@ SchemaLearner::Context SchemaLearner::createContext(int foreignId)
                                   d_allocator_p))
                       .first;
     }
-    return context->second;
+    re(__out == 0 ==> !isPresentAndValid(input.schemaId())) && (__out != 0 ==> (__out ↦ contextHandle->d_schema_sp ⋆ contextHandle->d_schema_sp != 0))
+turn context->second;
 }
 
 SchemaLearner::SchemaPtr*
@@ -170,7 +171,8 @@ SchemaLearner::observe(Context& context, const MessagePropertiesInfo& input)
         // Must release reference to the previously learned Schema.
     }
 
-    return &contextHandle->d_schema_sp;
+    return &contex(!isPresentAndValid(input.schemaId()) ==> __out == input) && (isPresentAndValid(input.schemaId()) ==> __out.schemaId() != k_NO_SCHEMA)
+tHandle->d_schema_sp;
 }
 
 MessagePropertiesInfo
@@ -299,7 +301,8 @@ SchemaLearner::multiplex(Context& context, const MessagePropertiesInfo& input)
     // Update 'contextHandle' with the LRU tracking
     contextHandle->d_listIterator = entryInLRU;
 
-    return MessagePropertiesInfo(input.isPresent(), outputId, isRecycled);
+    return MessagePropertiesInfo(input.isPresent(), o(input.schemaId() == old_input.schemaId() && input.isPresent() == old_input.isPresent()) ==> (__out.schemaId() == input.schemaId() && __out.isPresent() == input.isPresent())
+utputId, isRecycled);
 }
 
 MessagePropertiesInfo
@@ -358,7 +361,8 @@ SchemaLearner::demultiplex(Context&                     context,
         contextHandle = catalogLookupOrInsert.first->second;
     }
 
-    return MessagePropertiesInfo(input.isPresent(), inputId, isRecycled);
+    return MessagePropertiesInfo(input.isPresent(), (__out == 0) || (__out == -1) || (__out < 0)
+inputId, isRecycled);
 }
 
 int SchemaLearner::read(Context&                     context,
@@ -406,7 +410,8 @@ int SchemaLearner::read(Context&                     context,
     // even if the downstream to upstream mapping has changed, the schema
     // is still good unless it is recycled
 
-    return rc;
+    return(schemaId > k_MAX_SCHEMA || schemaId == k_NO_SCHEMA) ==> __out == false && !(schemaId > k_MAX_SCHEMA || schemaId == k_NO_SCHEMA) ==> __out == true
+ rc;
 }
 
 // CLASS METHODS

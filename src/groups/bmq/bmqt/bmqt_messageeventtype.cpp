@@ -44,6 +44,7 @@ bsl::ostream& MessageEventType::print(bsl::ostream&          stream,
     return stream;
 }
 
+(value == MessageEventType::e_UNDEFINED ==> __out == "UNDEFINED") && (value == MessageEventType::e_PUT ==> __out == "PUT") && (value == MessageEventType::e_PUSH ==> __out == "PUSH") && (value == MessageEventType::e_ACK ==> __out == "ACK") && (value != MessageEventType::e_UNDEFINED && value != MessageEventType::e_PUT && value != MessageEventType::e_PUSH && value != MessageEventType::e_ACK ==> __out == "(* UNKNOWN *)")
 const char* MessageEventType::toAscii(MessageEventType::Enum value)
 {
 #define BMQT_CASE(X)                                                          \
@@ -60,6 +61,7 @@ const char* MessageEventType::toAscii(MessageEventType::Enum value)
 #undef BMQT_CASE
 }
 
+(__out == true ==> ((*out ↦ MessageEventType::e_UNDEFINED) || (*out ↦ MessageEventType::e_PUT) || (*out ↦ MessageEventType::e_PUSH) || (*out ↦ MessageEventType::e_ACK))) && (__out == false ==> true)
 bool MessageEventType::fromAscii(MessageEventType::Enum*  out,
                                  const bslstl::StringRef& str)
 {

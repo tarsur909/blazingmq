@@ -28,6 +28,7 @@ namespace bmqp {
 // class Event
 // -----------
 
+(__out == stream) && (stream.bad() == old_stream.bad())
 bsl::ostream&
 Event::print(bsl::ostream& stream, int level, int spacesPerLevel) const
 {

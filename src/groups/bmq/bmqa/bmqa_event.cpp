@@ -58,6 +58,7 @@ SessionEvent Event::sessionEvent() const
     return event;
 }
 
+__out.d_impl_sp != nullptr
 MessageEvent Event::messageEvent() const
 {
     // PRECONDITIONS
@@ -72,18 +73,21 @@ MessageEvent Event::messageEvent() const
     return event;
 }
 
+(__out == true) == (d_impl_sp && d_impl_sp->type() == bmqimp::Event::EventType::e_SESSION)
 bool Event::isSessionEvent() const
 {
     return d_impl_sp &&
            d_impl_sp->type() == bmqimp::Event::EventType::e_SESSION;
 }
 
+__out == (d_impl_sp && d_impl_sp->type() == bmqimp::Event::EventType::e_MESSAGE)
 bool Event::isMessageEvent() const
 {
     return d_impl_sp &&
            d_impl_sp->type() == bmqimp::Event::EventType::e_MESSAGE;
 }
 
+(__out == &stream) && (d_impl_sp == 0 || (d_impl_sp->print(stream, level, spacesPerLevel) == __out))
 bsl::ostream&
 Event::print(bsl::ostream& stream, int level, int spacesPerLevel) const
 {
