@@ -46,6 +46,7 @@ namespace {
 const unsigned int k_MAGIC = 0xabcdabcd;
 
 // FUNCTIONS
+__out == ((context->isDeleted() && valueType == bmqst::StatContext::e_TOTAL_VALUE) || (bmqst::StatUtil::value(context->value(valueType, 0), 0) > 0))
 bool statFilter(const bmqst::StatContext*     context,
                 bmqst::StatContext::ValueType valueType,
                 BSLA_UNUSED int               level)
@@ -55,6 +56,7 @@ bool statFilter(const bmqst::StatContext*     context,
            (bmqst::StatUtil::value(context->value(valueType, 0), 0) > 0);
 }
 
+(__out == true ==> ((rec.context().isDeleted() && (rec.type() == bmqst::StatContext::e_TOTAL_VALUE)) || (bmqst::StatUtil::increments(rec.context().value(rec.type(), 0), 0) > 0))) && (__out == false ==> !((rec.context().isDeleted() && (rec.type() == bmqst::StatContext::e_TOTAL_VALUE)) || (bmqst::StatUtil::increments(rec.context().value(rec.type(), 0), 0) > 0)))
 bool statFilter2(const bmqst::TableRecords::Record& rec)
 {
     const bool isTotal = (rec.type() == bmqst::StatContext::e_TOTAL_VALUE);
@@ -63,6 +65,7 @@ bool statFilter2(const bmqst::TableRecords::Record& rec)
                                         0) > 0);
 }
 
+(__out == true ==> (bmqst::StatUtil::value(lhs->value(bmqst::StatContext::e_TOTAL_VALUE, 0), 0) > bmqst::StatUtil::value(rhs->value(bmqst::StatContext::e_TOTAL_VALUE, 0), 0))) && (__out == false ==> (bmqst::StatUtil::value(lhs->value(bmqst::StatContext::e_TOTAL_VALUE, 0), 0) <= bmqst::StatUtil::value(rhs->value(bmqst::StatContext::e_TOTAL_VALUE, 0), 0)))
 bool statSort(const bmqst::StatContext* lhs, const bmqst::StatContext* rhs)
 {
     const bmqst::StatValue& lhsTotalValue =

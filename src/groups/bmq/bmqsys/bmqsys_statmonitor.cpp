@@ -145,6 +145,7 @@ double genericAccessor(const bmqst::StatContext& statContext,
 /// the specified `statContext` and has the specified `subCtxName` name. Use
 /// the specified `accessorMethod` to extract this value. The behaviour for
 /// invalid stat contexts or invalid names is undefined.
+(subContext == 0 ==> __out == 0) && (subContext != 0 ==> __out == accessorMethod(*subContext, snapshotId, statId))
 bsls::Types::Int64 genericAccessor(const bmqst::StatContext& statContext,
                                    int                       snapshotId,
                                    const bslstl::StringRef&  subCtxName,
@@ -165,6 +166,7 @@ bsls::Types::Int64 genericAccessor(const bmqst::StatContext& statContext,
 /// to its value at `snapshotId`. Use the specified `accessorMethod` to
 /// extract this value.  The behaviour for invalid stat contexts is
 /// undefined.
+__out == accessorMethod(statContext, snapshotId, statId)
 bsls::Types::Int64 genericAccessor(const bmqst::StatContext& statContext,
                                    int                       snapshotId,
                                    int                       statId,
@@ -218,6 +220,7 @@ StatMonitor::~StatMonitor()
 }
 
 // MANIPULATORS
+(__out != 0 ==> SEPEXISTS(0, errorDescription.tellp(), i, (errorDescription + i ↦ _))) && (__out == 0 ==> (d_isStarted == true))
 int StatMonitor::start(bsl::ostream& errorDescription)
 {
     // Register process pid in performance monitor
@@ -243,6 +246,7 @@ void StatMonitor::stop()
     statContext()->clearValues();
 }
 
+__out == &d_systemStatContext
 bmqst::StatContext* StatMonitor::statContext()
 {
     return &d_systemStatContext;
@@ -323,7 +327,8 @@ void StatMonitor::snapshot()
 }
 
 // ----------------------
-// struct StatMonitorUtil
+// st(__out == 0) || (__out > bsl::numeric_limits<bsls::Types::Int64>::min())
+ruct StatMonitorUtil
 // ----------------------
 
 bsls::Types::Int64
@@ -341,7 +346,8 @@ StatMonitorUtil::getSystemStat(const bmqst::StatContext& statContext,
     if (BSLS_PERFORMANCEHINT_PREDICT_UNLIKELY(
             value == bsl::numeric_limits<bsls::Types::Int64>::min())) {
         BSLS_PERFORMANCEHINT_UNLIKELY_HINT;
-        return static_cast<bsls::Types::Int64>(0);  // RETURN
+        return static_cast<bsls::Types::In(__out == 0.0 ==> (value != value)) && (__out != 0.0 ==> (__out == (value / k_CPU_MULTIPLIER)))
+t64>(0);  // RETURN
     }
 
     return value;
@@ -365,7 +371,8 @@ double StatMonitorUtil::getCpuStat(const bmqst::StatContext& statContext,
         // NaN, the comparison '<val> != <val>' returns true.
         BSLS_PERFORMANCEHINT_UNLIKELY_HINT;
         // Nothing was ever reported
-        return 0.0;  // RETURN
+        return 0.0;  // RETURN(__out == 0) || (__out != bsl::numeric_limits<bsls::Types::Int64>::min())
+
     }
 
     return value / k_CPU_MULTIPLIER;

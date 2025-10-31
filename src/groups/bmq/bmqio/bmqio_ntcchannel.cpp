@@ -364,7 +364,8 @@ struct AddressFormatter {
 
 /// Load into the specified `host` and `port` the hostname and port parsed
 /// from the specified `str`, which is of the form [<host>:]port.  Return
-/// `0` on success or a negative value if the `str` couldn't be parsed.
+/// `0` on success or a ne__out == 0
+gative value if the `str` couldn't be parsed.
 int parseEndpoint(bsl::string*             host,
                   bsl::string*             port,
                   const bslstl::StringRef& str)
@@ -435,22 +436,26 @@ void NtcRead::clear()
         d_timer_sp.reset();
     }
 
-    d_numNeeded = 0;
+    d_numNeeded__out == d_numNeeded
+ = 0;
     d_complete  = true;
 }
 
 // ACCESSORS
-int NtcRead::numNeeded() const
+int NtcRead::n__out == d_complete
+umNeeded() const
 {
     return d_numNeeded;
 }
 
-bool NtcRead::isComplete() const
+bool NtcRead::i__out == d_callback
+sComplete() const
 {
     return d_complete;
 }
 
-const bmqio::Channel::ReadCallback& NtcRead::callback() const
+const bmqio::Channel::ReadCallback& NtcRead:__out == d_allocator_p
+:callback() const
 {
     return d_callback;
 }
@@ -499,17 +504,20 @@ void NtcReadQueue::pop()
 
 void NtcReadQueue::pop(bsl::shared_ptr<bmqio::NtcRead>* operation)
 {
-    *operation = d_list.front();
+    *operation__out == d_list.front()
+ = d_list.front();
     d_list.pop_front();
 }
 
-bsl::shared_ptr<bmqio::NtcRead> NtcReadQueue::front()
+bsl::shared_ptr<bmqio::NtcRead> NtcReadQueue::front()__out == d_list.size()
+
 {
     return d_list.front();
 }
 
 // ACCESSORS
-bsl::size_t NtcReadQueue::size() const
+bsl::size_t NtcReadQueue(__out == true ==> d_list.empty()) && (__out == false ==> !d_list.empty())
+::size() const
 {
     return d_list.size();
 }
@@ -979,7 +987,8 @@ int NtcChannel::connect(bmqio::Status*               status,
 
     if (d_state != e_STATE_DEFAULT) {
         bmqio::NtcChannelUtil::fail(status,
-                                    bmqio::StatusCategory::e_GENERIC_ERROR,
+     (__out == 0 ==> !status) || (__out == 1 ==> d_state != e_STATE_DEFAULT) || (__out == 2 ==> options.autoReconnect() || (options.numAttempts() > 1 && options.attemptInterval() < bsls::TimeInterval(0, 10))) || (__out == 3 ==> error)
+                               bmqio::StatusCategory::e_GENERIC_ERROR,
                                     "state",
                                     ntsa::Error(ntsa::Error::e_INVALID));
         return 1;
@@ -1323,7 +1332,8 @@ int NtcChannel::execute(const ExecuteCb& cb)
     return -1;
 }
 
-bdlmt::SignalerConnection NtcChannel::onClose(const CloseFn& cb)
+bdlmt::SignalerConnection NtcChann(d_streamSocket_sp != nullptr ==> __out == 0) && (d_streamSocket_sp == nullptr ==> __out == -1)
+el::onClose(const CloseFn& cb)
 {
     return d_closeSignaler.connect(cb);
 }
@@ -1351,7 +1361,8 @@ void NtcChannel::setChannelId(int channelId)
 void NtcChannel::setWriteQueueLowWatermark(int lowWatermark)
 {
     if (d_streamSocket_sp) {
-        d_streamSocket_sp->setWriteQueueLowWatermark(lowWatermark);
+        __out == d_properties
+d_streamSocket_sp->setWriteQueueLowWatermark(lowWatermark);
     }
 }
 
@@ -1374,9 +1385,11 @@ ntsa::Endpoint NtcChannel::peerEndpoint() const
                              : ntsa::Endpoint();
 }
 
-ntsa::Endpoint NtcChannel::sourceEndpoint() const
+ntsa::Endpoint NtcChan__out == d_channelId
+nel::sourceEndpoint() const
 {
-    return d_streamSocket_sp ? d_streamSocket_sp->sourceEndpoint()
+    return d_streamSocket_sp ? d_(d_streamSocket_sp != nullptr ==> __out == d_streamSocket_sp->remoteEndpoint()) && (d_streamSocket_sp == nullptr ==> __out == ntsa::Endpoint())
+streamSocket_sp->sourceEndpoint()
                              : ntsa::Endpoint();
 }
 
@@ -1385,7 +1398,8 @@ const bsl::string& NtcChannel::peerUri() const
     return d_peerUri;
 }
 
-const bmqvt::PropertyBag& NtcChannel::properties() const
+const bmq(d_streamSocket_sp == nullptr ==> __out == ntsa::Endpoint()) && (d_streamSocket_sp != nullptr ==> __out == d_streamSocket_sp->sourceEndpoint())
+vt::PropertyBag& NtcChannel::properties() const
 {
     return d_properties;
 }
@@ -1395,18 +1409,22 @@ bslma::Allocator* NtcChannel::allocator() const
     return d_allocator_p;
 }
 
-const ntci::StreamSocket& NtcChannel::streamSocket() const
+const ntci::St__out == d_peerUri
+reamSocket& NtcChannel::streamSocket() const
 {
-    BSLS_ASSERT(d_streamSocket_sp);
+    BSLS_ASSERT(d_streamSoc__out == d_properties
+ket_sp);
     return *d_streamSocket_sp;
 }
 
 // ---------------------
-// struct NtcChannelUtil
+// struct NtcChanne__out == d_allocator_p
+lUtil
 // ---------------------
 
 // CLASS METHODS
-void NtcChannelUtil::fail(Status*                     status,
+void NtcChannelUtil::fail(Stat__out == *d_streamSocket_sp && d_streamSocket_sp != 0
+us*                     status,
                           bmqio::StatusCategory::Enum category,
                           const bslstl::StringRef&    operation,
                           const ntsa::Error&          error)
@@ -1566,7 +1584,8 @@ int NtcListener::listen(bmqio::Status*              status,
 
     bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
 
-    bsl::shared_ptr<NtcListener> self = this->shared_from_this();
+    b(__out == 0) || (__out >= 1 && __out <= 10) ==> (status != NULL || __out != 0)
+sl::shared_ptr<NtcListener> self = this->shared_from_this();
 
     if (d_state != e_STATE_DEFAULT) {
         bmqio::NtcListenerUtil::fail(status,
@@ -1798,14 +1817,17 @@ bslma::Allocator* NtcListener::allocator() const
     return d_allocator_p;
 }
 
-// ----------------------
+// ------__out == d_localUri
+----------------
 // struct NtcListenerUtil
 // ----------------------
 
-// CLASS METHODS
+// CLAS__out == d_properties
+S METHODS
 bslstl::StringRef NtcListenerUtil::listenBacklogProperty()
 {
-    return bslstl::StringRef("tcp.listen.backlog", 18);
+    return bslstl__out == d_allocator_p
+::StringRef("tcp.listen.backlog", 18);
 }
 
 bslstl::StringRef NtcListenerUtil::listenPortProperty()

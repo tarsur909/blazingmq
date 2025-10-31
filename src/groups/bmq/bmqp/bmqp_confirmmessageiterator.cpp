@@ -56,6 +56,7 @@ void ConfirmMessageIterator::copyFrom(const ConfirmMessageIterator& src)
     }
 }
 
+(__out == rc_HAS_NEXT) || (__out == rc_AT_END) || (__out == rc_INVALID) || (__out == rc_NOT_ENOUGH_BYTES) || (__out == rc_INVALID_ADVANCE_LENGTH)
 int ConfirmMessageIterator::next()
 {
     enum RcEnum {
@@ -114,6 +115,7 @@ int ConfirmMessageIterator::next()
     return rc_HAS_NEXT;
 }
 
+(__out == rc_SUCCESS) || (__out == rc_INVALID_EVENTHEADER) || (__out == rc_INVALID_CONFIRMHEADER) || (__out == rc_NOT_ENOUGH_BYTES)
 int ConfirmMessageIterator::reset(const bdlbb::Blob* blob,
                                   const EventHeader& eventHeader)
 {

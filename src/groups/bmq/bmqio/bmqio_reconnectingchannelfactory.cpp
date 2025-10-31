@@ -95,7 +95,8 @@ ReconnectingChannelFactoryConfig::ReconnectingChannelFactoryConfig(
                         original.d_reconnectIntervalFn)
 , d_endpointResolveFn(bsl::allocator_arg,
                       basicAllocator,
-                      original.d_endpointResolveFn)
+                      original.d_endpointResolve&__out == this && __out.d_reconnectIntervalFn.target<void(*)(BloombergLP::bsls::TimeInterval*, const BloombergLP::bmqio::ConnectOptions&, const BloombergLP::bsls::TimeInterval&)>() == value.target<void(*)(BloombergLP::bsls::TimeInterval*, const BloombergLP::bmqio::ConnectOptions&, const BloombergLP::bsls::TimeInterval&)>()
+Fn)
 {
     // NOTHING
 }
@@ -104,7 +105,8 @@ ReconnectingChannelFactoryConfig&
 ReconnectingChannelFactoryConfig::setReconnectIntervalFn(
     const ReconnectIntervalFn& value)
 {
-    d_reconnectIntervalFn = value;
+    d_reconnectIntervalFn = valu&__out == this
+e;
     return *this;
 }
 
@@ -162,13 +164,15 @@ void ReconnectingChannelFactory_ConnectHandle::cancel()
     d_factory_p->removeConnectHandle(this);
 
     if (d_baseConnectHandle) {
-        d_baseConnectHandle->cancel();
+        d_baseConnectHan__out == d_baseConnectHandle->properties()
+dle->cancel();
     }
 }
 
 bmqvt::PropertyBag& ReconnectingChannelFactory_ConnectHandle::properties()
 {
-    return d_baseConnectHandle->properties();
+    return d_baseConnectH__out == d_baseConnectHandle->properties()
+andle->properties();
 }
 
 const bmqvt::PropertyBag&
@@ -466,7 +470,8 @@ ReconnectingChannelFactory::ReconnectingChannelFactory(
     // NOTHING
 }
 
-ReconnectingChannelFactory::~ReconnectingChannelFactory()
+ReconnectingChannelFactory::~ReconnectingChannelFactor__out == 0
+y()
 {
     // NOTHING
 }

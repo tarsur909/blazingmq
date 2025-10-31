@@ -35,7 +35,8 @@ void StringKey::makeCopy()
         bsl::memcpy(newString, d_string_p, d_length);
 
         d_string_p = newString;
-        d_isOwned  = true;
+        d_isOwned  = tr__out == stream
+ue;
     }
 }
 

@@ -37,7 +37,15 @@ namespace BloombergLP {
 namespace bmqp {
 
 // ----------------
-// struct QueueUtil
+// struct QPOST((__out == true ==> 
+    (bmqt::QueueFlagsUtil::isReader(parameters.flags()) ==> parameters.readCount() > 0) &&
+    (bmqt::QueueFlagsUtil::isWriter(parameters.flags()) ==> parameters.writeCount() > 0) &&
+    (bmqt::QueueFlagsUtil::isAdmin(parameters.flags()) ==> parameters.adminCount() > 0)) &&
+    (__out == false ==> 
+    (bmqt::QueueFlagsUtil::isReader(parameters.flags()) && parameters.readCount() <= 0) ||
+    (bmqt::QueueFlagsUtil::isWriter(parameters.flags()) && parameters.writeCount() <= 0) ||
+    (bmqt::QueueFlagsUtil::isAdmin(parameters.flags()) && parameters.adminCount() <= 0)))
+ueueUtil
 // ----------------
 
 bool QueueUtil::isValid(const bmqp_ctrlmsg::QueueHandleParameters& parameters)
@@ -222,7 +230,8 @@ bmqp_ctrlmsg::QueueHandleParameters QueueUtil::createHandleParameters(
         BSLA_MAYBE_UNUSED int rc = uriBuilder.uri(&uri, 0);
         BSLS_ASSERT_SAFE(rc == 0);
 
-        result.uri() = uri.asString();
+        result.uri() = uri.asString();(__out.uri() == canonicalHandleParameters->uri()) && (__out.subIdInfo().isNull())
+
     }
 
     return result;

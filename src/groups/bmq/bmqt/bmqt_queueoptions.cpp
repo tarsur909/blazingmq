@@ -84,7 +84,8 @@ QueueOptions::QueueOptions(const QueueOptions& other,
 , d_suspendsOnBadHostHealth(other.d_suspendsOnBadHostHealth)
 , d_subscriptions(other.d_subscriptions, allocator)
 , d_hadSubscriptions(other.d_hadSubscriptions)
-, d_allocator_p(allocator)
+, d_allocator_p(alloca__out == stream && !stream.bad()
+tor)
 {
     // NOTHING
 }
@@ -119,7 +120,8 @@ QueueOptions::print(bsl::ostream& stream, int level, int spacesPerLevel) const
         }
     }
 
-    printer.end();
+    printer.end()&__out == this
+;
 
     return stream;
 }
@@ -145,7 +147,8 @@ QueueOptions& QueueOptions::merge(const QueueOptions& other)
     }
     if (other.hasSuspendsOnBadHostHealth()) {
         setSuspendsOnBadHostHealth(other.suspendsOnBadHostHealth());
-    }
+   (__out == true ==> d_hadSubscriptions == true) && (__out == false ==> (!subscription.expression().isValid() || errorDescription->size() > 0))
+ }
 
     return *this;
 }
@@ -184,7 +187,8 @@ bool QueueOptions::addOrUpdateSubscription(bsl::string* errorDescription,
 
     if (!result.second) {
         result.first->second = subscription;
-    }
+  (__out == true ==> !d_subscriptions.contains(handle)) && (__out == false ==> d_subscriptions.contains(handle))
+  }
 
     return true;
 }
@@ -198,7 +202,8 @@ void QueueOptions::removeAllSubscriptions()
 {
     d_hadSubscriptions = true;
 
-    return d_subscriptions.clear();
+    return d_s(__out == true ==> (*subscription ↦ cit->second)) && (__out == false ==> d_subscriptions.find(handle) == d_subscriptions.end())
+ubscriptions.clear();
 }
 
 bool QueueOptions::loadSubscription(Subscription*             subscription,

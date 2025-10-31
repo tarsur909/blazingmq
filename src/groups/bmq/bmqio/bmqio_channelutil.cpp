@@ -47,6 +47,7 @@ BALL_LOG_SET_NAMESPACE_CATEGORY("BMQIO.CHANNELUTIL");
 /// The minimum size (in bytes) of a packet.
 static const int k_MINIMUM_PACKET_LENGTH = sizeof(bdlb::BigEndianUint32);
 
+(__out == true ==> (packetLength ↦ _ ⋆ *packetLength > k_MINIMUM_PACKET_LENGTH)) && (__out == false ==> (packetLength ↦ old_packetLength))
 inline bool
 isValidPacketLength(int*                      packetLength,
                     const bdlbb::Blob&        inBlob,
@@ -213,6 +214,7 @@ int ChannelUtil::handleRead(bsl::vector<bdlbb::Blob>* outPackets,
     return 0;
 }
 
+(__out == true ==> host == bsl::string_view(bsl::to_string(s_localIpAddress))) && (__out == false ==> host != bsl::string_view(bsl::to_string(s_localIpAddress)))
 bool ChannelUtil::isLocalHost(const bsl::string_view& host)
 {
     static bsl::uint32_t s_localIpAddress;  // IPAddress of the localHost,
@@ -254,6 +256,7 @@ bool ChannelUtil::isLocalHost(const bsl::string_view& host)
     return (s_localIpAddress == ipAddress.value());
 }
 
+(__out == true ==> SEPEXISTS(0, s_localAddresses_p->size(), i, (*s_localAddresses_p)[i] == ip)) && (__out == false ==> SEPFORALL(0, s_localAddresses_p->size(), i, (*s_localAddresses_p)[i] != ip))
 bool ChannelUtil::isLocalHost(const ntsa::IpAddress& ip)
 {
     static bsl::vector<ntsa::IpAddress>* s_localAddresses_p = 0;
