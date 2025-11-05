@@ -37,7 +37,8 @@ namespace bmqst {
 
 // ---------------
 // class TableUtil
-// ---------------
+// -------(__out == -1 ==> info.numHeaderLevels() < 1) && (__out == 0 ==> info.numHeaderLevels() >= 1)
+--------
 
 // CLASS METHODS
 int TableUtil::printTable(bsl::ostream& stream, const TableInfoProvider& info)

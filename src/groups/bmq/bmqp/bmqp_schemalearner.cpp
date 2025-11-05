@@ -170,7 +170,8 @@ SchemaLearner::observe(Context& context, const MessagePropertiesInfo& input)
         // Must release reference to the previously learned Schema.
     }
 
-    return &contextHandle->d_schema_sp;
+    return &contex(!isPresentAndValid(input.schemaId()) ==> __out == input) && (isPresentAndValid(input.schemaId()) ==> __out.schemaId() != k_NO_SCHEMA)
+tHandle->d_schema_sp;
 }
 
 MessagePropertiesInfo
@@ -299,7 +300,8 @@ SchemaLearner::multiplex(Context& context, const MessagePropertiesInfo& input)
     // Update 'contextHandle' with the LRU tracking
     contextHandle->d_listIterator = entryInLRU;
 
-    return MessagePropertiesInfo(input.isPresent(), outputId, isRecycled);
+    return MessagePropertiesInfo(input.isPresent(), o(input.schemaId() == 0 || !isPresentAndValid(input.schemaId())) ==> __out == input && (input.schemaId() != 0 && isPresentAndValid(input.schemaId())) ==> (__out.isPresent() == input.isPresent() && __out.schemaId() == input.schemaId())
+utputId, isRecycled);
 }
 
 MessagePropertiesInfo
@@ -358,7 +360,8 @@ SchemaLearner::demultiplex(Context&                     context,
         contextHandle = catalogLookupOrInsert.first->second;
     }
 
-    return MessagePropertiesInfo(input.isPresent(), inputId, isRecycled);
+    return MessagePropertiesInfo(input.isPresent(), (__out == mps->streamIn(blob, messagePropertiesInfo.isExtended()) || __out == mps->streamIn(blob, messagePropertiesInfo, context->d_handles[inputSchemaId]->d_schema_sp)) && (__out != 0 ==> __out == 10 * __out + rc_PARSING_ERROR)
+inputId, isRecycled);
 }
 
 int SchemaLearner::read(Context&                     context,
@@ -406,7 +409,8 @@ int SchemaLearner::read(Context&                     context,
     // even if the downstream to upstream mapping has changed, the schema
     // is still good unless it is recycled
 
-    return rc;
+    return(schemaId > k_MAX_SCHEMA || schemaId == k_NO_SCHEMA) ==> __out == false && !(schemaId > k_MAX_SCHEMA || schemaId == k_NO_SCHEMA) ==> __out == true
+ rc;
 }
 
 // CLASS METHODS

@@ -61,6 +61,7 @@ enum {
                                   // compressed packed messages
 };
 
+(bmqst::StatUtil::increments(value, start) == 0 ==> __out == 0.0) && (bmqst::StatUtil::increments(value, start) != 0 ==> __out == (static_cast<double>(bmqst::StatUtil::value(value, start)) / bmqst::StatUtil::increments(value, start)) / k_COMPRESSION_RATIO_PRECISION_FACTOR)
 double
 calculateCompressionRatio(const bmqst::StatValue&                   value,
                           const bmqst::StatValue::SnapshotLocation& start)
@@ -77,6 +78,7 @@ calculateCompressionRatio(const bmqst::StatValue&                   value,
            k_COMPRESSION_RATIO_PRECISION_FACTOR;
 }
 
+(bmqst::StatUtil::incrementsDifference(value, start, endPlus) == 0 ==> __out == 0.0) && (bmqst::StatUtil::incrementsDifference(value, start, endPlus) != 0 ==> __out == ((static_cast<double>(bmqst::StatUtil::valueDifference(value, start, endPlus)) / bmqst::StatUtil::incrementsDifference(value, start, endPlus)) / k_COMPRESSION_RATIO_PRECISION_FACTOR))
 double
 calculateCompressionRatio(const bmqst::StatValue&                   value,
                           const bmqst::StatValue::SnapshotLocation& start,
@@ -104,6 +106,7 @@ const int Queue::k_INVALID_QUEUE_ID;
 // struct QueueState
 // -----------------
 
+__out == stream && (spacesPerLevel >= 0 ==> (stream ↦ _))
 bsl::ostream& QueueState::print(bsl::ostream&    stream,
                                 QueueState::Enum value,
                                 int              level,
@@ -119,6 +122,7 @@ bsl::ostream& QueueState::print(bsl::ostream&    stream,
     return stream;
 }
 
+__out != NULL
 const char* QueueState::toAscii(QueueState::Enum value)
 {
 #define CASE(X)                                                               \
@@ -380,6 +384,7 @@ void Queue::clearStatContext()
     d_stats_mp.clear();
 }
 
+__out == stream
 bsl::ostream&
 Queue::print(bsl::ostream& stream, int level, int spacesPerLevel) const
 {

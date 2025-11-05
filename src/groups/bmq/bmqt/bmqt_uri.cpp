@@ -252,7 +252,8 @@ void UriParser::shutdown()
 
     BSLS_ASSERT(s_initialized > 0);
     if (--s_initialized != 0) {
-        return;  // RETURN
+        return;  //(__out == rc_SUCCESS) || (__out == rc_INVALID_FORMAT) || (__out == rc_BAD_QUERY) || (__out == rc_MISSING_DOMAIN) || (__out == rc_MISSING_QUEUE) || (__out == rc_MISSING_TIER)
+ RETURN
     }
 
     s_regex.object().~RegEx();
@@ -423,7 +424,8 @@ UriBuilder& UriBuilder::setQualifiedDomain(const bslstl::StringRef& value)
     }
     else {
         d_uri.d_domain = value;
-        d_uri.d_tier.reset();
+        (tier.length() > 0) ==> (d_uri.d_domain ↦ bslstl::StringRef(value.begin(), tier.begin()) ⋆ d_uri.d_tier ↦ bslstl::StringRef(tier.end(), value.end())) && (tier.length() == 0) ==> (d_uri.d_domain ↦ value ⋆ d_uri.d_tier ↦ bslstl::StringRef())
+d_uri.d_tier.reset();
     }
 
     return *this;
@@ -450,7 +452,8 @@ int UriBuilder::uri(Uri* result, bsl::string* errorDescription) const
     }
     os << "/" << d_uri.d_path;
     if (!d_uri.d_query_id.isEmpty()) {
-        os << "?" << k_QUERY_ID << "=" << d_uri.d_query_id;
+ __out == UriParser::parse(result, errorDescription, os.str())
+       os << "?" << k_QUERY_ID << "=" << d_uri.d_query_id;
     }
 
     // Parse and populate the result

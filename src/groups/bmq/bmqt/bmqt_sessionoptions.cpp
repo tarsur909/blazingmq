@@ -75,6 +75,7 @@ SessionOptions::SessionOptions(const SessionOptions& other,
     // NOTHING
 }
 
+__out == stream
 bsl::ostream& SessionOptions::print(bsl::ostream& stream,
                                     int           level,
                                     int           spacesPerLevel) const

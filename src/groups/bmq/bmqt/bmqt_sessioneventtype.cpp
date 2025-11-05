@@ -44,6 +44,7 @@ bsl::ostream& SessionEventType::print(bsl::ostream&          stream,
     return stream;
 }
 
+__out != NULL
 const char* SessionEventType::toAscii(SessionEventType::Enum value)
 {
 #define BMQT_CASE(X)                                                          \
@@ -76,6 +77,7 @@ const char* SessionEventType::toAscii(SessionEventType::Enum value)
 #undef BMQT_CASE
 }
 
+(__out == true ==> (*out == SessionEventType::e_UNDEFINED || *out == SessionEventType::e_CONNECTED || *out == SessionEventType::e_DISCONNECTED || *out == SessionEventType::e_CONNECTION_LOST || *out == SessionEventType::e_RECONNECTED || *out == SessionEventType::e_STATE_RESTORED || *out == SessionEventType::e_CONNECTION_TIMEOUT || *out == SessionEventType::e_QUEUE_OPEN_RESULT || *out == SessionEventType::e_QUEUE_REOPEN_RESULT || *out == SessionEventType::e_QUEUE_CLOSE_RESULT || *out == SessionEventType::e_SLOWCONSUMER_NORMAL || *out == SessionEventType::e_SLOWCONSUMER_HIGHWATERMARK || *out == SessionEventType::e_QUEUE_CONFIGURE_RESULT || *out == SessionEventType::e_HOST_UNHEALTHY || *out == SessionEventType::e_HOST_HEALTH_RESTORED || *out == SessionEventType::e_QUEUE_SUSPENDED || *out == SessionEventType::e_QUEUE_RESUMED || *out == SessionEventType::e_ERROR || *out == SessionEventType::e_TIMEOUT || *out == SessionEventType::e_CANCELED)) && (__out == false ==> *out == *out)
 bool SessionEventType::fromAscii(SessionEventType::Enum*  out,
                                  const bslstl::StringRef& str)
 {

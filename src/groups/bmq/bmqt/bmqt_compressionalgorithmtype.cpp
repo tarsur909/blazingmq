@@ -44,6 +44,7 @@ CompressionAlgorithmType::print(bsl::ostream&                  stream,
     return stream;
 }
 
+(value == CompressionAlgorithmType::e_UNKNOWN ==> __out == "UNKNOWN") && (value == CompressionAlgorithmType::e_NONE ==> __out == "NONE") && (value == CompressionAlgorithmType::e_ZLIB ==> __out == "ZLIB") && (value != CompressionAlgorithmType::e_UNKNOWN && value != CompressionAlgorithmType::e_NONE && value != CompressionAlgorithmType::e_ZLIB ==> __out == "(* UNKNOWN *)")
 const char*
 CompressionAlgorithmType::toAscii(CompressionAlgorithmType::Enum value)
 {
@@ -60,6 +61,7 @@ CompressionAlgorithmType::toAscii(CompressionAlgorithmType::Enum value)
 #undef BMQT_CASE
 }
 
+(__out == true ==> ((*out == CompressionAlgorithmType::e_NONE && str == toAscii(CompressionAlgorithmType::e_NONE)) || (*out == CompressionAlgorithmType::e_ZLIB && str == toAscii(CompressionAlgorithmType::e_ZLIB)))) && (__out == false ==> (str != toAscii(CompressionAlgorithmType::e_NONE) && str != toAscii(CompressionAlgorithmType::e_ZLIB)))
 bool CompressionAlgorithmType::fromAscii(CompressionAlgorithmType::Enum* out,
                                          const bsl::string&              str)
 {
@@ -80,6 +82,7 @@ bool CompressionAlgorithmType::fromAscii(CompressionAlgorithmType::Enum* out,
 #undef BMQT_CHECKVALUE
 }
 
+(__out == true) || (__out == false && stream.rdbuf()->in_avail() > old_stream_in_avail)
 bool CompressionAlgorithmType::isValid(const bsl::string* str,
                                        bsl::ostream&      stream)
 {

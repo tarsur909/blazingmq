@@ -181,6 +181,7 @@ void StatMonitorSnapshotRecorder::print(bsl::ostream&      os,
 }
 
 // ACCESSORS
+__out == (bmqsys::Time::highResolutionTimer() - d_impl_sp->d_startTimeNs)
 bsls::Types::Int64 StatMonitorSnapshotRecorder::totalElapsed() const
 {
     return bmqsys::Time::highResolutionTimer() - d_impl_sp->d_startTimeNs;

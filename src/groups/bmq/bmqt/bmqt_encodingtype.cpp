@@ -44,6 +44,7 @@ bsl::ostream& EncodingType::print(bsl::ostream&      stream,
     return stream;
 }
 
+(value == EncodingType::Enum::e_UNDEFINED ==> __out == "UNDEFINED") && (value == EncodingType::Enum::e_RAW ==> __out == "RAW") && (value == EncodingType::Enum::e_BER ==> __out == "BER") && (value == EncodingType::Enum::e_BDEX ==> __out == "BDEX") && (value == EncodingType::Enum::e_XML ==> __out == "XML") && (value == EncodingType::Enum::e_JSON ==> __out == "JSON") && (value == EncodingType::Enum::e_TEXT ==> __out == "TEXT") && (value == EncodingType::Enum::e_MULTIPARTS ==> __out == "MULTIPARTS") && (value != EncodingType::Enum::e_UNDEFINED && value != EncodingType::Enum::e_RAW && value != EncodingType::Enum::e_BER && value != EncodingType::Enum::e_BDEX && value != EncodingType::Enum::e_XML && value != EncodingType::Enum::e_JSON && value != EncodingType::Enum::e_TEXT && value != EncodingType::Enum::e_MULTIPARTS ==> __out == "(* UNKNOWN *)")
 const char* EncodingType::toAscii(EncodingType::Enum value)
 {
 #define BMQT_CASE(X)                                                          \
@@ -64,6 +65,7 @@ const char* EncodingType::toAscii(EncodingType::Enum value)
 #undef BMQT_CASE
 }
 
+(__out == true ==> ((*out == EncodingType::e_UNDEFINED) || (*out == EncodingType::e_RAW) || (*out == EncodingType::e_BER) || (*out == EncodingType::e_BDEX) || (*out == EncodingType::e_XML) || (*out == EncodingType::e_JSON) || (*out == EncodingType::e_TEXT) || (*out == EncodingType::e_MULTIPARTS))) && (__out == false ==> (*out == old_out))
 bool EncodingType::fromAscii(EncodingType::Enum*      out,
                              const bslstl::StringRef& str)
 {
@@ -90,6 +92,7 @@ bool EncodingType::fromAscii(EncodingType::Enum*      out,
 #undef BMQT_CHECKVALUE
 }
 
+(__out == true ==> fromAscii(&value, *string)) && (__out == false ==> !fromAscii(&value, *string))
 bool EncodingType::isValid(const bsl::string* string, bsl::ostream& stream)
 {
     EncodingType::Enum value;

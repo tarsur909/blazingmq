@@ -170,7 +170,8 @@ void QueueUtil::subtractHandleParameters(
         return;  // RETURN
     }
 
-    subtractHandleParameters(out, in);
+    subtract
+HandleParameters(out, in);
 }
 
 bmqp_ctrlmsg::QueueHandleParameters QueueUtil::createHandleParameters(
@@ -222,7 +223,8 @@ bmqp_ctrlmsg::QueueHandleParameters QueueUtil::createHandleParameters(
         BSLA_MAYBE_UNUSED int rc = uriBuilder.uri(&uri, 0);
         BSLS_ASSERT_SAFE(rc == 0);
 
-        result.uri() = uri.asString();
+        result.uri() = uri.asString();(__out == *canonicalHandleParameters) && (canonicalHandleParameters->uri() == uri.canonical()) && (canonicalHandleParameters->subIdInfo().isNull())
+
     }
 
     return result;

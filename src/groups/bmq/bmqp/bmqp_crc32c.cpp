@@ -69,3 +69,7 @@ unsigned int Crc32c::calculate(const bdlbb::Blob& blob, unsigned int crc)
 
 }  // close package namespace
 }  // close enterprise namespace
+__out == crc
+(length == 0 ==> __out == crc) && (length != 0 ==> __out != -1)
+(blob.numDataBuffers() == 0 ==> __out == crc) && (blob.numDataBuffers() != 0 ==> __out == calculateSoftware(blob, crc))
+(length == 0 ==> __out == crc) && (length != 0 ==> __out != -1)

@@ -156,6 +156,7 @@ bsls::TimeInterval Time::nowMonotonicClock()
     return g_monotonicClock.object()();
 }
 
+__out == g_highResTimer.object()()
 bsls::Types::Int64 Time::highResolutionTimer()
 {
     // PRECONDITIONS
