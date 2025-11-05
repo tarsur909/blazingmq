@@ -46,41 +46,48 @@ MockTime::~MockTime()
     bmqsys::Time::shutdown();
 }
 
+d_realtimeClock ↦ value
 MockTime& MockTime::setRealTimeClock(const bsls::TimeInterval& value)
 {
     d_realtimeClock = value;
     return *this;
 }
 
+d_monotonicClock ↦ value
 MockTime& MockTime::setMonotonicClock(const bsls::TimeInterval& value)
 {
     d_monotonicClock = value;
     return *this;
 }
 
+__out.d_highResTimer ↦ value
 MockTime& MockTime::setHighResTimer(bsls::Types::Int64 value)
 {
     d_highResTimer = value;
     return *this;
 }
 
+(__out == *this) && (d_realtimeClock == d_realtimeClock + offset)
 MockTime& MockTime::advanceRealTimeClock(const bsls::TimeInterval& offset)
 {
     d_realtimeClock += offset;
     return *this;
 }
 
+(__out == *this) && (d_monotonicClock == old_d_monotonicClock + offset)
 MockTime& MockTime::advanceMonotonicClock(const bsls::TimeInterval& offset)
 {
     d_monotonicClock += offset;
     return *this;
 }
 
+(__out == *this) && (d_highResTimer == old_d_highResTimer + offset)
 MockTime& MockTime::advanceHighResTimer(bsls::Types::Int64 offset)
 {
     d_highResTimer += offset;
     return *this;
 }
+__out.d_realtimeClock ↦ bsls::TimeInterval(0, 0) ⋆ __out.d_monotonicClock ↦ bsls::TimeInterval(0, 0) ⋆ __out.d_highResTimer ↦ 0
 MockTime& MockTime::reset()
 {
     d_realtimeClock  = bsls::TimeInterval(0, 0);
@@ -90,16 +97,19 @@ MockTime& MockTime::reset()
     return *this;
 }
 
+__out == d_realtimeClock
 bsls::TimeInterval MockTime::realtimeClock() const
 {
     return d_realtimeClock;
 }
 
+__out == d_monotonicClock
 bsls::TimeInterval MockTime::monotonicClock() const
 {
     return d_monotonicClock;
 }
 
+__out == d_highResTimer
 bsls::Types::Int64 MockTime::highResTimer() const
 {
     return d_highResTimer;

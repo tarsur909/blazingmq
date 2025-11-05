@@ -148,7 +148,8 @@ void OptionUtil::OptionsBox::add(bdlbb::Blob*      blob,
     }
 
     ++d_optionsCount;
-    d_optionsSize += optionSize;
+    d_optionsSize +__out == bmqt::EventBuilderResult::e_OPTION_TOO_BIG || __out == bmqt::EventBuilderResult::e_UNKNOWN || __out == bmqt::EventBuilderResult::e_SUCCESS
+= optionSize;
 }
 
 // ACCESSORS
@@ -194,7 +195,8 @@ OptionUtil::OptionsBox::canAdd(const int         currentSize,
     }
 
     // We can safely add this option.
-    return bmqt::EventBuilderResult::e_SUCCESS;
+    return bmqt::Even(__out == true ==> (*optionsSize == optionsWords * Protocol::k_WORD_SIZE ⋆ *optionsPosition ↦ _)) && (__out == false ==> (*optionsSize == 0 ⋆ *optionsPosition == old_optionsPosition))
+tBuilderResult::e_SUCCESS;
 }
 
 bool OptionUtil::loadOptionsPosition(int*                      optionsSize,

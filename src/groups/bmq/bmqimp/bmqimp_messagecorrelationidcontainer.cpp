@@ -130,7 +130,8 @@ void MessageCorrelationIdContainer::add(
     bsls::SpinLockGuard guard(&d_lock);  // LOCK
 
     QueueAndCorrelationId toInsert(correlationId, queueId, d_allocator_p);
-    d_correlationIds.insert(bsl::make_pair(key, toInsert));
+    d_correlat__out == key && d_correlationIds.find(__out) != d_correlationIds.end() && d_numControls == old_d_numControls + 1
+ionIds.insert(bsl::make_pair(key, toInsert));
 }
 
 bmqt::MessageGUID MessageCorrelationIdContainer::add(
@@ -148,7 +149,8 @@ bmqt::MessageGUID MessageCorrelationIdContainer::add(
 
     // Use internal GUID as a key to add the control message
     bmqt::MessageGUID key = bmqp::MessageGUIDGenerator::testGUID();
-    d_correlationIds.insert(bsl::make_pair(key, toInsert));
+    d_correlationIds.insert(bsl::make_pair(key, toIn__out != cit && (cit->second.d_messageType == bmqp::EventType::e_PUT ==> __out == d_correlationIds.erase(cit)) && (cit->second.d_messageType == bmqp::EventType::e_CONTROL ==> __out == d_correlationIds.erase(cit))
+sert));
     ++d_numControls;
 
     return key;
@@ -176,7 +178,8 @@ MessageCorrelationIdContainer::removeLocked(
 
         cit->second.d_requestContext->adoptUserData(bdld::Datum::createNull());
         --d_numControls;
-    }
+ (__out == -1 ==> d_correlationIds.find(key) == d_correlationIds.end()) && (__out == 0 ==> d_correlationIds.find(key) == d_correlationIds.end())
+   }
 
     return d_correlationIds.erase(cit);
 }
@@ -228,7 +231,8 @@ void MessageCorrelationIdContainer::associateMessageData(
 
     if (BSLS_PERFORMANCEHINT_PREDICT_LIKELY(isAckRequested)) {
         // Add a per queue item with sending timestamp
-        addQueueItem(it->second.d_queueId, header.messageGUID(), sentTime);
+        addQueueItem(it->second.d_qu(__out == true) || (__out == false)
+eueId, header.messageGUID(), sentTime);
     }
 }
 
@@ -247,7 +251,8 @@ bool MessageCorrelationIdContainer::iterateAndInvoke(const KeyIdsCb& callback)
             ++cit;
         }
         if (interrupt) {
-            return false;  // RETURN
+            return false;(__out == true ==> FORALL(0, keys.size(), i, (d_correlationIds.find(keys[i]) != d_correlationIds.end()))) && (__out == false ==> SEPEXISTS(0, keys.size(), i, callback(_, keys[i], _) == true))
+  // RETURN
         }
     }
 
@@ -335,7 +340,8 @@ bsls::TimeInterval MessageCorrelationIdContainer::getExpiredIds(
                 }
                 break;  // BREAK
             }
-            keys->push_back(hit->first);
+            keys->push_back(hi(__out == -1 ==> d_correlationIds.find(key) == d_correlationIds.end()) && (__out == 0 ==> (*correlationId ↦ cit->second.d_correlationId))
+t->first);
         }
     }
 

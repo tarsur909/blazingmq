@@ -64,6 +64,7 @@ void AtomicValidator::invalidate()
 // --------------------------
 
 // MANIPULATORS
+(__out != 0 ==> d_isAcquired == false) && (__out == 0 ==> d_isAcquired == d_isAcquired)
 AtomicValidator* AtomicValidatorGuard::release()
 {
     // Clear the validator

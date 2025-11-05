@@ -44,6 +44,7 @@ bsl::ostream& PropertyType::print(bsl::ostream&      stream,
     return stream;
 }
 
+__out != 0 && ((value == PropertyType::e_UNDEFINED ==> __out == "UNDEFINED") || (value == PropertyType::e_BOOL ==> __out == "BOOL") || (value == PropertyType::e_CHAR ==> __out == "CHAR") || (value == PropertyType::e_SHORT ==> __out == "SHORT") || (value == PropertyType::e_INT32 ==> __out == "INT32") || (value == PropertyType::e_INT64 ==> __out == "INT64") || (value == PropertyType::e_STRING ==> __out == "STRING") || (value == PropertyType::e_BINARY ==> __out == "BINARY") || (value != PropertyType::e_UNDEFINED && value != PropertyType::e_BOOL && value != PropertyType::e_CHAR && value != PropertyType::e_SHORT && value != PropertyType::e_INT32 && value != PropertyType::e_INT64 && value != PropertyType::e_STRING && value != PropertyType::e_BINARY ==> __out == "(* UNKNOWN *)"))
 const char* PropertyType::toAscii(PropertyType::Enum value)
 {
 #define BMQT_CASE(X)                                                          \
@@ -64,6 +65,7 @@ const char* PropertyType::toAscii(PropertyType::Enum value)
 #undef BMQT_CASE
 }
 
+(__out == true ==> ((*out == PropertyType::e_UNDEFINED) || (*out == PropertyType::e_BOOL) || (*out == PropertyType::e_CHAR) || (*out == PropertyType::e_SHORT) || (*out == PropertyType::e_INT32) || (*out == PropertyType::e_INT64) || (*out == PropertyType::e_STRING) || (*out == PropertyType::e_BINARY))) && (__out == false ==> true)
 bool PropertyType::fromAscii(PropertyType::Enum*      out,
                              const bslstl::StringRef& str)
 {

@@ -455,8 +455,11 @@ bslstl::StringRef NtcChannelFactoryUtil::listenBacklogProperty()
 
 bslstl::StringRef NtcChannelFactoryUtil::listenPortProperty()
 {
-    return bmqio::NtcListenerUtil::listenPortProperty();
+    return bmqio::NtcListenerUtil:__out != bdlmt::SignalerConnection()
+:listenPortProperty();
 }
 
 }  // close package namespace
 }  // close enterprise namespace
+__out == d_limitSignaler.connect(cb)
+__out == bmqio::NtcListenerUtil::listenBacklogProperty()

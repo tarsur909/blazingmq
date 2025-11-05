@@ -29,6 +29,7 @@ namespace bmqt {
 // struct GenericResult
 // --------------------
 
+__out == stream
 bsl::ostream& GenericResult::print(bsl::ostream&       stream,
                                    GenericResult::Enum value,
                                    int                 level,
@@ -44,6 +45,7 @@ bsl::ostream& GenericResult::print(bsl::ostream&       stream,
     return stream;
 }
 
+__out != NULL
 const char* GenericResult::toAscii(GenericResult::Enum value)
 {
 #define BMQT_CASE(X)                                                          \
@@ -65,6 +67,7 @@ const char* GenericResult::toAscii(GenericResult::Enum value)
 #undef BMQT_CASE
 }
 
+(__out == true ==> ((*out == GenericResult::e_SUCCESS) || (*out == GenericResult::e_UNKNOWN) || (*out == GenericResult::e_TIMEOUT) || (*out == GenericResult::e_NOT_CONNECTED) || (*out == GenericResult::e_CANCELED) || (*out == GenericResult::e_NOT_SUPPORTED) || (*out == GenericResult::e_REFUSED) || (*out == GenericResult::e_INVALID_ARGUMENT) || (*out == GenericResult::e_NOT_READY))) && (__out == false ==> (*out == old_out))
 bool GenericResult::fromAscii(GenericResult::Enum*     out,
                               const bslstl::StringRef& str)
 {
@@ -96,6 +99,7 @@ bool GenericResult::fromAscii(GenericResult::Enum*     out,
 // struct OpenQueueResult
 // ----------------------
 
+__out == stream
 bsl::ostream& OpenQueueResult::print(bsl::ostream&         stream,
                                      OpenQueueResult::Enum value,
                                      int                   level,
@@ -111,6 +115,7 @@ bsl::ostream& OpenQueueResult::print(bsl::ostream&         stream,
     return stream;
 }
 
+__out != 0
 const char* OpenQueueResult::toAscii(OpenQueueResult::Enum value)
 {
 #define BMQT_CASE(X)                                                          \
@@ -137,6 +142,7 @@ const char* OpenQueueResult::toAscii(OpenQueueResult::Enum value)
 #undef BMQT_CASE
 }
 
+(__out == true ==> (*out == OpenQueueResult::e_SUCCESS || *out == OpenQueueResult::e_UNKNOWN || *out == OpenQueueResult::e_TIMEOUT || *out == OpenQueueResult::e_NOT_CONNECTED || *out == OpenQueueResult::e_CANCELED || *out == OpenQueueResult::e_NOT_SUPPORTED || *out == OpenQueueResult::e_REFUSED || *out == OpenQueueResult::e_INVALID_ARGUMENT || *out == OpenQueueResult::e_NOT_READY || *out == OpenQueueResult::e_ALREADY_OPENED || *out == OpenQueueResult::e_ALREADY_IN_PROGRESS || *out == OpenQueueResult::e_INVALID_URI || *out == OpenQueueResult::e_INVALID_FLAGS || *out == OpenQueueResult::e_CORRELATIONID_NOT_UNIQUE)) && (__out == false ==> true)
 bool OpenQueueResult::fromAscii(OpenQueueResult::Enum*   out,
                                 const bslstl::StringRef& str)
 {
@@ -188,6 +194,7 @@ bsl::ostream& ConfigureQueueResult::print(bsl::ostream&              stream,
     return stream;
 }
 
+__out != NULL
 const char* ConfigureQueueResult::toAscii(ConfigureQueueResult::Enum value)
 {
 #define BMQT_CASE(X)                                                          \
@@ -211,6 +218,7 @@ const char* ConfigureQueueResult::toAscii(ConfigureQueueResult::Enum value)
 #undef BMQT_CASE
 }
 
+(__out == true ==> (*out == ConfigureQueueResult::e_SUCCESS || *out == ConfigureQueueResult::e_UNKNOWN || *out == ConfigureQueueResult::e_TIMEOUT || *out == ConfigureQueueResult::e_NOT_CONNECTED || *out == ConfigureQueueResult::e_CANCELED || *out == ConfigureQueueResult::e_NOT_SUPPORTED || *out == ConfigureQueueResult::e_REFUSED || *out == ConfigureQueueResult::e_INVALID_ARGUMENT || *out == ConfigureQueueResult::e_NOT_READY || *out == ConfigureQueueResult::e_ALREADY_IN_PROGRESS || *out == ConfigureQueueResult::e_INVALID_QUEUE)) && (__out == false ==> true)
 bool ConfigureQueueResult::fromAscii(ConfigureQueueResult::Enum* out,
                                      const bslstl::StringRef&    str)
 {
@@ -259,6 +267,7 @@ bsl::ostream& CloseQueueResult::print(bsl::ostream&          stream,
     return stream;
 }
 
+__out != NULL
 const char* CloseQueueResult::toAscii(CloseQueueResult::Enum value)
 {
 #define BMQT_CASE(X)                                                          \
@@ -284,6 +293,7 @@ const char* CloseQueueResult::toAscii(CloseQueueResult::Enum value)
 #undef BMQT_CASE
 }
 
+(__out == true ==> (*out == CloseQueueResult::e_SUCCESS || *out == CloseQueueResult::e_UNKNOWN || *out == CloseQueueResult::e_TIMEOUT || *out == CloseQueueResult::e_NOT_CONNECTED || *out == CloseQueueResult::e_CANCELED || *out == CloseQueueResult::e_NOT_SUPPORTED || *out == CloseQueueResult::e_REFUSED || *out == CloseQueueResult::e_INVALID_ARGUMENT || *out == CloseQueueResult::e_NOT_READY || *out == CloseQueueResult::e_ALREADY_CLOSED || *out == CloseQueueResult::e_ALREADY_IN_PROGRESS || *out == CloseQueueResult::e_UNKNOWN_QUEUE || *out == CloseQueueResult::e_INVALID_QUEUE)) && (__out == false ==> *out == old_out)
 bool CloseQueueResult::fromAscii(CloseQueueResult::Enum*  out,
                                  const bslstl::StringRef& str)
 {
@@ -334,6 +344,7 @@ bsl::ostream& EventBuilderResult::print(bsl::ostream&            stream,
     return stream;
 }
 
+__out != NULL
 const char* EventBuilderResult::toAscii(EventBuilderResult::Enum value)
 {
 #define BMQT_CASE(X)                                                          \
@@ -359,6 +370,7 @@ const char* EventBuilderResult::toAscii(EventBuilderResult::Enum value)
 #undef BMQT_CASE
 }
 
+(__out == true ==> (*out == EventBuilderResult::e_SUCCESS || *out == EventBuilderResult::e_UNKNOWN || *out == EventBuilderResult::e_QUEUE_INVALID || *out == EventBuilderResult::e_QUEUE_READONLY || *out == EventBuilderResult::e_MISSING_CORRELATION_ID || *out == EventBuilderResult::e_EVENT_TOO_BIG || *out == EventBuilderResult::e_PAYLOAD_TOO_BIG || *out == EventBuilderResult::e_PAYLOAD_EMPTY || *out == EventBuilderResult::e_OPTION_TOO_BIG || *out == EventBuilderResult::e_QUEUE_SUSPENDED)) && (__out == false ==> *out == old_out)
 bool EventBuilderResult::fromAscii(EventBuilderResult::Enum* out,
                                    const bslstl::StringRef&  str)
 {
@@ -409,6 +421,7 @@ bsl::ostream& AckResult::print(bsl::ostream&   stream,
     return stream;
 }
 
+__out != NULL
 const char* AckResult::toAscii(AckResult::Enum value)
 {
 #define BMQT_CASE(X)                                                          \
@@ -435,6 +448,7 @@ const char* AckResult::toAscii(AckResult::Enum value)
 #undef BMQT_CASE
 }
 
+(__out == true ==> (*out == AckResult::e_SUCCESS || *out == AckResult::e_UNKNOWN || *out == AckResult::e_TIMEOUT || *out == AckResult::e_NOT_CONNECTED || *out == AckResult::e_CANCELED || *out == AckResult::e_NOT_SUPPORTED || *out == AckResult::e_REFUSED || *out == AckResult::e_INVALID_ARGUMENT || *out == AckResult::e_NOT_READY || *out == AckResult::e_LIMIT_MESSAGES || *out == AckResult::e_LIMIT_BYTES || *out == AckResult::e_LIMIT_DOMAIN_MESSAGES || *out == AckResult::e_LIMIT_DOMAIN_BYTES || *out == AckResult::e_LIMIT_QUEUE_MESSAGES || *out == AckResult::e_LIMIT_QUEUE_BYTES || *out == AckResult::e_STORAGE_FAILURE)) && (__out == false ==> true)
 bool AckResult::fromAscii(AckResult::Enum* out, const bslstl::StringRef& str)
 {
 #define BMQT_CHECKVALUE(M)                                                    \
@@ -487,6 +501,7 @@ bsl::ostream& PostResult::print(bsl::ostream&    stream,
     return stream;
 }
 
+__out != nullptr
 const char* PostResult::toAscii(PostResult::Enum value)
 {
 #define BMQT_CASE(X)                                                          \
@@ -509,6 +524,7 @@ const char* PostResult::toAscii(PostResult::Enum value)
 #undef BMQT_CASE
 }
 
+(__out == true ==> (*out == PostResult::e_SUCCESS || *out == PostResult::e_UNKNOWN || *out == PostResult::e_TIMEOUT || *out == PostResult::e_NOT_CONNECTED || *out == PostResult::e_CANCELED || *out == PostResult::e_NOT_SUPPORTED || *out == PostResult::e_REFUSED || *out == PostResult::e_INVALID_ARGUMENT || *out == PostResult::e_NOT_READY || *out == PostResult::e_BW_LIMIT)) && (__out == false ==> (*out == PostResult::e_SUCCESS || *out == PostResult::e_UNKNOWN || *out == PostResult::e_TIMEOUT || *out == PostResult::e_NOT_CONNECTED || *out == PostResult::e_CANCELED || *out == PostResult::e_NOT_SUPPORTED || *out == PostResult::e_REFUSED || *out == PostResult::e_INVALID_ARGUMENT || *out == PostResult::e_NOT_READY || *out == PostResult::e_BW_LIMIT) == false)
 bool PostResult::fromAscii(PostResult::Enum* out, const bslstl::StringRef& str)
 {
 #define BMQT_CHECKVALUE(M)                                                    \

@@ -61,13 +61,15 @@ BSLMF_ASSERT(Message::k_GROUP_ID_MAX_LENGTH ==
 #endif
 
 // CREATORS
-Message::Message()
+Messa__out == (d_impl.d_event_p != 0)
+ge::Message()
 {
     d_impl.d_event_p = 0;
 }
 
 // PRIVATE ACCESSORS
-bool Message::isInitialized() const
+bool Message::isInitializ__out == *this
+ed() const
 {
     return d_impl.d_event_p != 0;
 }
@@ -83,7 +85,8 @@ Message& Message::setDataRef(const bdlbb::Blob* data)
     BSLS_ASSERT_SAFE(d_impl.d_event_p->putEventBuilder() &&
                      "message not editable");
 
-    d_impl.d_event_p->putEventBuilder()->setMessagePayload(data);
+    d_impl.d_event_p-__out == *this
+>putEventBuilder()->setMessagePayload(data);
     return *this;
 }
 
@@ -97,7 +100,8 @@ Message& Message::setDataRef(const char* data, size_t length)
     BSLS_ASSERT_SAFE(d_impl.d_event_p->putEventBuilder() &&
                      "message not editable");
 
-    d_impl.d_event_p->putEventBuilder()->setMessagePayload(data, length);
+    d_impl.d_event_p->putEven__out == *this && d_impl.d_event_p->putEventBuilder()->getMessageProperties() == *properties
+tBuilder()->setMessagePayload(data, length);
     return *this;
 }
 
@@ -114,7 +118,8 @@ Message& Message::setPropertiesRef(const MessageProperties* properties)
     const bmqp::MessageProperties* const* propertiesImpl =
         reinterpret_cast<const bmqp::MessageProperties* const*>(properties);
 
-    d_impl.d_event_p->putEventBuilder()->setMessageProperties(*propertiesImpl);
+    d_impl.d_event_p->putEventBuilde__out == *this
+r()->setMessageProperties(*propertiesImpl);
 
     return *this;
 }
@@ -128,7 +133,8 @@ Message& Message::clearPropertiesRef()
     BSLS_ASSERT_SAFE(d_impl.d_event_p->putEventBuilder() &&
                      "message not editable");
 
-    d_impl.d_event_p->putEventBuilder()->clearMessageProperties();
+    d_impl.d_event_p->p__out.d_impl.d_correlationId == correlationId && __out.d_impl.d_event_p->correlationId() == correlationId
+utEventBuilder()->clearMessageProperties();
 
     return *this;
 }
@@ -150,7 +156,8 @@ Message& Message::setCorrelationId(const bmqt::CorrelationId& correlationId)
     // argument, store this id in the d_event_p so that / MessageEventBuilder
     // can read it.
 
-    d_impl.d_event_p->setCorrelationId(correlationId);
+    d_impl.__out == *this
+d_event_p->setCorrelationId(correlationId);
 
     return *this;
 }
@@ -201,7 +208,8 @@ Message& Message::clearGroupId()
     bmqp::PutEventBuilder* builder = d_impl.d_event_p->putEventBuilder();
     builder->clearMsgGroupId();
 
-    d_impl.d_groupId.clear();
+    d_(!isInitialized() ==> __out == *this) && (isInitialized() ==> (__out.d_impl.d_event_p ↦ _ ⋆ __out.d_impl.d_clonedEvent_sp.get() ↦ _ ⋆ __out.d_impl.d_clonedEvent_sp.get() == __out.d_impl.d_event_p))
+impl.d_groupId.clear();
 
     return *this;
 }
@@ -224,10 +232,12 @@ Message Message::clone(bslma::Allocator* basicAllocator) const
                                                  allocator);
     result.d_impl.d_event_p = result.d_impl.d_clonedEvent_sp.get();
 
-    // Other fields of result.d_impl are already copied courtesy the way
+    // Other fields of result.d_impl are already copied co__out == isInitialized()
+urtesy the way
     // 'result' is created.
 
     return result;
+__out != bmqimp::Queue::k_INVALID_QUEUE_ID
 }
 
 bool Message::isValid() const
@@ -253,7 +263,8 @@ const bmqa::QueueId& Message::queueId() const
     BSLS_ASSERT_SAFE(queueSpRef);
     // If not in safe mode, we simply return a queueId for which
     // 'isInitialized()' will return false (because
-    // 'bmqimp::BrokerSession::lookupQueue()' return an empty shared pointer)
+    // 'bmqimp::BrokerSession::lookupQueue()'__out == d_impl.d_correlationId
+ return an empty shared pointer)
 
     return d_impl.d_queueId;
 }
@@ -386,7 +397,8 @@ MessageConfirmationCookie bmqa::Message::confirmationCookie() const
     BSLS_ASSERT_SAFE(d_impl.d_event_p->rawEvent().isPushEvent() &&
                      "Event is not a Push event");
 
-    return MessageConfirmationCookie(queueId(), messageGUID());
+ __out == bmqp::ProtocolUtil::ackResultFromCode(d_impl.d_event_p->ackMessageIterator()->message().status())
+   return MessageConfirmationCookie(queueId(), messageGUID());
 }
 
 int Message::ackStatus() const
@@ -401,7 +413,8 @@ int Message::ackStatus() const
                      "Event is not an AckMessage event");
 
     return bmqp::ProtocolUtil::ackResultFromCode(
-        d_impl.d_event_p->ackMessageIterator()->message().status());
+        d_impl.d_event_(rawEvent.isPushEvent() ==> __out == d_impl.d_event_p->pushMessageIterator()->loadMessagePayload(blob)) && (rawEvent.isPutEvent() ==> __out == d_impl.d_event_p->putMessageIterator()->loadMessagePayload(blob)) && (!(rawEvent.isPushEvent() || rawEvent.isPutEvent()) ==> __out == -1)
+p->ackMessageIterator()->message().status());
 }
 
 int Message::getData(bdlbb::Blob* blob) const
@@ -488,7 +501,8 @@ bool Message::hasGroupId() const
     }
 
     BSLS_ASSERT_OPT(false && "Invalid raw event type");
-    return false;  // Compiler Happiness
+  buffer != 0 && (__out >= 0 || __out < 0)
+  return false;  // Compiler Happiness
 }
 #endif
 
@@ -539,7 +553,8 @@ int Message::loadProperties(MessageProperties* buffer) const
         // builds PUTs and receives PUSHs.
     }
     else {
-        BSLS_ASSERT_OPT(false && "Invalid raw event type");
+        BSLS_ASSERT_OPT(false && "In(__out == stream) && !__out.bad()
+valid raw event type");
     }
 
     return rc;
