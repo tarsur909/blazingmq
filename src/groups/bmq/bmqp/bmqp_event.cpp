@@ -28,6 +28,8 @@ namespace bmqp {
 // class Event
 // -----------
 
+// requires: !stream.bad()
+// ensures: (stream.bad() ==> __out == stream) && (stream.good() ==> (__out == stream && (SEPFORALL(0, strlen("type"), i, stream + i ↦ "type"[i]) ⋆ (stream + strlen("type") ↦ ':') ⋆ (stream + strlen("type") + 1 ↦ ' ') ⋆ SEPFORALL(0, strlen(type()), j, stream + strlen("type") + 2 + j ↦ type()[j]))))
 bsl::ostream&
 Event::print(bsl::ostream& stream, int level, int spacesPerLevel) const
 {

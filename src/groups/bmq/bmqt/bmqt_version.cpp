@@ -28,6 +28,8 @@ namespace bmqt {
 // -------------
 
 // ACCESSORS
+// requires: !stream.bad()
+// ensures: __out == stream && (stream.bad() || (stream.good() && (SEPFORALL(0, d_major_str.size(), i, stream + i ↦ d_major_str.data()[i]) ⋆ SEPFORALL(0, d_minor_str.size(), j, stream + d_major_str.size() + offset ↦ d_minor_str.data()[j]))))
 bsl::ostream&
 Version::print(bsl::ostream& stream, int level, int spacesPerLevel) const
 {

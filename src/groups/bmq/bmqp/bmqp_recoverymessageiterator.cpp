@@ -46,6 +46,8 @@ void RecoveryMessageIterator::copyFrom(const RecoveryMessageIterator& src)
     }
 }
 
+// requires: true
+// ensures: (__out == rc_HAS_NEXT) || (__out == rc_AT_END) || (__out == rc_INVALID) || (__out == rc_NO_RECOVERYHEADER) || (__out == rc_NOT_ENOUGH_BYTES)
 int RecoveryMessageIterator::next()
 {
     enum RcEnum {
@@ -117,6 +119,8 @@ int RecoveryMessageIterator::next()
     return rc_HAS_NEXT;
 }
 
+// requires: blob != 0 && eventHeader.headerWords() * Protocol::k_WORD_SIZE <= blob->length()
+// ensures: (__out == rc_SUCCESS ==> d_advanceLength == 0) && (__out == rc_INVALID_EVENTHEADER ==> d_advanceLength == -1)
 int RecoveryMessageIterator::reset(const bdlbb::Blob* blob,
                                    const EventHeader& eventHeader)
 {

@@ -34,6 +34,8 @@ namespace bmqio {
 // ------------------
 // struct ResolveUtil
 // ------------------
+// requires: result != 0
+// ensures: true
 
 // CLASS LEVEL METHODS
 ntsa::Error ResolveUtil::getDomainName(bsl::string*           result,
@@ -43,7 +45,9 @@ ntsa::Error ResolveUtil::getDomainName(bsl::string*           result,
     BSLS_ASSERT(result);
 
     bsl::shared_ptr<ntsi::Resolver> resolver = ntsf::System::createResolver();
-    return resolver->getDomainName(result, ipAddress);
+    return resolver->getDomainName// requires: result != NULL
+// ensures: true
+(result, ipAddress);
 }
 
 ntsa::Error ResolveUtil::getHostname(bsl::string* result)
@@ -52,7 +56,9 @@ ntsa::Error ResolveUtil::getHostname(bsl::string* result)
     BSLS_ASSERT(result);
 
     bsl::shared_ptr<ntsi::Resolver> resolver = ntsf::System::createResolver();
-    return resolver->getHostname(result);
+    return resolver->// requires: result != 0
+// ensures: (__out.code() == ntsa::Error::e_OK ==> (result != 0 && *result == ipAddresses.front().v4())) && (__out.code() != ntsa::Error::e_OK ==> true)
+getHostname(result);
 }
 
 ntsa::Error ResolveUtil::getIpAddress(ntsa::Ipv4Address*      result,

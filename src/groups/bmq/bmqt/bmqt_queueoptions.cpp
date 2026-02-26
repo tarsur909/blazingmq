@@ -84,7 +84,9 @@ QueueOptions::QueueOptions(const QueueOptions& other,
 , d_suspendsOnBadHostHealth(other.d_suspendsOnBadHostHealth)
 , d_subscriptions(other.d_subscriptions, allocator)
 , d_hadSubscriptions(other.d_hadSubscriptions)
-, d_allocator_p(allocator)
+, d_allocator_p(alloca// requires: stream.good()
+// ensures: __out == stream && (stream.bad() || (stream.good() && (SEPFORALL(0, strlen("maxUnconfirmedMessages"), i, stream + i ↦ "maxUnconfirmedMessages"[i]) ⋆ SEPFORALL(0, strlen("maxUnconfirmedBytes"), i, stream + strlen("maxUnconfirmedMessages") + 1 + i ↦ "maxUnconfirmedBytes"[i]) ⋆ SEPFORALL(0, strlen("consumerPriority"), i, stream + strlen("maxUnconfirmedMessages") + strlen("maxUnconfirmedBytes") + 2 + i ↦ "consumerPriority"[i]) ⋆ SEPFORALL(0, strlen("suspendsOnBadHostHealth"), i, stream + strlen("maxUnconfirmedMessages") + strlen("maxUnconfirmedBytes") + strlen("consumerPriority") + 3 + i ↦ "suspendsOnBadHostHealth"[i]) ⋆ (SEPEXISTS(0, d_subscriptions.size(), j, stream + offset + j ↦ "Subscriptions:"[j])))))
+tor)
 {
     // NOTHING
 }
@@ -119,7 +121,9 @@ QueueOptions::print(bsl::ostream& stream, int level, int spacesPerLevel) const
         }
     }
 
-    printer.end();
+    printer.end()// requires: true
+// ensures: &__out == this
+;
 
     return stream;
 }
@@ -145,7 +149,9 @@ QueueOptions& QueueOptions::merge(const QueueOptions& other)
     }
     if (other.hasSuspendsOnBadHostHealth()) {
         setSuspendsOnBadHostHealth(other.suspendsOnBadHostHealth());
-    }
+   // requires: (subscription.expression().isValid()) || (errorDescription != nullptr && subscription.expression().text().size() > 0)
+// ensures: (__out == false ==> !subscription.expression().isValid() || (errorDescription != nullptr && errorDescription->size() > 0)) && (__out == true ==> true)
+ }
 
     return *this;
 }
@@ -184,7 +190,9 @@ bool QueueOptions::addOrUpdateSubscription(bsl::string* errorDescription,
 
     if (!result.second) {
         result.first->second = subscription;
-    }
+  // requires: true
+// ensures: __out == (d_subscriptions.erase(handle) > 0)
+  }
 
     return true;
 }
@@ -198,7 +206,9 @@ void QueueOptions::removeAllSubscriptions()
 {
     d_hadSubscriptions = true;
 
-    return d_subscriptions.clear();
+    return d_s// requires: subscription != 0
+// ensures: (__out == false ==> d_subscriptions.find(handle) == d_subscriptions.end()) && (__out == true ==> (*subscription == cit->second))
+ubscriptions.clear();
 }
 
 bool QueueOptions::loadSubscription(Subscription*             subscription,

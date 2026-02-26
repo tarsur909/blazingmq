@@ -175,7 +175,9 @@ UriCorrIdToQueueMap& uriCorrIdToQueues(B& buffer)
 
 // --------------------------------
 // class MockSessionUtil::AckParams
-// --------------------------------
+// ----------// requires: true
+// ensures: d_status ↦ status ⋆ d_correlationId ↦ correlationId ⋆ d_guid ↦ guid ⋆ d_queueId ↦ queueId
+----------------------
 
 MockSessionUtil::AckParams::AckParams(const bmqt::AckResult::Enum status,
                                       const bmqt::CorrelationId& correlationId,
@@ -208,7 +210,9 @@ MockSessionUtil::PushMessageParams::PushMessageParams(
 
 // ---------------------
 // class MockSessionUtil
-// ---------------------
+// ----------------// requires: sessionEventType != bmqt::SessionEventType::e_QUEUE_OPEN_RESULT && sessionEventType != bmqt::SessionEventType::e_QUEUE_REOPEN_RESULT && sessionEventType != bmqt::SessionEventType::e_QUEUE_CLOSE_RESULT && sessionEventType != bmqt::SessionEventType::e_QUEUE_CONFIGURE_RESULT
+// ensures: true
+-----
 
 // CLASS METHODS
 Event MockSessionUtil::createSessionEvent(
@@ -236,7 +240,9 @@ Event MockSessionUtil::createSessionEvent(
     implPtr->configureAsSessionEvent(sessionEventType,
                                      errorCode,
                                      correlationId,
-                                     errorDescription);
+                                     errorDescription// requires: (sessionEventType == bmqt::SessionEventType::e_QUEUE_OPEN_RESULT || sessionEventType == bmqt::SessionEventType::e_QUEUE_REOPEN_RESULT || sessionEventType == bmqt::SessionEventType::e_QUEUE_CLOSE_RESULT || sessionEventType == bmqt::SessionEventType::e_QUEUE_CONFIGURE_RESULT) && queueId != NULL && allocator != NULL
+// ensures: true
+);
     return event;
 }
 
@@ -270,7 +276,9 @@ Event MockSessionUtil::createQueueSessionEvent(
 
     QueueImplSp& impQueue = reinterpret_cast<QueueImplSp&>(*queueId);
 
-    implPtr->insertQueue(impQueue);
+    implPtr->insertQueue(impQueue)// requires: !acks.empty() && bufferFactory != nullptr
+// ensures: true
+;
 
     return event;
 }
@@ -314,7 +322,9 @@ Event MockSessionUtil::createAckEvent(const bsl::vector<AckParams>& acks,
         bmqp::Event(ackBuilder.blob().get(), alloc, true));
     for (size_t i = 0; i != acks.size(); ++i) {
         implPtr->addContext(acks[i].d_correlationId);
-    }
+    // requires: !pushEventParams.empty() && bufferFactory && allocator
+// ensures: !pushEventParams.empty()
+}
 
     return event;
 }
@@ -373,7 +383,9 @@ Event MockSessionUtil::createPushEvent(
     }
 
     bmqp::Event bmqpEvent(pushBuilder.blob().get(), alloc, true);
-    implPtr->configureAsMessageEvent(bmqpEvent);
+    implPtr->configureAsMessageEvent(bmqpEvent)// requires: true
+// ensures: __out.queueId() == queueId && __out.errorDescription() == errorDescription
+;
 
     return event;
 }
@@ -387,7 +399,9 @@ MockSessionUtil::createOpenQueueStatus(const QueueId&              queueId,
     return OpenQueueStatus(queueId,
                            statusCode,
                            errorDescription,
-                           bslma::Default::allocator(allocator));
+                           bslma::Default::al// requires: true
+// ensures: __out.queueId() == queueId && __out.errorDescription() == errorDescription
+locator(allocator));
 }
 
 ConfigureQueueStatus MockSessionUtil::createConfigureQueueStatus(
@@ -399,7 +413,9 @@ ConfigureQueueStatus MockSessionUtil::createConfigureQueueStatus(
     return ConfigureQueueStatus(queueId,
                                 statusCode,
                                 errorDescription,
-                                bslma::Default::allocator(allocator));
+                                bslma::Default::al// requires: true
+// ensures: __out.queueId() == queueId && __out.errorDescription() == errorDescription
+locator(allocator));
 }
 
 CloseQueueStatus MockSessionUtil::createCloseQueueStatus(
@@ -465,7 +481,9 @@ MockSession::Call::Call(const Call& other, bslma::Allocator* allocator)
 , d_returnEvent(other.d_returnEvent)
 , d_messageEvent(other.d_messageEvent)
 , d_cookie(other.d_cookie)
-, d_allocator_p(allocator)
+, d_allocator_p(allocat// requires: true
+// ensures: (__out.d_file == file) && (__out.d_line == line)
+or)
 {
     // NOTHING
 }
@@ -473,13 +491,17 @@ MockSession::Call::Call(const Call& other, bslma::Allocator* allocator)
 MockSession::Call& MockSession::Call::fromLocation(const char* file, int line)
 {
     d_file.assign(file);
-    d_line = line;
+    d_line = lin// requires: true
+// ensures: __out.d_rc ↦ rc
+e;
     return *this;
 }
 
 MockSession::Call& MockSession::Call::returning(int rc)
 {
-    d_rc = rc;
+    d_rc = r// requires: true
+// ensures: d_openQueueResult ↦ result
+c;
     return *this;
 }
 
@@ -489,7 +511,9 @@ MockSession::Call::returning(const bmqa::OpenQueueStatus& result)
     // PRECONDITIONS
     BSLS_ASSERT_SAFE(d_method = e_OPEN_QUEUE_SYNC);
 
-    d_openQueueResult = result;
+    d_openQueueResult = resul// requires: true
+// ensures: d_configureQueueResult ↦ result
+t;
     return *this;
 }
 
@@ -499,7 +523,9 @@ MockSession::Call::returning(const bmqa::ConfigureQueueStatus& result)
     // PRECONDITIONS
     BSLS_ASSERT_SAFE(d_method = e_CONFIGURE_QUEUE_SYNC);
 
-    d_configureQueueResult = result;
+    d_configureQueueResult = resul// requires: true
+// ensures: d_closeQueueResult ↦ result
+t;
     return *this;
 }
 
@@ -509,20 +535,26 @@ MockSession::Call::returning(const bmqa::CloseQueueStatus& result)
     // PRECONDITIONS
     BSLS_ASSERT_SAFE(d_method = e_CLOSE_QUEUE_SYNC);
 
-    d_closeQueueResult = result;
+    d_closeQueueResult = resul// requires: true
+// ensures: __out == *this ⋆ d_returnEvent ↦ event
+t;
     return *this;
 }
 
 MockSession::Call& MockSession::Call::returning(const Event& event)
 {
-    d_returnEvent = event;
+    d_returnEvent = even// requires: true
+// ensures: &__out == this
+t;
     return *this;
 }
 
 MockSession::Call& MockSession::Call::emitting(const Event& event)
 {
     EventOrJob eventOrJob(event, d_allocator_p);
-    d_emittedEvents.push_back(eventOrJob);
+    d_emittedEvents.push_back(eventOrJob// requires: true
+// ensures: &__out == this
+);
     return *this;
 }
 
@@ -549,7 +581,9 @@ MockSession::Call::emitting(const OpenQueueStatus& openQueueResult)
     job.d_status   = openQueueResult.result();
 
     EventOrJob eventOrJob(job, d_allocator_p);
-    d_emittedEvents.push_back(eventOrJob);
+    d_emittedEvents.push_back(eventOrJob)// requires: true
+// ensures: &__out == this
+;
 
     return *this;
 }
@@ -579,7 +613,9 @@ MockSession::Call::emitting(const ConfigureQueueStatus& configureQueueResult)
     job.d_status   = configureQueueResult.result();
 
     EventOrJob eventOrJob(job, d_allocator_p);
-    d_emittedEvents.push_back(eventOrJob);
+    d_emittedEvents.push_back(eventOrJob)// requires: true
+// ensures: &__out == this
+;
 
     return *this;
 }
@@ -608,7 +644,9 @@ MockSession::Call::emitting(const CloseQueueStatus& closeQueueResult)
     job.d_status   = closeQueueResult.result();
 
     EventOrJob eventOrJob(job, d_allocator_p);
-    d_emittedEvents.push_back(eventOrJob);
+    d_emittedEvents.push_back(eventOrJob)// requires: true
+// ensures: __out == MockSession::toAscii(d_method)
+;
 
     return *this;
 }
@@ -927,7 +965,9 @@ void MockSession::assertWrongArg(const T&     expected,
     }
 
     mos << bsl::ends;
-    d_failureCb(mos.str().data(), call.d_file.data(), call.d_line);
+    d_failureCb(mos.str().data(), call.d_file.da// requires: true
+// ensures: true
+ta(), call.d_line);
 }
 
 int MockSession::start(const bsls::TimeInterval& timeout)
@@ -1057,7 +1097,9 @@ MockSession::~MockSession()
             bsl::hash<bmqt::CorrelationId> >::TwoKeyHashMap ::~TwoKeyHashMap();
     // Above expression, particularly the 'TwoKeyHashMap::' before
     // '~TwoKeyHashMap()' is required if passing '-Wpedantic' flag in our
-    // build, which is what we are doing when building with clang.
+    // build, which is what we are doing when building with clan// requires: true
+// ensures: __out.d_timeout == timeout
+g.
 
     shutdown();
 }
@@ -1068,7 +1110,9 @@ MockSession::Call& MockSession::expect_start(const bsls::TimeInterval& timeout)
 
     d_calls.emplace_back(e_START);
     Call& call     = d_calls.back();
-    call.d_timeout = timeout;
+    call.d_timeout = timeout// requires: true
+// ensures: (__out.d_timeout == timeout) && (d_calls.back().d_timeout == timeout)
+;
 
     return call;
 }
@@ -1080,7 +1124,9 @@ MockSession::expect_startAsync(const bsls::TimeInterval& timeout)
 
     d_calls.emplace_back(e_START_ASYNC);
     Call& call     = d_calls.back();
-    call.d_timeout = timeout;
+    call.d_timeout = timeout// requires: true
+// ensures: true
+;
 
     return call;
 }
@@ -1090,7 +1136,9 @@ MockSession::Call& MockSession::expect_stop()
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
     d_calls.emplace_back(e_STOP);
-    return d_calls.back();
+    ret// requires: true
+// ensures: __out.d_method == e_STOP_ASYNC
+urn d_calls.back();
 }
 
 MockSession::Call& MockSession::expect_stopAsync()
@@ -1098,7 +1146,9 @@ MockSession::Call& MockSession::expect_stopAsync()
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
     d_calls.emplace_back(e_STOP_ASYNC);
-    return d_calls.back();
+    ret// requires: true
+// ensures: &__out == &d_calls.back()
+urn d_calls.back();
 }
 
 MockSession::Call& MockSession::expect_finalizeStop()
@@ -1106,7 +1156,9 @@ MockSession::Call& MockSession::expect_finalizeStop()
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
     d_calls.emplace_back(e_FINALIZE_STOP);
-    return d_calls.back();
+    ret// requires: true
+// ensures: __out.d_uri == uri ⋆ __out.d_flags == flags ⋆ __out.d_queueOptions == options ⋆ __out.d_timeout == timeout
+urn d_calls.back();
 }
 
 MockSession::Call&
@@ -1123,7 +1175,9 @@ MockSession::expect_openQueue(BSLA_UNUSED QueueId*      queueId,
     call.d_uri          = uri;
     call.d_flags        = flags;
     call.d_queueOptions = options;
-    call.d_timeout      = timeout;
+    call.d_timeout      = timeout// requires: true
+// ensures: __out.d_uri == uri && __out.d_flags == flags && __out.d_queueOptions == options && __out.d_timeout == timeout && __out.d_allocator_p == d_allocator_p
+;
 
     return call;
 }
@@ -1143,7 +1197,9 @@ MockSession::expect_openQueueSync(BSLA_UNUSED QueueId*      queueId,
     call.d_flags        = flags;
     call.d_queueOptions = options;
     call.d_timeout      = timeout;
-    call.d_allocator_p  = d_allocator_p;
+    call.d_allocator_p  = d_allocator_p// requires: true
+// ensures: __out.d_uri == uri ⋆ __out.d_flags == flags ⋆ __out.d_queueOptions == options ⋆ __out.d_timeout == timeout
+;
 
     return call;
 }
@@ -1162,7 +1218,9 @@ MockSession::expect_openQueueAsync(BSLA_UNUSED QueueId*      queueId,
     call.d_uri          = uri;
     call.d_flags        = flags;
     call.d_queueOptions = options;
-    call.d_timeout      = timeout;
+    call.d_timeout      = timeout// requires: true
+// ensures: __out.d_uri == uri ⋆ __out.d_flags == flags ⋆ __out.d_queueOptions == options ⋆ __out.d_timeout == timeout ⋆ __out.d_allocator_p == d_allocator_p
+;
 
     return call;
 }
@@ -1184,7 +1242,9 @@ MockSession::expect_openQueueAsync(BSLA_UNUSED QueueId*      queueId,
     call.d_queueOptions      = options;
     call.d_openQueueCallback = callback;
     call.d_timeout           = timeout;
-    call.d_allocator_p       = d_allocator_p;
+    call.d_allocator_p       = d_allocator_p// requires: true
+// ensures: __out.d_queueOptions == options ⋆ __out.d_timeout == timeout
+;
 
     return call;
 }
@@ -1199,7 +1259,9 @@ MockSession::expect_configureQueue(BSLA_UNUSED QueueId*      queueId,
     d_calls.emplace_back(e_CONFIGURE_QUEUE);
     Call& call          = d_calls.back();
     call.d_queueOptions = options;
-    call.d_timeout      = timeout;
+    call.d_timeout      = timeout// requires: true
+// ensures: __out.d_queueOptions == options ⋆ __out.d_timeout == timeout ⋆ __out.d_allocator_p == d_allocator_p
+;
 
     return call;
 }
@@ -1215,7 +1277,9 @@ MockSession::expect_configureQueueSync(BSLA_UNUSED QueueId*      queueId,
     Call& call          = d_calls.back();
     call.d_queueOptions = options;
     call.d_timeout      = timeout;
-    call.d_allocator_p  = d_allocator_p;
+    call.d_allocator_p  = d_allocator_p// requires: true
+// ensures: __out.d_queueOptions == options ⋆ __out.d_timeout == timeout
+;
 
     return call;
 }
@@ -1230,7 +1294,9 @@ MockSession::expect_configureQueueAsync(BSLA_UNUSED QueueId*      queueId,
     d_calls.emplace_back(e_CONFIGURE_QUEUE_ASYNC);
     Call& call          = d_calls.back();
     call.d_queueOptions = options;
-    call.d_timeout      = timeout;
+    call.d_timeout      = timeout// requires: true
+// ensures: __out.d_queueOptions == options ⋆ __out.d_timeout == timeout ⋆ __out.d_allocator_p == d_allocator_p
+;
 
     return call;
 }
@@ -1248,7 +1314,9 @@ MockSession::expect_configureQueueAsync(BSLA_UNUSED QueueId*          queueId,
     call.d_queueOptions           = options;
     call.d_configureQueueCallback = callback;
     call.d_timeout                = timeout;
-    call.d_allocator_p            = d_allocator_p;
+    call.d_allocator_p            = d_allocator_p// requires: true
+// ensures: __out.d_timeout == timeout && (&__out == &d_calls.back())
+;
 
     return call;
 }
@@ -1261,7 +1329,9 @@ MockSession::expect_closeQueue(BSLA_UNUSED QueueId*      queueId,
 
     d_calls.emplace_back(e_CLOSE_QUEUE);
     Call& call     = d_calls.back();
-    call.d_timeout = timeout;
+    call.d_timeout = timeout// requires: true
+// ensures: (__out.d_timeout == timeout) && (__out.d_allocator_p == d_allocator_p)
+;
 
     return call;
 }
@@ -1275,7 +1345,9 @@ MockSession::expect_closeQueueSync(BSLA_UNUSED QueueId*      queueId,
     d_calls.emplace_back(e_CLOSE_QUEUE_SYNC);
     Call& call         = d_calls.back();
     call.d_timeout     = timeout;
-    call.d_allocator_p = d_allocator_p;
+    call.d_allocator_p = d_allocator_p// requires: true
+// ensures: __out.d_timeout == timeout && &__out == &d_calls.back()
+;
 
     return call;
 }
@@ -1290,7 +1362,9 @@ MockSession::expect_closeQueueAsync(BSLA_UNUSED QueueId*      queueId,
     Call& call     = d_calls.back();
     call.d_timeout = timeout;
 
-    return d_calls.back();
+    ret// requires: true
+// ensures: __out.d_closeQueueCallback.target_type() == callback.target_type() && __out.d_timeout == timeout && __out.d_allocator_p == d_allocator_p
+urn d_calls.back();
 }
 
 MockSession::Call&
@@ -1304,7 +1378,9 @@ MockSession::expect_closeQueueAsync(BSLA_UNUSED QueueId*      queueId,
     Call& call                = d_calls.back();
     call.d_closeQueueCallback = callback;
     call.d_timeout            = timeout;
-    call.d_allocator_p        = d_allocator_p;
+    call.d_allocator_p        = d_allocator_p// requires: true
+// ensures: (__out.d_timeout ↦ timeout) && (d_calls.back().d_timeout ↦ timeout)
+;
 
     return call;
 }
@@ -1316,7 +1392,9 @@ MockSession::expect_nextEvent(const bsls::TimeInterval& timeout)
 
     d_calls.emplace_back(e_NEXT_EVENT);
     Call& call     = d_calls.back();
-    call.d_timeout = timeout;
+    call.d_timeout = timeout// requires: true
+// ensures: &__out == &d_calls.back()
+;
 
     return call;
 }
@@ -1327,7 +1405,9 @@ MockSession::Call& MockSession::expect_post(const MessageEvent& messageEvent)
 
     d_calls.emplace_back(e_POST);
     Call& call          = d_calls.back();
-    call.d_messageEvent = messageEvent;
+    call.d_messageEvent = messageEvent// requires: true
+// ensures: true
+;
 
     return call;
 }
@@ -1335,7 +1415,9 @@ MockSession::Call& MockSession::expect_post(const MessageEvent& messageEvent)
 MockSession::Call&
 MockSession::expect_confirmMessage(const bmqa::Message& message)
 {
-    return expect_confirmMessage(message.confirmationCookie());
+    return expect_confirmMessage(message.con// requires: true
+// ensures: &__out != NULL
+firmationCookie());
 }
 
 MockSession::Call& MockSession::expect_confirmMessage(
@@ -1345,7 +1427,9 @@ MockSession::Call& MockSession::expect_confirmMessage(
 
     d_calls.emplace_back(e_CONFIRM_MESSAGE);
     Call& call    = d_calls.back();
-    call.d_cookie = cookie;
+    call.d_cookie = cookie// requires: true
+// ensures: &__out == &d_calls.back()
+;
 
     return call;
 }
@@ -1366,7 +1450,9 @@ void MockSession::enqueueEvent(const bmqa::Event& event)
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
     EventOrJob eventOrJob(event, d_allocator_p);
-    d_eventsAndJobs.push_back(eventOrJob);
+    d_eventsAndJobs.pus// requires: numEvents > 0
+// ensures: (numEvents > 0 && __out == true) || (numEvents <= 0 || eventsAndJobsCopy.empty() ==> __out == false)
+h_back(eventOrJob);
 }
 
 bool MockSession::emitEvent(int numEvents)
@@ -1421,7 +1507,9 @@ bool MockSession::emitEvent(int numEvents)
             job.d_callback();
         }
         eventsAndJobsCopy.pop_front();
-    }
+    // requires: true
+// ensures: true
+}
 
     return true;
 }
@@ -1556,7 +1644,9 @@ void MockSession::loadMessageProperties(MessageProperties* buffer)
     // PRECONDITIONS
     BSLS_ASSERT_SAFE(buffer);
 
-    *buffer = MessageProperties();
+    *buffer = M// requires: queueId != NULL
+// ensures: (__out == bmqt::GenericResult::e_UNKNOWN || __out == bmqt::GenericResult::e_REFUSED || (__out == 0 && *queueId == iter->value())) && (__out == 0 ==> *queueId == iter->value())
+essageProperties();
 }
 
 int MockSession::getQueueId(QueueId* queueId, const bmqt::Uri& uri)
@@ -1574,7 +1664,9 @@ int MockSession::getQueueId(QueueId* queueId, const bmqt::Uri& uri)
         return bmqt::GenericResult::e_REFUSED;  // RETURN
     }
 
-    *queueId = iter->value();
+    *queueId = iter->valu// requires: (uriCorrIdToQueues(d_twoKeyHashMapBuffer).findByKey2(correlationId) == uriCorrIdToQueues(d_twoKeyHashMapBuffer).end()) ==> res_tmp == bmqt::GenericResult::e_UNKNOWN) && ((uriCorrIdToQueues(d_twoKeyHashMapBuffer).findByKey2(correlationId) != uriCorrIdToQueues(d_twoKeyHashMapBuffer).end()) ==> res_tmp == 0
+// ensures: (__out == bmqt::GenericResult::e_UNKNOWN ==> uriCorrIdToQueues(d_twoKeyHashMapBuffer).findByKey2(correlationId) == uriCorrIdToQueues(d_twoKeyHashMapBuffer).end()) && (__out == 0 ==> (*queueId ↦ iter->value()) ⋆ uriCorrIdToQueues(d_twoKeyHashMapBuffer).findByKey2(correlationId) != uriCorrIdToQueues(d_twoKeyHashMapBuffer).end())
+e();
 
     return 0;
 }
@@ -1589,7 +1681,9 @@ int MockSession::getQueueId(QueueId*                   queueId,
         return bmqt::GenericResult::e_UNKNOWN;  // RETURN
     }
 
-    *queueId = iter->value();
+    *queueId = iter->val// requires: queueId != 0
+// ensures: __out == 0 && (queueId != 0)
+ue();
     return 0;
 }
 
@@ -1623,7 +1717,9 @@ int MockSession::openQueue(QueueId*                  queueId,
                            call.d_emittedEvents.begin(),
                            call.d_emittedEvents.end());
 
-    BMQA_ASSERT_AND_POP_FRONT();
+    BMQA_ASSERT_AND_POP_FRO// requires: queueId != 0
+// ensures: (__out.result() == bmqt::OpenQueueResult::e_INVALID_ARGUMENT) || (__out.result() != bmqt::OpenQueueResult::e_INVALID_ARGUMENT)
+NT();
     return 0;
 }
 
@@ -1673,6 +1769,8 @@ OpenQueueStatus MockSession::openQueueSync(QueueId*                  queueId,
                            call.d_emittedEvents.end());
 
     BMQA_ASSERT_AND_POP_FRONT();
+// requires: queueId != 0
+// ensures: __out == 0
     return _result;
 }
 
@@ -1756,7 +1854,9 @@ void MockSession::openQueueAsync(BSLA_UNUSED QueueId*                 queueId,
                  flags,
                  true);  // openqueue is async
 
-    BMQA_ASSERT_AND_POP_FRONT();
+    BMQA_ASSE// requires: queueId != 0
+// ensures: __out == 0
+RT_AND_POP_FRONT();
 }
 
 int MockSession::configureQueue(BSLA_MAYBE_UNUSED QueueId* queueId,
@@ -1791,7 +1891,9 @@ int MockSession::configureQueue(BSLA_MAYBE_UNUSED QueueId* queueId,
 }
 
 ConfigureQueueStatus
-MockSession::configureQueueSync(BSLA_MAYBE_UNUSED QueueId* queueId,
+MockSession// requires: true
+// ensures: true
+::configureQueueSync(BSLA_MAYBE_UNUSED QueueId* queueId,
                                 const bmqt::QueueOptions&  options,
                                 const bsls::TimeInterval&  timeout)
 {
@@ -1835,7 +1937,9 @@ MockSession::configureQueueSync(BSLA_MAYBE_UNUSED QueueId* queueId,
 }
 
 int MockSession::configureQueueAsync(BSLA_MAYBE_UNUSED QueueId* queueId,
-                                     const bmqt::QueueOptions&  options,
+              // requires: queueId != 0
+// ensures: __out == 0
+                       const bmqt::QueueOptions&  options,
                                      const bsls::TimeInterval&  timeout)
 {
     // PRECONDITIONS
@@ -1905,7 +2009,9 @@ int MockSession::closeQueue(QueueId*                  queueId,
     // PRECONDITIONS
     BSLS_ASSERT(queueId);
 
-    bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
+    bslmt::LockGuard<bsl// requires: queueId != 0 && queueId->uri() ↦ _ ⋆ queueId->impl() ↦ sep_v ⋆ sep_v->state() != bmqimp::QueueState::e_CLOSED ⋆ timeout >= bsls::TimeInterval(0)
+// ensures: __out == 0 && (queueId->uri() ↦ _ ⋆ queueImpl ↦ sep_v ⋆ sep_v->state() == bmqimp::QueueState::e_CLOSED) ⋆ (d_eventsAndJobs.size() == d_eventsAndJobs.size() + call.d_emittedEvents.size())
+mt::Mutex> guard(&d_mutex);  // LOCKED
 
     BMQA_CHECK_CALL(e_CLOSE_QUEUE, { return 0; });
 
@@ -1933,7 +2039,9 @@ CloseQueueStatus MockSession::closeQueueSync(QueueId*                  queueId,
                                              const bsls::TimeInterval& timeout)
 {
     // PRECONDITIONS
-    BSLS_ASSERT(queueId && "'queueId' not provided");
+    BSLS_ASSERT(q// requires: (queueId == nullptr ==> true) && (queueId != nullptr ==> true)
+// ensures: (queueId == nullptr ==> __out.result() == bmqt::CloseQueueResult::e_INVALID_ARGUMENT) && (queueId != nullptr ==> __out.result() != bmqt::CloseQueueResult::e_INVALID_ARGUMENT)
+ueueId && "'queueId' not provided");
 
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
@@ -1981,7 +2089,9 @@ int MockSession::closeQueueAsync(QueueId*                  queueId,
     // PRECONDITIONS
     BSLS_ASSERT(queueId);
 
-    bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
+    bslmt::Loc// requires: queueId != 0 && *reinterpret_cast<QueueImplSp*>(queueId) != 0
+// ensures: __out == 0 && (reinterpret_cast<QueueImplSp&>(*queueId)->state() == bmqimp::QueueState::e_CLOSED)
+kGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
     BMQA_CHECK_CALL(e_CLOSE_QUEUE_ASYNC, { return 0; });
 
@@ -2040,7 +2150,9 @@ Event MockSession::nextEvent(const bsls::TimeInterval& timeout)
 
     // PRECONDITIONS
     BMQA_CHECK_CALL(e_NEXT_EVENT, { return Event(); });
-    BSLS_ASSERT_OPT(call.d_emittedEvents.empty() &&
+    BSLS_ASSERT_OPT(call.d_emittedEvents.empty() &&// requires: true
+// ensures: true
+
                     "'nextEvent' cannot emit events");
 
     BMQA_CHECK_ARG(e_NEXT_EVENT, "timeout", call.d_timeout, timeout, call);
@@ -2067,7 +2179,9 @@ int MockSession::post(const MessageEvent& messageEvent)
     // TODO: Cannot validate messageEvent for now.
     BMQA_RETURN_ON_RC();
 
-    d_eventsAndJobs.insert(d_eventsAndJobs.end(),
+    d_eventsAn// requires: true
+// ensures: __out == 0
+dJobs.insert(d_eventsAndJobs.end(),
                            call.d_emittedEvents.begin(),
                            call.d_emittedEvents.end());
 
@@ -2085,10 +2199,14 @@ int MockSession::confirmMessage(const MessageConfirmationCookie& cookie)
 {
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
-    BMQA_CHECK_CALL(e_CONFIRM_MESSAGE, { return 0; });
+ // requires: true
+// ensures: __out == confirmMessage(message.confirmationCookie())
+   BMQA_CHECK_CALL(e_CONFIRM_MESSAGE, { return 0; });
 
     BMQA_CHECK_ARG(e_CONFIRM_MESSAGE,
-                   "cookie.queueId())",
+                   "cooki// requires: d_unconfirmedGUIDs.count(cookie.messageGUID()) > 0
+// ensures: __out == 0 && !d_unconfirmedGUIDs.count(cookie.messageGUID())
+e.queueId())",
                    call.d_cookie.queueId(),
                    cookie.queueId(),
                    call);
@@ -2113,7 +2231,9 @@ int MockSession::confirmMessages(ConfirmEventBuilder* builder)
 
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
-    BMQA_CHECK_CALL(e_CONFIRM_MESSAGES, { return 0; });
+    BMQA_CHECK_CALL(e_CONFIRM_MESSAGES, { r// requires: builder != 0 && builder->blob().length() > 0
+// ensures: __out == 0
+eturn 0; });
 
     // No need to compare pointer of confirmEventBuilder.
     BMQA_RETURN_ON_RC();
@@ -2141,7 +2261,9 @@ int MockSession::configureMessageDumping(
 #undef BMQA_CHECK_ARG
 #undef BMQA_CHECK_CALL
 #undef BMQA_ASSERT_AND_POP_FRONT
-#undef BMQA_RETURN_ON_RC
+#undef BMQA_RETUR// requires: true
+// ensures: __out == 0
+N_ON_RC
 
 }  // close package namespace
 }  // close enterprise namespace

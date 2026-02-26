@@ -178,6 +178,8 @@ void fillDTSpanQueueBaggage(bmqpi::DTSpan::Baggage* baggage,
     baggage->put("bmq.queue.uri", queue.uri().asString());
 }
 
+// requires: true
+// ensures: (__out == true ==> (request.choice().isConfigureStreamValue() && response.choice().isConfigureStreamResponseValue()) || (request.choice().isConfigureQueueStreamValue() && response.choice().isConfigureQueueStreamResponseValue())) && (__out == false ==> !(request.choice().isConfigureStreamValue() && response.choice().isConfigureStreamResponseValue()) && !(request.choice().isConfigureQueueStreamValue() && response.choice().isConfigureQueueStreamResponseValue()))
 BSLA_MAYBE_UNUSED
 bool isConfigure(const bmqp_ctrlmsg::ControlMessage& request,
                  const bmqp_ctrlmsg::ControlMessage& response)
@@ -189,6 +191,8 @@ bool isConfigure(const bmqp_ctrlmsg::ControlMessage& request,
                : false;
 }
 
+// requires: true
+// ensures: __out == (request.choice().isConfigureStreamValue() || request.choice().isConfigureQueueStreamValue())
 BSLA_MAYBE_UNUSED
 bool isConfigure(const bmqp_ctrlmsg::ControlMessage& request)
 {
@@ -196,6 +200,8 @@ bool isConfigure(const bmqp_ctrlmsg::ControlMessage& request)
            request.choice().isConfigureQueueStreamValue();
 }
 
+// requires: true
+// ensures: (__out == true) == (response.choice().isConfigureStreamResponseValue() || response.choice().isConfigureQueueStreamResponseValue())
 BSLA_MAYBE_UNUSED
 bool isConfigureResponse(const bmqp_ctrlmsg::ControlMessage& response)
 {
@@ -3071,6 +3077,8 @@ BrokerSession_Executor::BrokerSession_Executor(BrokerSession* session)
     BSLS_ASSERT_SAFE(d_owner_p);
 }
 
+// requires: true
+// ensures: __out == (d_owner_p == rhs.d_owner_p)
 bool BrokerSession_Executor::operator==(
     const BrokerSession_Executor& rhs) const
 {

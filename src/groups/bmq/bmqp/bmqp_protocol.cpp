@@ -85,6 +85,8 @@ const unsigned char RdaInfo::k_MAX_COUNTER_VALUE = 63U;
 
 const unsigned char RdaInfo::k_MAX_INTERNAL_COUNTER_VALUE = 255U;
 
+// requires: true
+// ensures: (stream.bad() ==> __out == stream) && (stream.good() ==> __out == stream)
 bsl::ostream&
 RdaInfo::print(bsl::ostream& stream, int level, int spacesPerLevel) const
 {
@@ -132,6 +134,8 @@ SubQueueInfo::SubQueueInfo(unsigned int id, const RdaInfo& rdaInfo)
     setId(id);
 }
 
+// requires: true
+// ensures: __out == stream && (stream.bad() || stream.good())
 bsl::ostream&
 SubQueueInfo::print(bsl::ostream& stream, int level, int spacesPerLevel) const
 {
@@ -186,6 +190,8 @@ bsl::ostream& EventType::print(bsl::ostream&   stream,
     return stream;
 }
 
+// requires: true
+// ensures: __out != 0 && (value == EventType::e_UNDEFINED ==> __out == "UNDEFINED") && (value == EventType::e_CONTROL ==> __out == "CONTROL") && (value == EventType::e_PUT ==> __out == "PUT") && (value == EventType::e_CONFIRM ==> __out == "CONFIRM") && (value == EventType::e_REJECT ==> __out == "REJECT") && (value == EventType::e_PUSH ==> __out == "PUSH") && (value == EventType::e_ACK ==> __out == "ACK") && (value == EventType::e_CLUSTER_STATE ==> __out == "CLUSTER_STATE") && (value == EventType::e_ELECTOR ==> __out == "ELECTOR") && (value == EventType::e_STORAGE ==> __out == "STORAGE") && (value == EventType::e_RECOVERY ==> __out == "RECOVERY") && (value == EventType::e_PARTITION_SYNC ==> __out == "PARTITION_SYNC") && (value == EventType::e_HEARTBEAT_REQ ==> __out == "HEARTBEAT_REQ") && (value == EventType::e_HEARTBEAT_RSP ==> __out == "HEARTBEAT_RSP") && (value == EventType::e_REPLICATION_RECEIPT ==> __out == "REPLICATION_RECEIPT") && (true ==> __out == "(* UNKNOWN *)")
 const char* EventType::toAscii(EventType::Enum value)
 {
 #define CASE(X)                                                               \
@@ -232,6 +238,8 @@ bsl::ostream& EncodingType::print(bsl::ostream&      stream,
     return stream;
 }
 
+// requires: true
+// ensures: (__out != 0) && ((value == EncodingType::e_UNKNOWN ==> __out == "UNKNOWN") && (value == EncodingType::e_BER ==> __out == "BER") && (value == EncodingType::e_JSON ==> __out == "JSON") && (value != EncodingType::e_UNKNOWN && value != EncodingType::e_BER && value != EncodingType::e_JSON ==> __out == "(* UNKNOWN *)"))
 const char* EncodingType::toAscii(EncodingType::Enum value)
 {
 #define CASE(X)                                                               \
@@ -282,6 +290,8 @@ const char SubscriptionsFeatures::k_CONFIGURE_STREAM[] = "CONFIGURE_STREAM";
 // struct OptionType
 // -----------------
 
+// requires: true
+// ensures: PrintStream(stream, level, spacesPerLevel, OptionType::toAscii(value))
 bsl::ostream& OptionType::print(bsl::ostream&    stream,
                                 OptionType::Enum value,
                                 int              level,
@@ -297,6 +307,8 @@ bsl::ostream& OptionType::print(bsl::ostream&    stream,
     return stream;
 }
 
+// requires: true
+// ensures: (value == OptionType::e_UNDEFINED ==> __out == "UNDEFINED") && (value == OptionType::e_SUB_QUEUE_IDS_OLD ==> __out == "SUB_QUEUE_IDS_OLD") && (value == OptionType::e_MSG_GROUP_ID ==> __out == "MSG_GROUP_ID") && (value == OptionType::e_SUB_QUEUE_INFOS ==> __out == "SUB_QUEUE_INFOS") && (value != OptionType::e_UNDEFINED && value != OptionType::e_SUB_QUEUE_IDS_OLD && value != OptionType::e_MSG_GROUP_ID && value != OptionType::e_SUB_QUEUE_INFOS ==> __out == "(* UNKNOWN *)")
 const char* OptionType::toAscii(OptionType::Enum value)
 {
 #define CASE(X)                                                               \
@@ -438,6 +450,8 @@ bsl::ostream& PutHeaderFlags::print(bsl::ostream&        stream,
     return stream;
 }
 
+// requires: true
+// ensures: __out != 0 && (value == PutHeaderFlags::e_ACK_REQUESTED ==> __out == "ACK_REQUESTED") && (value == PutHeaderFlags::e_MESSAGE_PROPERTIES ==> __out == "MESSAGE_PROPERTIES") && (value == PutHeaderFlags::e_UNUSED3 ==> __out == "UNUSED3") && (value == PutHeaderFlags::e_UNUSED4 ==> __out == "UNUSED4") && (value != PutHeaderFlags::e_ACK_REQUESTED && value != PutHeaderFlags::e_MESSAGE_PROPERTIES && value != PutHeaderFlags::e_UNUSED3 && value != PutHeaderFlags::e_UNUSED4 ==> __out == "(* UNKNOWN *)")
 const char* PutHeaderFlags::toAscii(PutHeaderFlags::Enum value)
 {
 #define CASE(X)                                                               \
@@ -454,6 +468,8 @@ const char* PutHeaderFlags::toAscii(PutHeaderFlags::Enum value)
 #undef CASE
 }
 
+// requires: out != 0 && str.length() >= 0
+// ensures: (__out == true ==> (*out == PutHeaderFlags::e_ACK_REQUESTED || *out == PutHeaderFlags::e_MESSAGE_PROPERTIES || *out == PutHeaderFlags::e_UNUSED3 || *out == PutHeaderFlags::e_UNUSED4)) && (__out == false ==> (*out == old_out))
 bool PutHeaderFlags::fromAscii(PutHeaderFlags::Enum*    out,
                                const bslstl::StringRef& str)
 {
@@ -480,6 +496,8 @@ bool PutHeaderFlags::fromAscii(PutHeaderFlags::Enum*    out,
 // struct PutHeaderFlagUtil
 // ------------------------
 
+// requires: true
+// ensures: (__out == false ==> ((isSet(flags, PutHeaderFlags::e_UNUSED3) || isSet(flags, PutHeaderFlags::e_UNUSED4)) && SEPFORALL(0, strlen("UNUSED flags are invalid.\n"), i, errorDescription + i ↦ "UNUSED flags are invalid.\n"[i]))) && (__out == true ==> !(isSet(flags, PutHeaderFlags::e_UNUSED3) || isSet(flags, PutHeaderFlags::e_UNUSED4)))
 bool PutHeaderFlagUtil::isValid(bsl::ostream& errorDescription, int flags)
 {
     if (isSet(flags, PutHeaderFlags::e_UNUSED3) ||
@@ -612,6 +630,8 @@ bsl::ostream& PushHeaderFlags::print(bsl::ostream&         stream,
     return stream;
 }
 
+// requires: true
+// ensures: (value == PushHeaderFlags::Enum::e_IMPLICIT_PAYLOAD ==> __out == "IMPLICIT_PAYLOAD") && (value == PushHeaderFlags::Enum::e_MESSAGE_PROPERTIES ==> __out == "MESSAGE_PROPERTIES") && (value == PushHeaderFlags::Enum::e_OUT_OF_ORDER ==> __out == "OUT_OF_ORDER") && (value == PushHeaderFlags::Enum::e_UNUSED4 ==> __out == "UNUSED4") && (value != PushHeaderFlags::Enum::e_IMPLICIT_PAYLOAD && value != PushHeaderFlags::Enum::e_MESSAGE_PROPERTIES && value != PushHeaderFlags::Enum::e_OUT_OF_ORDER && value != PushHeaderFlags::Enum::e_UNUSED4 ==> __out == "(* UNKNOWN *)")
 const char* PushHeaderFlags::toAscii(PushHeaderFlags::Enum value)
 {
 #define CASE(X)                                                               \
@@ -628,6 +648,8 @@ const char* PushHeaderFlags::toAscii(PushHeaderFlags::Enum value)
 #undef CASE
 }
 
+// requires: out != 0 && str.data() != nullptr && str.length() >= 0
+// ensures: (__out == true ==> ((*out == PushHeaderFlags::e_IMPLICIT_PAYLOAD) || (*out == PushHeaderFlags::e_MESSAGE_PROPERTIES) || (*out == PushHeaderFlags::e_OUT_OF_ORDER) || (*out == PushHeaderFlags::e_UNUSED4))) && (__out == false ==> true)
 bool PushHeaderFlags::fromAscii(PushHeaderFlags::Enum*   out,
                                 const bslstl::StringRef& str)
 {
@@ -654,6 +676,8 @@ bool PushHeaderFlags::fromAscii(PushHeaderFlags::Enum*   out,
 // struct PushHeaderFlagUtil
 // -------------------------
 
+// requires: true
+// ensures: (__out == false ==> (errorDescription << "UNUSED flags are invalid." && SEPFORALL(0, strlen("UNUSED flags are invalid."), i, errorDescription + i ↦ "UNUSED flags are invalid."[i]))) && (__out == true ==> true)
 bool PushHeaderFlagUtil::isValid(bsl::ostream& errorDescription, int flags)
 {
     if (isSet(flags, PushHeaderFlags::e_UNUSED4)) {
@@ -778,6 +802,8 @@ bsl::ostream& StorageMessageType::print(bsl::ostream&            stream,
     return stream;
 }
 
+// requires: true
+// ensures: __out != 0 && (value == StorageMessageType::e_UNDEFINED ==> __out == "UNDEFINED") && (value == StorageMessageType::e_DATA ==> __out == "DATA") && (value == StorageMessageType::e_QLIST ==> __out == "QLIST") && (value == StorageMessageType::e_CONFIRM ==> __out == "CONFIRM") && (value == StorageMessageType::e_DELETION ==> __out == "DELETION") && (value == StorageMessageType::e_JOURNAL_OP ==> __out == "JOURNAL_OP") && (value == StorageMessageType::e_QUEUE_OP ==> __out == "QUEUE_OP") && (value != StorageMessageType::e_UNDEFINED && value != StorageMessageType::e_DATA && value != StorageMessageType::e_QLIST && value != StorageMessageType::e_CONFIRM && value != StorageMessageType::e_DELETION && value != StorageMessageType::e_JOURNAL_OP && value != StorageMessageType::e_QUEUE_OP ==> __out == "(* UNKNOWN *)")
 const char* StorageMessageType::toAscii(StorageMessageType::Enum value)
 {
 #define CASE(X)                                                               \
@@ -816,6 +842,8 @@ bsl::ostream& StorageHeaderFlags::print(bsl::ostream&            stream,
     return stream;
 }
 
+// requires: true
+// ensures: (value == StorageHeaderFlags::Enum::e_RECEIPT_REQUESTED ==> __out == "RECEIPT_REQUESTED") && (value == StorageHeaderFlags::Enum::e_UNUSED2 ==> __out == "UNUSED2") && (value == StorageHeaderFlags::Enum::e_UNUSED3 ==> __out == "UNUSED3") && (value == StorageHeaderFlags::Enum::e_UNUSED4 ==> __out == "UNUSED4") && (value != StorageHeaderFlags::Enum::e_RECEIPT_REQUESTED && value != StorageHeaderFlags::Enum::e_UNUSED2 && value != StorageHeaderFlags::Enum::e_UNUSED3 && value != StorageHeaderFlags::Enum::e_UNUSED4 ==> __out == "(* UNKNOWN *)")
 const char* StorageHeaderFlags::toAscii(StorageHeaderFlags::Enum value)
 {
 #define CASE(X)                                                               \
@@ -832,6 +860,8 @@ const char* StorageHeaderFlags::toAscii(StorageHeaderFlags::Enum value)
 #undef CASE
 }
 
+// requires: true
+// ensures: (__out == true ==> (*out == StorageHeaderFlags::e_RECEIPT_REQUESTED || *out == StorageHeaderFlags::e_UNUSED2 || *out == StorageHeaderFlags::e_UNUSED3 || *out == StorageHeaderFlags::e_UNUSED4)) && (__out == false ==> (*out == old_out))
 bool StorageHeaderFlags::fromAscii(StorageHeaderFlags::Enum* out,
                                    const bslstl::StringRef&  str)
 {
@@ -858,6 +888,8 @@ bool StorageHeaderFlags::fromAscii(StorageHeaderFlags::Enum* out,
 // struct StorageHeaderFlagUtil
 // ----------------------------
 
+// requires: true
+// ensures: (__out == false ==> (isSet(flags, StorageHeaderFlags::e_UNUSED2) || isSet(flags, StorageHeaderFlags::e_UNUSED3) || isSet(flags, StorageHeaderFlags::e_UNUSED4)) && SEPFORALL(0, strlen("UNUSED flags are invalid."), i, errorDescription + i ↦ "UNUSED flags are invalid."[i])) && (__out == true ==> !(isSet(flags, StorageHeaderFlags::e_UNUSED2) || isSet(flags, StorageHeaderFlags::e_UNUSED3) || isSet(flags, StorageHeaderFlags::e_UNUSED4)))
 bool StorageHeaderFlagUtil::isValid(bsl::ostream& errorDescription,
                                     unsigned char flags)
 {
@@ -893,6 +925,8 @@ bsl::ostream& StorageHeaderFlagUtil::prettyPrint(bsl::ostream& stream,
 #undef CHECKVALUE
 }
 
+// requires: true
+// ensures: (__out == 0 ==> (out ↦ sep_v && SEPFORALL(0, bdlb::Tokenizer(str, ",").size(), i, (bdlb::Tokenizer(str, ",").begin() + i) != bdlb::Tokenizer(str, ",").end() && StorageHeaderFlags::fromAscii(&sep_v, *(bdlb::Tokenizer(str, ",").begin() + i)) == true && sep_v == (sep_v | *out)))) && (__out == -1 ==> EXISTS(0, bdlb::Tokenizer(str, ",").size(), i, (bdlb::Tokenizer(str, ",").begin() + i) != bdlb::Tokenizer(str, ",").end() && StorageHeaderFlags::fromAscii(&sep_v, *(bdlb::Tokenizer(str, ",").begin() + i)) == false && errorDescription.str().find(*(bdlb::Tokenizer(str, ",").begin() + i)) != std::string::npos))
 int StorageHeaderFlagUtil::fromString(bsl::ostream&      errorDescription,
                                       unsigned char*     out,
                                       const bsl::string& str)
@@ -940,6 +974,8 @@ bsl::ostream& RecoveryFileChunkType::print(bsl::ostream&               stream,
     return stream;
 }
 
+// requires: true
+// ensures: (value == RecoveryFileChunkType::e_UNDEFINED ==> __out == "UNDEFINED") && (value == RecoveryFileChunkType::e_DATA ==> __out == "DATA") && (value == RecoveryFileChunkType::e_JOURNAL ==> __out == "JOURNAL") && (value == RecoveryFileChunkType::e_QLIST ==> __out == "QLIST") && (value != RecoveryFileChunkType::e_UNDEFINED && value != RecoveryFileChunkType::e_DATA && value != RecoveryFileChunkType::e_JOURNAL && value != RecoveryFileChunkType::e_QLIST ==> __out == "(* UNKNOWN *)")
 const char* RecoveryFileChunkType::toAscii(RecoveryFileChunkType::Enum value)
 {
 #define CASE(X)                                                               \

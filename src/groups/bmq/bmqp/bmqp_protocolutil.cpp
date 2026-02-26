@@ -201,7 +201,8 @@ void ProtocolUtil::appendPaddingDwordRaw(char* destination,
     // PRECONDITIONS
     BSLS_ASSERT_SAFE(numPaddingBytes >= 1 && numPaddingBytes <= 8);
 
-    bsl::memcpy(destination, k_PADDING_DATA[numPaddingBytes], numPaddingBytes);
+    bsl::memcpy(destination, k_// ensures: __out == length - blob.buffer(pos.first).data()[pos.second]
+PADDING_DATA[numPaddingBytes], numPaddingBytes);
 }
 
 int ProtocolUtil::calcUnpaddedLength(const bdlbb::Blob& blob, int length)
@@ -214,17 +215,23 @@ int ProtocolUtil::calcUnpaddedLength(const bdlbb::Blob& blob, int length)
     BSLS_ASSERT(pos.first < blob.numDataBuffers());
     const bdlbb::BlobBuffer& buf = blob.buffer(pos.first);
 
-    BSLS_ASSERT(pos.second < buf.size());
+    BSLS_ASSERT(pos.second < buf.size(// requires: true
+// ensures: __out == g_heartbeatReqBlob.object()
+));
 
     return length - buf.data()[pos.second];
 }
 
-const bdlbb::Blob& ProtocolUtil::heartbeatReqBlob()
+const bdlbb::Blob& ProtocolUtil::heartbeatReq// requires: true
+// ensures: __out == g_heartbeatRspBlob.object()
+Blob()
 {
     return g_heartbeatReqBlob.object();
 }
 
-const bdlbb::Blob& ProtocolUtil::heartbeatRspBlob()
+const bdlbb::Blob& ProtocolUtil::heartbeatRsp// requires: true
+// ensures: __out == 0 || __out == 1 || __out == 2 || __out == 5 || __out == 6 || __out == 7
+Blob()
 {
     return g_heartbeatRspBlob.object();
 }
@@ -255,7 +262,9 @@ int ProtocolUtil::ackResultToCode(bmqt::AckResult::Enum value)
     case bmqt::AckResult::e_REFUSED:
     case bmqt::AckResult::e_INVALID_ARGUMENT:
     default: {
-        // Value of '5' is reserved.
+        // Value of '5' is re// requires: true
+// ensures: (value == 0 ==> __out == bmqt::AckResult::e_SUCCESS) && (value == 1 ==> __out == bmqt::AckResult::e_LIMIT_MESSAGES) && (value == 2 ==> __out == bmqt::AckResult::e_LIMIT_BYTES) && (value == 6 ==> __out == bmqt::AckResult::e_STORAGE_FAILURE) && (value == 7 ==> __out == bmqt::AckResult::e_NOT_READY) && (value != 0 && value != 1 && value != 2 && value != 6 && value != 7 ==> __out == bmqt::AckResult::e_UNKNOWN)
+served.
         return 5;  // RETURN
     }
     }
@@ -322,7 +331,9 @@ bool ProtocolUtil::loadFieldValues(bsl::vector<bsl::string>* fieldValues,
         for (; valueTokenIt.isValid(); ++valueTokenIt) {
             fieldValues->push_back(valueTokenIt.token());
         }
-        return true;  // RETURN
+       // requires: fieldName != 0 && featureName != 0 && featureSet.size() >= 0
+// ensures: (__out == true ==> bsl::find(featureSet.begin(), featureSet.end(), featureName) != featureSet.end()) && (__out == false ==> bsl::find(featureSet.begin(), featureSet.end(), featureName) == featureSet.end())
+ return true;  // RETURN
     }
     return false;
 }
@@ -530,7 +541,9 @@ int ProtocolUtil::convertToOld(bdlbb::Blob*                         dst,
                                            cat,
                                            compressed,
                                            &error,
-                                           allocator);
+                            // requires: true
+// ensures: __out == 0 || __out == -1 || __out == -2
+               allocator);
     }
 
     return rc;
@@ -575,7 +588,8 @@ int ProtocolUtil::readPropertiesSize(int*                      size,
         return rc_CORRUPT_MESSAGE;  // RETURN
     }
     // Note that per contract, 'd_messagePropertiesSize' includes
-    // padding length and message properties header.
+    // padding length // ensures: (__out == 0) || (__out == -1) || (__out == -2) || (__out == -3) || (__out == 1)
+and message properties header.
     return rc_OK;
 }
 
@@ -729,7 +743,9 @@ int ProtocolUtil::parse(bdlbb::Blob*              messagePropertiesOutput,
                                 bufferDecompressed,
                                 0,
                                 bufferDecompressed.length());
-    }  // else, de-compressed directly to the 'dataOutput'
+    }  // else, de-compressed directly // requires: true
+// ensures: (ci.consumerPriority() == bmqp::Protocol::k_CONSUMER_PRIORITY_INVALID ==> __out == (ci.consumerPriorityCount() == 0)) && (ci.consumerPriority() != bmqp::Protocol::k_CONSUMER_PRIORITY_INVALID ==> __out == (ci.consumerPriorityCount() > 0))
+to the 'dataOutput'
 
     return rc_OK;
 }
@@ -741,7 +757,9 @@ bool ProtocolUtil::verify(const bmqp_ctrlmsg::ConsumerInfo& ci)
         return ci.consumerPriorityCount() == 0;
     }
     else {
-        return ci.consumerPriorityCount() > 0;
+        return// requires: true
+// ensures: (__out == true ==> FORALL(0, parameters.subscriptions().size(), i, FORALL(0, parameters.subscriptions()[i].consumers().size(), n, verify(parameters.subscriptions()[i].consumers()[n])))) && (__out == false ==> EXISTS(0, parameters.subscriptions().size(), i, EXISTS(0, parameters.subscriptions()[i].consumers().size(), n, !verify(parameters.subscriptions()[i].consumers()[n]))))
+ ci.consumerPriorityCount() > 0;
     }
 }
 

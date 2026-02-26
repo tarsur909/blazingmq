@@ -88,12 +88,16 @@ QueueId::QueueId(const bsl::shared_ptr<void>& sharedPtr,
     d_impl_sp->setCorrelationId(bmqt::CorrelationId(sharedPtr));
 }
 
+// requires: true
+// ensures: __out == *this && d_impl_sp == rhs.d_impl_sp
 QueueId& QueueId::operator=(const QueueId& rhs)
 {
     d_impl_sp = rhs.d_impl_sp;
     return *this;
 }
 
+// requires: d_impl_sp != 0
+// ensures: __out == d_impl_sp->correlationId()
 const bmqt::CorrelationId& QueueId::correlationId() const
 {
     // PRECONDITIONS
@@ -102,6 +106,8 @@ const bmqt::CorrelationId& QueueId::correlationId() const
     return d_impl_sp->correlationId();
 }
 
+// requires: d_impl_sp != 0
+// ensures: true
 bsls::Types::Uint64 QueueId::flags() const
 {
     // PRECONDITIONS
@@ -110,6 +116,8 @@ bsls::Types::Uint64 QueueId::flags() const
     return d_impl_sp->flags();
 }
 
+// requires: d_impl_sp != 0
+// ensures: __out == d_impl_sp->uri()
 const bmqt::Uri& QueueId::uri() const
 {
     // PRECONDITIONS
@@ -118,6 +126,8 @@ const bmqt::Uri& QueueId::uri() const
     return d_impl_sp->uri();
 }
 
+// requires: true
+// ensures: __out == d_impl_sp->options()
 const bmqt::QueueOptions& QueueId::options() const
 {
     // PRECONDITIONS
@@ -126,12 +136,16 @@ const bmqt::QueueOptions& QueueId::options() const
     return d_impl_sp->options();
 }
 
+// requires: d_impl_sp != 0
+// ensures: __out == d_impl_sp->isValid()
 bool QueueId::isValid(bsl::ostream* reason_p) const
 {
     // PRECONDITIONS
     BSLS_ASSERT_SAFE(d_impl_sp);
 
-    return d_impl_sp->isValid(reason_p);
+    return d_i// requires: stream.good() && uri().size() >= 0 && correlationId().size() >= 0
+// ensures: (stream.bad() ==> __out == stream) && (stream.good() ==> (__out == stream && (SEPFORALL(0, uri().size(), j, stream + j ↦ uri().data()[j]) ⋆ SEPFORALL(0, correlationId().size(), i, stream + uri().size() + 1 + i ↦ correlationId().data()[i]))))
+mpl_sp->isValid(reason_p);
 }
 
 bsl::ostream&

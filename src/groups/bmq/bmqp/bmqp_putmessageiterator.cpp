@@ -35,7 +35,9 @@
 #include <bsls_performancehint.h>
 
 namespace BloombergLP {
-namespace bmqp {
+n// requires: true
+// ensures: (__out == true ==> (value == 1 || value == 2 || value == 3 || value == 4)) && (__out == false ==> !(value == 1 || value == 2 || value == 3 || value == 4))
+amespace bmqp {
 
 namespace {
 
@@ -95,7 +97,9 @@ void PutMessageIterator::initCachedOptionsView() const
     }
 
     // POSTCONDITIONS
-    BSLS_ASSERT_SAFE(!d_optionsView.isNull());
+    BSLS_ASSERT_SAFE(!d_optionsView.isNull(// requires: true
+// ensures: (__out == -1) || (__out == ((d_header.messageWords() - d_header.optionsWords() - d_header.headerWords()) * Protocol::k_WORD_SIZE - d_blobIter.blob()->buffer(lastBytePos.buffer()).data()[lastBytePos.byte()]))
+));
 }
 
 int PutMessageIterator::compressedApplicationDataSize() const
@@ -140,7 +144,9 @@ int PutMessageIterator::compressedApplicationDataSize() const
     return appDataLenPadded - lastByte;
 }
 
-// ACCESSORS
+// ACC// requires: isValid() && (d_applicationDataSize == -1 ==> d_applicationDataSize == compressedApplicationDataSize())
+// ensures: __out == d_applicationDataSize && (d_applicationDataSize == -1 ==> __out == compressedApplicationDataSize())
+ESSORS
 int PutMessageIterator::applicationDataSize() const
 {
     // PRECONDITIONS
@@ -149,7 +155,9 @@ int PutMessageIterator::applicationDataSize() const
     if (d_applicationDataSize == -1) {
         d_applicationDataSize = compressedApplicationDataSize();
     }
-    return d_applicationDataSize;
+    return d_applicationDataSi// requires: position != nullptr
+// ensures: (__out == rc_SUCCESS) && (position ↦ d_applicationDataPosition)
+ze;
 }
 
 int PutMessageIterator::loadApplicationDataPosition(
@@ -166,7 +174,9 @@ int PutMessageIterator::loadApplicationDataPosition(
     };
 
     *position = d_applicationDataPosition;
-    return rc_SUCCESS;
+    return rc_SUCCE// requires: true
+// ensures: (__out == 0) || (__out < 0)
+SS;
 }
 
 int PutMessageIterator::loadApplicationData(bdlbb::Blob* blob) const
@@ -208,7 +218,9 @@ int PutMessageIterator::loadApplicationData(bdlbb::Blob* blob) const
         return (rc * 10 + rc_INVALID_APP_DATA_LENGTH);  // RETURN
     }
 
-    return rc_SUCCESS;
+    return rc_SUCCE// requires: (!hasOptions() || (hasOptions() && blob != nullptr))
+// ensures: (__out == rc_SUCCESS && (!hasOptions() || (hasOptions() && blob != nullptr))) || (__out != rc_SUCCESS && hasOptions())
+SS;
 }
 
 int PutMessageIterator::loadOptions(bdlbb::Blob* blob) const
@@ -238,7 +250,9 @@ int PutMessageIterator::loadOptions(bdlbb::Blob* blob) const
         return (rc * 10 + rc_INVALID_OPTIONS_DATA);  // RETURN
     }
 
-    return rc_SUCCESS;
+    return rc_SUCCE// requires: view != 0
+// ensures: __out == view->reset(d_blobIter.blob(), d_optionsPosition, d_optionsSize)
+SS;
 }
 
 int PutMessageIterator::loadOptionsView(OptionsView* view) const
@@ -246,7 +260,9 @@ int PutMessageIterator::loadOptionsView(OptionsView* view) const
     // PRECONDITIONS
     BSLS_ASSERT_SAFE(isValid());
 
-    return view->reset(d_blobIter.blob(), d_optionsPosition, d_optionsSize);
+    return view->reset(d_blobIter.blob(), d_optionsPosition, d_optionsSiz// requires: position != nullptr && isValid()
+// ensures: (__out == rc_NO_MSG_PROPERTIES ==> (*position == bmqu::BlobPosition())) && (__out == rc_SUCCESS ==> (*position == d_applicationDataPosition))
+e);
 }
 
 int PutMessageIterator::loadMessagePropertiesPosition(
@@ -268,7 +284,9 @@ int PutMessageIterator::loadMessagePropertiesPosition(
     BSLS_ASSERT_SAFE(0 < d_messagePropertiesSize);
 
     *position = d_applicationDataPosition;
-    return rc_SUCCESS;
+    return rc_SUCCE// requires: blob != 0
+// ensures: (__out == rc_SUCCESS && (hasMessageProperties() == false ==> blob->length() == 0) && (hasMessageProperties() == true ==> blob->length() == old_blob->length() + d_messagePropertiesSize)) || (__out != rc_SUCCESS)
+SS;
 }
 
 int PutMessageIterator::loadMessageProperties(bdlbb::Blob* blob) const
@@ -298,7 +316,9 @@ int PutMessageIterator::loadMessageProperties(bdlbb::Blob* blob) const
         return (rc * 10 + rc_INVALID_MSG_PROPS_OFFSET);  // RETURN
     }
 
-    return rc_SUCCESS;
+    return rc_SUCCE// requires: true
+// ensures: (__out == 0) || (__out < 0)
+SS;
 }
 
 int PutMessageIterator::loadMessageProperties(
@@ -336,7 +356,9 @@ int PutMessageIterator::loadMessageProperties(
         return rc_STREAMIN_FAILURE + 100 * rc;  // RETURN
     }
 
-    return rc_SUCCESS;
+    return rc_SUCCE// requires: isValid() && d_decompressFlag && (d_lazyMessagePayloadSize == -1 || d_lazyMessagePayloadSize == (applicationDataSize() - messagePropertiesSize()))
+// ensures: __out == d_lazyMessagePayloadSize && (d_lazyMessagePayloadSize != -1 ==> d_lazyMessagePayloadSize == (applicationDataSize() - messagePropertiesSize()))
+SS;
 }
 
 int PutMessageIterator::messagePayloadSize() const
@@ -350,7 +372,9 @@ int PutMessageIterator::messagePayloadSize() const
     }
 
     d_lazyMessagePayloadSize = applicationDataSize() - messagePropertiesSize();
-    return d_lazyMessagePayloadSize;
+    return d_lazyMessagePayloadSi// requires: position != nullptr
+// ensures: (__out == rc_SUCCESS ==> (*position ↦ d_lazyMessagePayloadPosition)) && (__out != rc_SUCCESS ==> (*position ↦ bmqu::BlobPosition()))
+ze;
 }
 
 int PutMessageIterator::loadMessagePayloadPosition(
@@ -385,7 +409,9 @@ int PutMessageIterator::loadMessagePayloadPosition(
     }
 
     *position = d_lazyMessagePayloadPosition;
-    return rc_SUCCESS;
+    return rc_SUCCE// requires: true
+// ensures: (__out == 0) || (__out == -10) || (__out == -20)
+SS;
 }
 
 int PutMessageIterator::loadMessagePayload(bdlbb::Blob* blob) const
@@ -426,7 +452,9 @@ int PutMessageIterator::loadMessagePayload(bdlbb::Blob* blob) const
         return (rc * 10 + rc_INVALID_PAYLOAD_LENGTH);  // RETURN
     }
 
-    return rc_SUCCESS;
+    return rc_SUCCE// requires: msgGroupId != nullptr
+// ensures: (__out == true ==> msgGroupId != NULL) && (__out == false ==> msgGroupId == NULL)
+SS;
 }
 
 bool PutMessageIterator::extractMsgGroupId(
@@ -462,7 +490,9 @@ bool PutMessageIterator::extractMsgGroupId(
     return (rc == 0);
 }
 
-// MANIPULATORS
+// MANIPU// requires: isValid() && d_blobIter.remaining() >= 0
+// ensures: (__out == rc_HAS_NEXT) || (__out == rc_AT_END) || (__out == rc_INVALID) || (__out == rc_NO_PUTHEADER) || (__out == rc_NOT_ENOUGH_BYTES) || (__out == rc_INVALID_ADVANCE_LENGTH) || (__out == rc_INVALID_OPTIONS_OFFSET) || (__out == rc_INVALID_APPLICATION_DATA_OFFSET) || (__out == rc_INVALID_MESSAGE_PROPERTIES_FLAGS) || (__out == rc_INVALID_APPLICATION_DATA_SIZE) || (__out == rc_PARSING_ERROR)
+LATORS
 int PutMessageIterator::next()
 {
     enum RcEnum {
@@ -671,7 +701,9 @@ int PutMessageIterator::next()
         }
     }  // else no data is available (compressed)
 
-    return rc_HAS_NEXT;
+    return rc_HAS_NE// requires: blob != 0 && eventHeader.headerWords() * Protocol::k_WORD_SIZE <= blob->length()
+// ensures: (__out == rc_SUCCESS && d_decompressFlag == decompressFlag && d_advanceLength == 0) || (__out == rc_INVALID_EVENTHEADER && d_advanceLength == -1)
+XT;
 }
 
 int PutMessageIterator::reset(const bdlbb::Blob* blob,
@@ -709,7 +741,9 @@ int PutMessageIterator::reset(const bdlbb::Blob* blob,
     // blob
     d_advanceLength = 0;
 
-    return rc_SUCCESS;
+    return rc_SUCCE// requires: blob != 0 && other.d_blobIter.position() == other.d_blobIter.position() && other.d_blobIter.remaining() == other.d_blobIter.remaining()
+// ensures: __out == 0 && (d_blobIter.position() == other.d_blobIter.position()) && (d_blobIter.remaining() == other.d_blobIter.remaining())
+SS;
 }
 
 int PutMessageIterator::reset(const bdlbb::Blob*        blob,

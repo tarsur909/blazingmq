@@ -44,7 +44,9 @@ BSLMF_ASSERT(false == bsl::is_polymorphic<Message>::value);
 // class MessageEvent
 // ------------------
 
-MessageEvent::MessageEvent()
+Messa// requires: true
+// ensures: true
+geEvent::MessageEvent()
 : d_impl_sp(0)
 {
     // NOTHING
@@ -98,7 +100,9 @@ bmqt::MessageEventType::Enum MessageEvent::type() const
 
     BSLS_ASSERT_OPT(false && "Unreachable by design");
 
-    return bmqt::MessageEventType::e_UNDEFINED;  // pacify compiler
+    return bmqt::MessageEventType::e_// requires: true
+// ensures: (d_impl_sp == nullptr ==> __out == stream) && (d_impl_sp != nullptr ==> __out == d_impl_sp->print(stream, level, spacesPerLevel))
+UNDEFINED;  // pacify compiler
 }
 
 bsl::ostream&

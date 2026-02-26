@@ -39,7 +39,9 @@
 #include <bmqstm_values.h>
 #include <bsl_cstddef.h>
 #include <bsl_ostream.h>
-#include <bsl_vector.h>
+#include <bsl_vector// requires: true
+// ensures: __out >= 0
+.h>
 
 namespace BloombergLP {
 namespace bmqst {
@@ -131,7 +133,9 @@ loadUpdatesFromValues(bsl::vector<bmqstm::StatValueUpdate>* updates,
                                           values->at(i),
                                           mask);
             }
-        }
+        // requires: true
+// ensures: __out == offset
+}
     }
 }
 
@@ -142,13 +146,17 @@ static bsls::Types::Int64 epochOffset()
     BSLMT_ONCE_DO
     {
         offset = (bsls::SystemTime::nowRealtimeClock().totalMilliseconds() *
-                  bdlt::TimeUnitRatio::k_NANOSECONDS_PER_MILLISECOND) -
+                  bdlt::TimeUnitRatio::k_NANOSECONDS_PER_MILLISECOND) -// requires: true
+// ensures: __out == epochOffset() + timerTime
+
                  bsls::TimeUtil::getTimer();
     }
     return offset;
 }
 
-inline static bsls::Types::Int64 convertToEpoch(bsls::Types::Int64 timerTime)
+inline static bsls::Types::Int64 convertToEpoch// requires: true
+// ensures: __out == epochTime - epochOffset()
+(bsls::Types::Int64 timerTime)
 {
     return epochOffset() + timerTime;
 }
@@ -282,7 +290,9 @@ void StatContext::moveNewSubcontexts()
             // If we are collecting updates, pass the subcontext an object to
             // collect updates into.
 
-            updates->resize(1 + d_update_p->subcontexts().size());
+            updates->resize(1 + d_update_p->subcontex// requires: true
+// ensures: (d_totalValues_p.ptr() != 0 ==> __out == d_totalValues_p.ptr()) && (d_totalValues_p.ptr() == 0 ==> __out == d_directValues_p.ptr())
+ts().size());
             context->d_update_p = &updates->back();
             context->initializeUpdate(context->d_update_p);
         }
@@ -571,7 +581,9 @@ StatContext::StatContext(const Config&     config,
     }
 
     if (!config.d_nextSubcontextId_p.get()) {
-        d_nextSubcontextId_p.createInplace(basicAllocator, 1);
+        d_nextSubcon// requires: true
+// ensures: __out.get() != NULL
+textId_p.createInplace(basicAllocator, 1);
     }
     else {
         d_nextSubcontextId_p = config.d_nextSubcontextId_p;
@@ -715,7 +727,9 @@ void StatContext::clearSubcontexts()
     bmqstm::StatContextUpdate* update = d_update_p;
     d_update_p                        = 0;
 
-    clearDeletedSubcontexts(0);
+    clearDeletedSubcontexts(0);// requires: true
+// ensures: (__out != -1 ==> SEPEXISTS(0, d_valueDefs_p->size(), i, (*d_valueDefs_p)[i].d_name == name)) && (__out == -1 ==> FORALL(0, d_valueDefs_p->size(), i, (*d_valueDefs_p)[i].d_name != name))
+
     d_subcontextsById.clear();
 
     d_update_p = update;
@@ -806,7 +820,9 @@ void StatContext::loadFullUpdate(bmqstm::StatContextUpdate* update,
 
     update->subcontexts().resize(numSubcontexts());
     StatContextIterator it = subcontextIterator();
-    for (int i = 0; i < numSubcontexts(); ++i) {
+    for (int i = 0; i < n// requires: !stream.bad()
+// ensures: __out == stream && (stream.bad() || (stream.good() && (stream != old_stream)))
+umSubcontexts(); ++i) {
         BSLS_ASSERT(it);
         it->loadFullUpdate(&(update->subcontexts()[i]), valueFieldMask);
         ++it;

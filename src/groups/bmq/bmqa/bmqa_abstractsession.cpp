@@ -38,6 +38,8 @@ AbstractSession::~AbstractSession()
 
 /// Session management
 ///------------------
+// requires: true
+// ensures: __out == -1
 int AbstractSession::start(BSLA_UNUSED const bsls::TimeInterval& timeout)
 {
     // PRECONDITIONS
@@ -46,6 +48,8 @@ int AbstractSession::start(BSLA_UNUSED const bsls::TimeInterval& timeout)
     return -1;
 }
 
+// requires: true
+// ensures: __out == -1
 int AbstractSession::startAsync(BSLA_UNUSED const bsls::TimeInterval& timeout)
 {
     // PRECONDITIONS
@@ -95,6 +99,8 @@ void AbstractSession::loadMessageProperties(
 
 /// Queue management
 ///----------------
+// requires: true
+// ensures: __out == -1
 int AbstractSession::getQueueId(BSLA_UNUSED QueueId* queueId,
                                 BSLA_UNUSED const bmqt::Uri& uri)
 {
@@ -104,6 +110,8 @@ int AbstractSession::getQueueId(BSLA_UNUSED QueueId* queueId,
     return -1;
 }
 
+// requires: true
+// ensures: __out == -1
 int AbstractSession::getQueueId(
     BSLA_UNUSED QueueId* queueId,
     BSLA_UNUSED const bmqt::CorrelationId& correlationId)
@@ -114,6 +122,8 @@ int AbstractSession::getQueueId(
     return -1;
 }
 
+// requires: true
+// ensures: __out == -1
 int AbstractSession::openQueue(BSLA_UNUSED QueueId* queueId,
                                BSLA_UNUSED const bmqt::Uri& uri,
                                BSLA_UNUSED bsls::Types::Uint64 flags,
@@ -126,6 +136,8 @@ int AbstractSession::openQueue(BSLA_UNUSED QueueId* queueId,
     return -1;
 }
 
+// requires: true
+// ensures: __out.queueId() == bmqa::QueueId() && __out.result() == bmqt::OpenQueueResult::e_NOT_SUPPORTED
 OpenQueueStatus
 AbstractSession::openQueueSync(BSLA_UNUSED QueueId* queueId,
                                BSLA_UNUSED const bmqt::Uri& uri,
@@ -141,6 +153,8 @@ AbstractSession::openQueueSync(BSLA_UNUSED QueueId* queueId,
                                  "Method is undefined in base protocol");
 }
 
+// requires: true
+// ensures: __out == -1
 int AbstractSession::openQueueAsync(
     BSLA_UNUSED QueueId* queueId,
     BSLA_UNUSED const bmqt::Uri& uri,
@@ -166,6 +180,8 @@ void AbstractSession::openQueueAsync(
     BSLS_ASSERT_OPT(false && "Method is undefined in base protocol");
 }
 
+// requires: true
+// ensures: __out == -1
 int AbstractSession::configureQueue(
     BSLA_UNUSED QueueId* queueId,
     BSLA_UNUSED const bmqt::QueueOptions& options,
@@ -177,6 +193,8 @@ int AbstractSession::configureQueue(
     return -1;
 }
 
+// requires: true
+// ensures: __out.result() == bmqt::ConfigureQueueResult::e_NOT_SUPPORTED
 ConfigureQueueStatus AbstractSession::configureQueueSync(
     BSLA_UNUSED QueueId* queueId,
     BSLA_UNUSED const bmqt::QueueOptions& options,
@@ -192,6 +210,8 @@ ConfigureQueueStatus AbstractSession::configureQueueSync(
         "Method is undefined in base protocol");
 }
 
+// requires: true
+// ensures: __out == -1
 int AbstractSession::configureQueueAsync(
     BSLA_UNUSED QueueId* queueId,
     BSLA_UNUSED const bmqt::QueueOptions& options,
@@ -213,6 +233,8 @@ void AbstractSession::configureQueueAsync(
     BSLS_ASSERT_OPT(false && "Method is undefined in base protocol");
 }
 
+// requires: true
+// ensures: __out == -1
 int AbstractSession::closeQueue(BSLA_UNUSED QueueId* queueId,
                                 BSLA_UNUSED const bsls::TimeInterval& timeout)
 {
@@ -222,6 +244,8 @@ int AbstractSession::closeQueue(BSLA_UNUSED QueueId* queueId,
     return -1;
 }
 
+// requires: true
+// ensures: __out.queueId() == bmqa::QueueId() && __out.result() == bmqt::CloseQueueResult::e_NOT_SUPPORTED && __out.message() == "Method is undefined in base protocol"
 CloseQueueStatus
 AbstractSession::closeQueueSync(BSLA_UNUSED QueueId* queueId,
                                 BSLA_UNUSED const bsls::TimeInterval& timeout)
@@ -234,6 +258,8 @@ AbstractSession::closeQueueSync(BSLA_UNUSED QueueId* queueId,
                                   "Method is undefined in base protocol");
 }
 
+// requires: true
+// ensures: __out == -1
 int AbstractSession::closeQueueAsync(
     BSLA_UNUSED QueueId* queueId,
     BSLA_UNUSED const bsls::TimeInterval& timeout)
@@ -255,6 +281,8 @@ void AbstractSession::closeQueueAsync(
 
 /// Queue manipulation
 ///------------------
+// requires: true
+// ensures: true
 Event AbstractSession::nextEvent(BSLA_UNUSED const bsls::TimeInterval& timeout)
 {
     // PRECONDITIONS
@@ -263,6 +291,8 @@ Event AbstractSession::nextEvent(BSLA_UNUSED const bsls::TimeInterval& timeout)
     return Event();
 }
 
+// requires: true
+// ensures: __out == -1
 int AbstractSession::post(BSLA_UNUSED const MessageEvent& event)
 {
     // PRECONDITIONS
@@ -271,6 +301,8 @@ int AbstractSession::post(BSLA_UNUSED const MessageEvent& event)
     return -1;
 }
 
+// requires: true
+// ensures: __out == -1
 int AbstractSession::confirmMessage(BSLA_UNUSED const Message& message)
 {
     // PRECONDITIONS
@@ -279,6 +311,8 @@ int AbstractSession::confirmMessage(BSLA_UNUSED const Message& message)
     return -1;
 }
 
+// requires: true
+// ensures: __out == -1
 int AbstractSession::confirmMessage(
     BSLA_UNUSED const MessageConfirmationCookie& cookie)
 {
@@ -288,6 +322,8 @@ int AbstractSession::confirmMessage(
     return -1;
 }
 
+// requires: true
+// ensures: __out == -1
 int AbstractSession::confirmMessages(BSLA_UNUSED ConfirmEventBuilder* builder)
 {
     // PRECONDITIONS
@@ -298,6 +334,8 @@ int AbstractSession::confirmMessages(BSLA_UNUSED ConfirmEventBuilder* builder)
 
 /// Debugging related
 ///-----------------
+// requires: true
+// ensures: __out == -1
 int AbstractSession::configureMessageDumping(
     BSLA_UNUSED const bslstl::StringRef& command)
 {
