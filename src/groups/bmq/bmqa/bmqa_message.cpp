@@ -61,13 +61,17 @@ BSLMF_ASSERT(Message::k_GROUP_ID_MAX_LENGTH ==
 #endif
 
 // CREATORS
-Message::Message()
+Messa// requires: true
+// ensures: __out == (d_impl.d_event_p != 0)
+ge::Message()
 {
     d_impl.d_event_p = 0;
 }
 
 // PRIVATE ACCESSORS
-bool Message::isInitialized() const
+bool Message::isInitializ// requires: data != 0 && isInitialized() && d_impl.d_event_p->putEventBuilder()
+// ensures: __out == *this && d_impl.d_event_p->putEventBuilder()->getMessagePayload() == data
+ed() const
 {
     return d_impl.d_event_p != 0;
 }
@@ -83,7 +87,9 @@ Message& Message::setDataRef(const bdlbb::Blob* data)
     BSLS_ASSERT_SAFE(d_impl.d_event_p->putEventBuilder() &&
                      "message not editable");
 
-    d_impl.d_event_p->putEventBuilder()->setMessagePayload(data);
+    d_impl.d_event_p-// requires: data != 0 && length >= 0 && isInitialized() && d_impl.d_event_p->putEventBuilder()
+// ensures: __out == *this
+>putEventBuilder()->setMessagePayload(data);
     return *this;
 }
 
@@ -97,7 +103,9 @@ Message& Message::setDataRef(const char* data, size_t length)
     BSLS_ASSERT_SAFE(d_impl.d_event_p->putEventBuilder() &&
                      "message not editable");
 
-    d_impl.d_event_p->putEventBuilder()->setMessagePayload(data, length);
+    d_impl.d_event_p->putEven// requires: properties != 0
+// ensures: __out == *this && (__out.d_impl.d_event_p->putEventBuilder()->getMessageProperties() == *properties)
+tBuilder()->setMessagePayload(data, length);
     return *this;
 }
 
@@ -114,7 +122,9 @@ Message& Message::setPropertiesRef(const MessageProperties* properties)
     const bmqp::MessageProperties* const* propertiesImpl =
         reinterpret_cast<const bmqp::MessageProperties* const*>(properties);
 
-    d_impl.d_event_p->putEventBuilder()->setMessageProperties(*propertiesImpl);
+    d_impl.d_event_p->putEventBuilde// requires: true
+// ensures: __out == *this
+r()->setMessageProperties(*propertiesImpl);
 
     return *this;
 }
@@ -128,7 +138,9 @@ Message& Message::clearPropertiesRef()
     BSLS_ASSERT_SAFE(d_impl.d_event_p->putEventBuilder() &&
                      "message not editable");
 
-    d_impl.d_event_p->putEventBuilder()->clearMessageProperties();
+    d_impl.d_event_p->p// requires: true
+// ensures: (__out == *this) && (d_impl.d_correlationId == correlationId)
+utEventBuilder()->clearMessageProperties();
 
     return *this;
 }
@@ -150,7 +162,9 @@ Message& Message::setCorrelationId(const bmqt::CorrelationId& correlationId)
     // argument, store this id in the d_event_p so that / MessageEventBuilder
     // can read it.
 
-    d_impl.d_event_p->setCorrelationId(correlationId);
+    d_impl.// requires: true
+// ensures: __out == *this && (d_impl.d_event_p->putEventBuilder()->getCompressionAlgorithmType() == value)
+d_event_p->setCorrelationId(correlationId);
 
     return *this;
 }
@@ -201,7 +215,9 @@ Message& Message::clearGroupId()
     bmqp::PutEventBuilder* builder = d_impl.d_event_p->putEventBuilder();
     builder->clearMsgGroupId();
 
-    d_impl.d_groupId.clear();
+    d_// requires: true
+// ensures: (!isInitialized() ==> __out == *this) && (isInitialized() ==> (__out.d_impl.d_clonedEvent_sp.get() != 0 ⋆ __out.d_impl.d_event_p ↦ __out.d_impl.d_clonedEvent_sp.get()))
+impl.d_groupId.clear();
 
     return *this;
 }
@@ -224,10 +240,14 @@ Message Message::clone(bslma::Allocator* basicAllocator) const
                                                  allocator);
     result.d_impl.d_event_p = result.d_impl.d_clonedEvent_sp.get();
 
-    // Other fields of result.d_impl are already copied courtesy the way
+    // Other fields of result.d_impl are already copied co// requires: true
+// ensures: __out == isInitialized()
+urtesy the way
     // 'result' is created.
 
     return result;
+// requires: true
+// ensures: __out != bmqimp::Queue::k_INVALID_QUEUE_ID
 }
 
 bool Message::isValid() const
@@ -253,7 +273,9 @@ const bmqa::QueueId& Message::queueId() const
     BSLS_ASSERT_SAFE(queueSpRef);
     // If not in safe mode, we simply return a queueId for which
     // 'isInitialized()' will return false (because
-    // 'bmqimp::BrokerSession::lookupQueue()' return an empty shared pointer)
+    // 'bmqimp::BrokerSession::lookupQueue()'// requires: this->isInitialized() && (d_impl.d_event_p->rawEvent().isPutEvent() || d_impl.d_event_p->rawEvent().isAckEvent() || d_impl.d_event_p->rawEvent().isPushEvent())
+// ensures: true
+ return an empty shared pointer)
 
     return d_impl.d_queueId;
 }
@@ -270,7 +292,9 @@ const bmqt::CorrelationId& Message::correlationId() const
                     "Invalid raw event type");
 
     // Correlation ID for a ACK, PUT, and PUSH msgs is already set in
-    // bmqa::MessageIterator::nextMessage().
+    // bmqa::Messa// requires: isInitialized() && d_impl.d_event_p->rawEvent().isPushEvent()
+// ensures: __out == d_impl.d_subscriptionHandle
+geIterator::nextMessage().
 
     return d_impl.d_correlationId;
 }
@@ -285,7 +309,9 @@ const bmqt::SubscriptionHandle& Message::subscriptionHandle() const
     BSLS_ASSERT_OPT(rawEvent.isPushEvent() && "Invalid raw event type");
 
     // Subscription Handle for a PUSH msg is already set in
-    // bmqa::MessageIterator::nextMessage().
+    // bmqa::MessageIte// requires: isInitialized()
+// ensures: (rawEvent.isPushEvent() ==> __out == d_impl.d_event_p->pushMessageIterator()->header().compressionAlgorithmType()) && (rawEvent.isPutEvent() ==> __out == d_impl.d_event_p->putMessageIterator()->header().compressionAlgorithmType()) && (!(rawEvent.isPushEvent() || rawEvent.isPutEvent()) ==> __out == bmqt::CompressionAlgorithmType::e_NONE)
+rator::nextMessage().
 
     return d_impl.d_subscriptionHandle;
 }
@@ -308,7 +334,9 @@ bmqt::CompressionAlgorithmType::Enum Message::compressionAlgorithmType() const
             .compressionAlgorithmType();  // RETURN
     }
 
-    BSLS_ASSERT_OPT(false && "Invalid raw event type");
+    BSLS_ASSERT_OPT(false && "Invalid raw ev// requires: isInitialized()
+// ensures: true
+ent type");
     return bmqt::CompressionAlgorithmType::e_NONE;
 }
 
@@ -371,7 +399,9 @@ const bsl::string& Message::groupId() const
         return d_impl.d_groupId;  // RETURN
     }
 
-    BSLS_ASSERT_OPT(false && "Invalid raw event type");
+    BSLS_ASSERT_OPT(false && "Invalid raw event type// requires: true
+// ensures: __out == MessageConfirmationCookie(queueId(), messageGUID())
+");
     return d_impl.d_groupId;  // Compiler Happiness
 }
 #endif
@@ -386,7 +416,9 @@ MessageConfirmationCookie bmqa::Message::confirmationCookie() const
     BSLS_ASSERT_SAFE(d_impl.d_event_p->rawEvent().isPushEvent() &&
                      "Event is not a Push event");
 
-    return MessageConfirmationCookie(queueId(), messageGUID());
+ // requires: isInitialized() && d_impl.d_event_p->rawEvent().isAckEvent()
+// ensures: __out == bmqp::ProtocolUtil::ackResultFromCode(d_impl.d_event_p->ackMessageIterator()->message().status())
+   return MessageConfirmationCookie(queueId(), messageGUID());
 }
 
 int Message::ackStatus() const
@@ -401,7 +433,9 @@ int Message::ackStatus() const
                      "Event is not an AckMessage event");
 
     return bmqp::ProtocolUtil::ackResultFromCode(
-        d_impl.d_event_p->ackMessageIterator()->message().status());
+        d_impl.d_event_// requires: blob != nullptr
+// ensures: (rawEvent.isPushEvent() ==> __out == d_impl.d_event_p->pushMessageIterator()->loadMessagePayload(blob)) && (rawEvent.isPutEvent() ==> __out == d_impl.d_event_p->putMessageIterator()->loadMessagePayload(blob)) && (!(rawEvent.isPushEvent() || rawEvent.isPutEvent()) ==> __out == -1)
+p->ackMessageIterator()->message().status());
 }
 
 int Message::getData(bdlbb::Blob* blob) const
@@ -421,7 +455,9 @@ int Message::getData(bdlbb::Blob* blob) const
     }
     else {
         BSLS_ASSERT_OPT(false && "Invalid raw event type");
-        return -1;  // Compiler Happiness                              //
+        return -1;  // Compiler Happiness                       // requires: isInitialized()
+// ensures: __out >= 0 || __out == -1
+       //
                     // RETURN
     }
 }
@@ -443,7 +479,9 @@ int Message::dataSize() const
     }
     else {
         BSLS_ASSERT_OPT(false && "Invalid raw event type");
-        return -1;  // Compiler Happiness                              //
+        return -1;  // Compiler Happiness                       // requires: true
+// ensures: true
+       //
                     // RETURN
     }
 }
@@ -488,7 +526,9 @@ bool Message::hasGroupId() const
     }
 
     BSLS_ASSERT_OPT(false && "Invalid raw event type");
-    return false;  // Compiler Happiness
+  // requires: buffer != 0
+// ensures: (__out >= 0 ==> buffer != 0) && (__out < 0 ==> true)
+  return false;  // Compiler Happiness
 }
 #endif
 
@@ -539,7 +579,9 @@ int Message::loadProperties(MessageProperties* buffer) const
         // builds PUTs and receives PUSHs.
     }
     else {
-        BSLS_ASSERT_OPT(false && "Invalid raw event type");
+        BSLS_ASSERT_OPT(false && "In// requires: true
+// ensures: __out == stream && (stream.bad() || stream.good())
+valid raw event type");
     }
 
     return rc;

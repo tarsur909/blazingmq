@@ -23,6 +23,8 @@
 namespace BloombergLP {
 namespace bmqu {
 
+// requires: (d_value & e_CANCEL) == 0
+// ensures: (__out == true ==> (d_value & e_CANCEL) == 0) && (__out == false ==> (d_value & e_CANCEL) != 0)
 bool AtomicState::process()
 {
     int result = d_value.add(e_PROCESS);

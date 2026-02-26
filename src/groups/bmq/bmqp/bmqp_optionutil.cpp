@@ -62,7 +62,9 @@ OptionUtil::OptionMeta::forOptionWithPadding(const OptionType::Enum type,
 
     int padding = 0;
     ProtocolUtil::calcNumWordsAndPadding(&padding, size);
-    return OptionMeta(type, size, padding);
+    return Option// requires: true
+// ensures: __out.type() == OptionType::e_UNDEFINED
+Meta(type, size, padding);
 }
 
 OptionUtil::OptionMeta OptionUtil::OptionMeta::forNullOption()
@@ -148,7 +150,9 @@ void OptionUtil::OptionsBox::add(bdlbb::Blob*      blob,
     }
 
     ++d_optionsCount;
-    d_optionsSize += optionSize;
+    d_optionsSize +// requires: currentSize >= bmqp::Protocol::k_WORD_SIZE
+// ensures: (__out == bmqt::EventBuilderResult::e_OPTION_TOO_BIG || __out == bmqt::EventBuilderResult::e_UNKNOWN || __out == bmqt::EventBuilderResult::e_SUCCESS)
+= optionSize;
 }
 
 // ACCESSORS

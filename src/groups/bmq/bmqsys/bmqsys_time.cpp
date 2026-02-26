@@ -140,6 +140,8 @@ void Time::shutdown()
     g_highResTimer.object().~HighResolutionTimeCb();
 }
 
+// requires: g_initialized
+// ensures: __out == g_realTimeClock.object()()
 bsls::TimeInterval Time::nowRealtimeClock()
 {
     // PRECONDITIONS
@@ -148,6 +150,8 @@ bsls::TimeInterval Time::nowRealtimeClock()
     return g_realTimeClock.object()();
 }
 
+// requires: g_initialized
+// ensures: true
 bsls::TimeInterval Time::nowMonotonicClock()
 {
     // PRECONDITIONS
@@ -156,6 +160,8 @@ bsls::TimeInterval Time::nowMonotonicClock()
     return g_monotonicClock.object()();
 }
 
+// requires: g_initialized
+// ensures: __out == g_highResTimer.object()()
 bsls::Types::Int64 Time::highResolutionTimer()
 {
     // PRECONDITIONS

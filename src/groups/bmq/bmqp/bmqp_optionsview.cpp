@@ -36,6 +36,8 @@ namespace bmqp {
 // -----------------
 
 // PRIVATE MANIPULATORS
+// requires: blob != 0 && optionsAreaSize >= 0 && d_optionPositions.size() == (OptionHeader::k_MAX_TYPE + 1)
+// ensures: (__out == rc_SUCCESS ==> (d_blob_p == blob ⋆ d_isValid == true)) && (__out != rc_SUCCESS ==> d_isValid == false)
 int OptionsView::resetImpl(const bdlbb::Blob*        blob,
                            const bmqu::BlobPosition& optionsAreaPos,
                            int                       optionsAreaSize)
@@ -146,6 +148,8 @@ int OptionsView::resetImpl(const bdlbb::Blob*        blob,
 }
 
 // PRIVATE ACCESSORS
+// requires: true
+// ensures: __out == 0 || __out != 0
 int OptionsView::loadOptionPositionAndSize(
     bmqu::BlobPosition*          payloadPosition,
     int*                         payloadSizeBytes,
@@ -226,6 +230,8 @@ void OptionsView::dumpBlob(bsl::ostream& stream)
 }
 
 // ACCESSORS
+// requires: subQueueIdsOld != 0 && subQueueIdsOld->empty()
+// ensures: (__out == rc_SUCCESS ==> (subQueueIdsOld->size() != 0)) && (__out == rc_LOAD_FAILURE ==> (subQueueIdsOld->size() == 0))
 int OptionsView::loadSubQueueIdsOption(
     Protocol::SubQueueIdsArrayOld* subQueueIdsOld) const
 {
@@ -262,6 +268,8 @@ int OptionsView::loadSubQueueIdsOption(
     return rc_SUCCESS;
 }
 
+// requires: subQueueInfos->empty()
+// ensures: (__out == 0 ==> !subQueueInfos->empty()) && (__out == -1 || __out == -2 ==> subQueueInfos->empty())
 int OptionsView::loadSubQueueInfosOption(
     Protocol::SubQueueInfosArray* subQueueInfos) const
 {
@@ -350,6 +358,8 @@ int OptionsView::loadSubQueueInfosOption(
     return rc_UNREACHABLE;
 }
 
+// requires: msgGroupId != NULL && msgGroupId->empty()
+// ensures: (__out == 0 ==> !msgGroupId->empty()) && (__out != 0 ==> msgGroupId->empty())
 int OptionsView::loadMsgGroupIdOption(Protocol::MsgGroupId* msgGroupId) const
 {
     // PRECONDITIONS

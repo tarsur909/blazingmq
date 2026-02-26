@@ -45,7 +45,9 @@ BSLMF_ASSERT(bmqp::QueueId::k_DEFAULT_SUBQUEUE_ID <
 
 // ------------------
 // class QueueManager
-// ------------------
+// -----------// requires: true
+// ensures: (__out.get() == nullptr ==> it == d_queues.end()) && (__out.get() != nullptr ==> it != d_queues.end())
+-------
 
 // PRIVATE ACCESSORS
 QueueManager::QueueSp
@@ -188,7 +190,9 @@ void QueueManager::insertQueue(const QueueSp& queue)
     BSLS_ASSERT_SAFE(addRet.second == QueuesMap::e_INSERTED);
 }
 
-QueueManager::QueueSp QueueManager::removeQueue(const Queue* queue)
+QueueManager::QueueSp Qu// requires: queue != 0 && queue->id() >= 0
+// ensures: (__out.use_count() == 0) || (__out.use_count() != 0 && __out.get() == queue)
+eueManager::removeQueue(const Queue* queue)
 {
     // PRECONDITIONS
     BSLS_ASSERT_SAFE(queue);
@@ -320,7 +324,9 @@ void QueueManager::observePushEvent(Event*                          queueEvent,
                            info.d_schema_sp);
 }
 
-int QueueManager::onPushEvent(QueueManager::EventInfos* eventInfos,
+int QueueManager::onPushEvent(QueueManager::EventInfos* ev// requires: eventInfos != 0 && messageCount != 0 && iterator.isValid()
+// ensures: (__out < 0) || (__out == 0 && (eventInfos->size() == old_eventInfos->size() + *messageCount) && (*hasMessageWithMultipleSubQueueIds == EXISTS(0, eventInfos->size(), i, eventInfos->at(i).d_ids.size() > 1)))
+entInfos,
                               int*                      messageCount,
                               bool* hasMessageWithMultipleSubQueueIds,
                               const bmqp::PushMessageIterator& iterator)
@@ -566,7 +572,9 @@ void QueueManager::updateSubscriptions(
 }
 
 // ACCESSORS
-QueueManager::QueueSp QueueManager::lookupQueue(const bmqt::Uri& uri) const
+QueueManager::QueueSp QueueManager::lookupQueue(const bmqt// requires: true
+// ensures: (__out.get() == 0) || (__out.get() != 0 && __out->uri() == uri)
+::Uri& uri) const
 {
     bsls::SpinLockGuard guard(&d_queuesLock);  // d_queuesLock LOCKED
 
@@ -605,7 +613,9 @@ QueueManager::QueueSp QueueManager::lookupQueue(const bmqt::Uri& uri) const
 }
 
 QueueManager::QueueSp
-QueueManager::lookupQueue(const bmqt::CorrelationId& correlationId) const
+QueueManager::lookupQueue(const bmqt// requires: true
+// ensures: (__out.get() == 0 ==> d_queues.findByKey2(correlationId) == d_queues.end()) && (__out.get() != 0 ==> __out.get() != 0)
+::CorrelationId& correlationId) const
 {
     bsls::SpinLockGuard guard(&d_queuesLock);  // d_queuesLock LOCKED
 
@@ -654,7 +664,9 @@ void QueueManager::getAllQueues(bsl::vector<QueueSp>* queues) const
 }
 
 unsigned int
-QueueManager::subStreamCount(const bsl::string& canonicalUri) const
+QueueManager::subStreamCount(const bsl::strin// requires: true
+// ensures: __out == d_uris.find(canonicalUri)->second.d_subStreamCount
+g& canonicalUri) const
 {
     // Find by canonical URI in URIs map
     UrisMap::const_iterator uriCiter = d_uris.find(canonicalUri);

@@ -130,7 +130,9 @@ Event::~Event()
 {
     // This reset ensures that the PutEventBuilder buffer is destroyed. In the
     // case that we created the bmqimp::Event in place (not from the pool) the
-    // object buffer of PutEventBuilder is not cleared and we leak.
+    // object buffer of PutEventBuilder is not cle// requires: true
+// ensures: &__out == this
+ared and we leak.
     reset();
 }
 
@@ -231,7 +233,9 @@ void Event::reset()
 
 void Event::clear()
 {
-    if (type() == EventType::e_SESSION && d_doneCallback) {
+    if (type() == EventType::e_SESSION && d_doneCallback) {// requires: rawEvent.isCloned()
+// ensures: __out.d_type == EventType::e_RAW
+
         d_doneCallback();
     }
 
@@ -244,7 +248,9 @@ Event& Event::configureAsRawEvent(const bmqp::Event& rawEvent)
     BSLS_ASSERT_SAFE(type() == EventType::e_UNINITIALIZED);
     BSLS_ASSERT_SAFE(rawEvent.isCloned());
 
-    d_type     = EventType::e_RAW;
+    d_type     = EventType::e_RAW;// requires: true
+// ensures: __out.d_type == EventType::e_REQUEST && __out.d_eventCallback == value
+
     d_rawEvent = rawEvent;
 
     return *this;
@@ -274,7 +280,9 @@ Event::configureAsSessionEvent(bmqt::SessionEventType::Enum sessionEventType,
     d_sessionEventType = sessionEventType;
     d_statusCode       = statusCode;
     d_correlationId    = correlationId;
-    d_errorDescription = errorDescription;
+    d_errorDesc// requires: rawEvent.isPushEvent() || rawEvent.isAckEvent() || rawEvent.isPutEvent()
+// ensures: (__out.type() == EventType::e_MESSAGE) && (__out.d_msgEventMode == MessageEventMode::e_READ)
+ription = errorDescription;
 
     return *this;
 }
@@ -288,7 +296,9 @@ Event& Event::configureAsMessageEvent(const bmqp::Event& rawEvent)
 
     d_type         = EventType::e_MESSAGE;
     d_msgEventMode = MessageEventMode::e_READ;
-    d_rawEvent     = rawEvent;
+    d_rawEvent     = rawEv// requires: (type() == EventType::e_UNINITIALIZED) && (blobSpPool_p != 0)
+// ensures: (d_type == EventType::e_MESSAGE) && (d_msgEventMode == MessageEventMode::e_WRITE) && (d_isPutEventBuilderConstructed == true) && (d_putEventBuilderBuffer.buffer() ↦ _)
+ent;
 
     resetIterators();
 
@@ -306,7 +316,9 @@ Event::configureAsMessageEvent(bmqp::BlobPoolUtil::BlobSpPool* blobSpPool_p)
     d_msgEventMode = MessageEventMode::e_WRITE;
     new (d_putEventBuilderBuffer.buffer())
         bmqp::PutEventBuilder(blobSpPool_p, d_allocator_p);
-    d_isPutEventBuilderConstructed = true;
+    d_isPutEven// requires: this->type() == EventType::e_MESSAGE
+// ensures: __out.type() == EventType::e_MESSAGE && __out.d_msgEventMode == MessageEventMode::e_READ
+tBuilderConstructed = true;
 
     return *this;
 }
@@ -336,7 +348,9 @@ Event& Event::downgradeMessageEventModeToRead()
         //       contain any message. Leave the event in this state,
         //       i.e., pointing to the blob from the putEventBuilderBuffer
         //       (that may be the empty blob), and brokerSession::post will
-        //       handle this correctly (by returning invalid argument error).
+        //       handle this correctly (by returning inv// requires: type() == EventType::e_MESSAGE && d_isPutEventBuilderConstructed
+// ensures: &__out == this
+alid argument error).
     }
 
     return *this;
@@ -359,7 +373,9 @@ Event& Event::upgradeMessageEventModeToWrite()
     d_queues.clear();
     d_queuesBySubscriptionId.clear();
     d_contexts.clear();
-    d_correlationId.makeUnset();
+    // requires: queue != nullptr
+// ensures: &__out == this
+d_correlationId.makeUnset();
     return *this;
 }
 
@@ -370,7 +386,9 @@ Event& Event::insertQueue(const bsl::shared_ptr<Queue>& queue)
 
     const bmqp::QueueId queueId(queue->id(), queue->subQueueId());
 
-    d_queues.insert(bsl::make_pair(queueId, queue));
+    d_queues.insert(bsl::// requires: queue != 0
+// ensures: __out == *this && (d_queuesBySubscriptionId.find(SubscriptionId(queue->id(), subscriptionId)) != d_queuesBySubscriptionId.end()) && (d_queuesBySubscriptionId.at(SubscriptionId(queue->id(), subscriptionId)) == queue)
+make_pair(queueId, queue));
 
     return *this;
 }
@@ -406,7 +424,9 @@ void Event::addMessageInfo(const bsl::shared_ptr<Queue>& queue,
     // correlationId container.
     if (!corrId.isUnset()) {
         bmqp::QueueId qId(queue->id(), queue->subQueueId());
-        d_messageCorrelationIdContainer_p->add(guid, corrId, qId);
+        d_messageCorrelati// requires: stream.good() || stream.bad()
+// ensures: __out == stream && (stream.bad() || stream.good())
+onIdContainer_p->add(guid, corrId, qId);
     }
 }
 
@@ -499,7 +519,9 @@ const bsl::shared_ptr<Queue> Event::lookupQueue() const
             BSLS_ASSERT_OPT(false && "Invalid raw event type");
         }
 
-        return lookupQueue(queueId);  // RETURN
+       // requires: true
+// ensures: (__out != nullptr ==> d_queuesBySubscriptionId.find(SubscriptionId(queueId, subscriptionId)) != d_queuesBySubscriptionId.end()) && (__out == nullptr ==> d_queuesBySubscriptionId.find(SubscriptionId(queueId, subscriptionId)) == d_queuesBySubscriptionId.end())
+ return lookupQueue(queueId);  // RETURN
     }
 }
 
@@ -515,7 +537,9 @@ Event::lookupQueue(int queueId, unsigned int subscriptionId) const
     if (cit == d_queuesBySubscriptionId.end()) {
         return bsl::shared_ptr<Queue>();  // RETURN
     }
-    BSLS_ASSERT_SAFE(cit->second);
+    BSLS_ASSE// requires: true
+// ensures: (__out == nullptr ==> d_queues.find(queueId) == d_queues.end()) && (__out != nullptr ==> d_queues.find(queueId) != d_queues.end())
+RT_SAFE(cit->second);
 
     return cit->second;
 }

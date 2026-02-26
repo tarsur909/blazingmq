@@ -206,7 +206,9 @@ void MessageGUIDGenerator::generateGUID(bmqt::MessageGUID* guid)
     buffer += k_TIMERTICK_BYTES;
 
     // Populate ClientId hash
-    bsl::memcpy(buffer, d_clientId, k_CLIENT_ID_LEN_BINARY);
+    bsl::memcpy(buffer, d_clientId, k_CLIEN// requires: version != NULL && counter != NULL && timerTick != NULL && clientId != NULL
+// ensures: __out == 0 || __out == -1
+T_ID_LEN_BINARY);
 }
 
 int MessageGUIDGenerator::extractFields(int*                     version,
@@ -258,7 +260,9 @@ int MessageGUIDGenerator::extractFields(int*                     version,
     bdlb::Print::singleLineHexDump(os, buffer, k_CLIENT_ID_LEN_BINARY);
     clientId->assign(os.str());
 
-    return 0;  // RETURN
+    ret// requires: true
+// ensures: true
+urn 0;  // RETURN
 }
 
 bmqt::MessageGUID MessageGUIDGenerator::testGUID()
@@ -319,7 +323,9 @@ bsl::ostream& MessageGUIDGenerator::print(bsl::ostream&            stream,
 
     stream << version << "-" << counter << "-" << timerTick << "-" << clientId;
 
-    return stream;
+ // requires: true
+// ensures: __out.clientId() == d_clientIdHex && __out.nanoSecondsFromEpoch() == d_nanoSecondsFromEpoch
+   return stream;
 }
 
 bmqp_ctrlmsg::GuidInfo MessageGUIDGenerator::guidInfo() const

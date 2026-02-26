@@ -35,6 +35,8 @@ namespace {
 /// `[allowlistBegin, allowlistEnd)` are reduced to one appearance of the
 /// character.  Return a pointer to the new end of the sequence.  Note that
 /// this function is similar to `bsl::remove_if` with a special predicate.
+// requires: begin <= end && allowlistBegin <= allowlistEnd && SEPFORALL(0, end - begin, i, (begin + i ↦ _)) && SEPFORALL(0, allowlistEnd - allowlistBegin, j, (allowlistBegin + j ↦ _))
+// ensures: (__out >= begin && __out <= end) && SEPFORALL(0, __out - begin, i, (begin + i ↦ sep_v) && (!SEPEXISTS(allowlistBegin, allowlistEnd, j, allowlistBegin + j ↦ sep_v) || (i == 0 || *(begin + i - 1) != sep_v)))
 char* removeIfPrecededBySame(char*       begin,
                              char*       end,
                              const char* allowlistBegin,
@@ -60,6 +62,8 @@ char* removeIfPrecededBySame(char*       begin,
 
 /// Return false if the specified char `c` is a space character, and true
 /// otherwise.
+// requires: true
+// ensures: __out == (!bsl::isspace(c))
 bool isNotSpace(char c)
 {
     return !bsl::isspace(c);
@@ -71,12 +75,16 @@ bool isNotSpace(char c)
 // struct StringUtil
 // -----------------
 
+// requires: true
+// ensures: (__out == true ==> str.find(substr, 0) != bsl::string::npos) && (__out == false ==> str.find(substr, 0) == bsl::string::npos)
 bool StringUtil::contains(const bsl::string&       str,
                           const bslstl::StringRef& substr)
 {
     return str.find(substr, 0) != bsl::string::npos;
 }
 
+// requires: (offset <= str.length()) && SEPFORALL(0, str.length(), i, str.data() + i ↦ _) && SEPFORALL(0, prefix.length(), i, prefix.data() + i ↦ _)
+// ensures: (__out == true ==> SEPFORALL(0, prefix.length(), i, str.data() + offset + i ↦ prefix.data()[i])) && (__out == false ==> ((offset > str.length()) || ((str.length() - offset) < prefix.length()) || SEPEXISTS(0, prefix.length(), i, str.data() + offset + i ↦ sep_v && sep_v != prefix.data()[i])))
 bool StringUtil::startsWith(const bslstl::StringRef& str,
                             const bslstl::StringRef& prefix,
                             size_t                   offset)
@@ -98,6 +106,8 @@ bool StringUtil::startsWith(const bslstl::StringRef& str,
     return true;
 }
 
+// requires: true
+// ensures: (__out == true ==> (str.length() >= suffix.length() && SEPFORALL(0, suffix.length(), i, str[str.length() - 1 - i] == suffix[suffix.length() - 1 - i]))) && (__out == false ==> (str.length() < suffix.length() || SEPEXISTS(0, suffix.length(), i, str[str.length() - 1 - i] != suffix[suffix.length() - 1 - i])))
 bool StringUtil::endsWith(const bslstl::StringRef& str,
                           const bslstl::StringRef& suffix)
 {
@@ -118,11 +128,15 @@ bool StringUtil::endsWith(const bslstl::StringRef& str,
     return true;
 }
 
+// requires: str != nullptr
+// ensures: __out == *str
 bsl::string& StringUtil::trim(bsl::string* str)
 {
     return ltrim(&rtrim(str));
 }
 
+// requires: str != 0 && SEPFORALL(0, str->size(), i, ((str->begin() + i) ↦ _))
+// ensures: __out == *str && SEPFORALL(0, __out.size(), i, (__out[i] ↦ sep_v && (sep_v != ' ' || i > 0)))
 bsl::string& StringUtil::ltrim(bsl::string* str)
 {
     str->erase(str->begin(),
@@ -130,6 +144,8 @@ bsl::string& StringUtil::ltrim(bsl::string* str)
     return *str;
 }
 
+// requires: str != nullptr
+// ensures: __out == *str
 bsl::string& StringUtil::rtrim(bsl::string* str)
 {
     str->erase(bsl::find_if(str->rbegin(), str->rend(), &isNotSpace).base(),
@@ -138,6 +154,8 @@ bsl::string& StringUtil::rtrim(bsl::string* str)
     return *str;
 }
 
+// requires: true
+// ensures: (str.empty() ==> __out.empty()) && (delims.length() == 0 && !str.empty() ==> __out.size() == 1) && (!(str.empty()) && delims.length() > 0 ==> !__out.empty())
 bsl::vector<bslstl::StringRef>
 StringUtil::strTokenizeRef(const bsl::string&       str,
                            const bslstl::StringRef& delims)
@@ -178,6 +196,8 @@ StringUtil::strTokenizeRef(const bsl::string&       str,
     return res;
 }
 
+// requires: true
+// ensures: (__out == true) || (__out == false)
 bool StringUtil::match(const bslstl::StringRef& str,
                        const bslstl::StringRef& pattern)
 {
@@ -239,6 +259,8 @@ bool StringUtil::match(const bslstl::StringRef& str,
     return true;
 }
 
+// requires: str != nullptr && (SEPFORALL(0, str->size(), i, (*str)[i] ↦ _)) && (characters.size() >= 0)
+// ensures: __out == *str && !(SEPEXISTS(0, __out.size() - 1, i, (__out[i] == __out[i + 1]) && (characters.find(__out[i]) != bslstl::StringRef::npos)))
 bsl::string& StringUtil::squeeze(bsl::string*             str,
                                  const bslstl::StringRef& characters)
 {
