@@ -1,0 +1,929 @@
+# Specs found
+
+- **src/groups/bmq/bmqa/bmqa_abstractsession.cpp**
+  - requires:
+    - `true`
+  - ensures:
+    - `__out == -1`
+    - `__out.queueId() == bmqa::QueueId() && __out.result() == bmqt::CloseQueueResult::e_NOT_SUPPORTED && __out.message() == "Method is undefined in base protocol"`
+    - `__out.queueId() == bmqa::QueueId() && __out.result() == bmqt::OpenQueueResult::e_NOT_SUPPORTED`
+    - `__out.result() == bmqt::ConfigureQueueResult::e_NOT_SUPPORTED`
+    - `true`
+- **src/groups/bmq/bmqa/bmqa_closequeuestatus.cpp**
+  - requires:
+    - `true`
+  - ensures:
+    - `__out == stream`
+- **src/groups/bmq/bmqa/bmqa_configurequeuestatus.cpp**
+  - requires:
+    - `true`
+  - ensures:
+    - `__out == stream`
+- **src/groups/bmq/bmqa/bmqa_event.cpp**
+  - requires:
+    - `(d_impl_sp == nullptr) || (d_impl_sp != nullptr && d_impl_sp->type() == bmqimp::Event::EventType::e_MESSAGE || d_impl_sp->type() != bmqimp::Event::EventType::e_MESSAGE)`
+    - `(d_impl_sp == nullptr) || (d_impl_sp != nullptr && d_impl_sp->type() == d_impl_sp->type())`
+    - `true`
+  - ensures:
+    - `(__out == true ==> (d_impl_sp != nullptr && d_impl_sp->type() == bmqimp::Event::EventType::e_MESSAGE)) && (__out == false ==> (d_impl_sp == nullptr || d_impl_sp->type() != bmqimp::Event::EventType::e_MESSAGE))`
+    - `(__out == true ==> (d_impl_sp != nullptr && d_impl_sp->type() == bmqimp::Event::EventType::e_SESSION)) && (__out == false ==> (d_impl_sp == nullptr || d_impl_sp->type() != bmqimp::Event::EventType::e_SESSION))`
+    - `(d_impl_sp == nullptr ==> __out == stream) && (d_impl_sp != nullptr ==> __out == d_impl_sp->print(stream, level, spacesPerLevel))`
+    - `__out.d_impl_sp == this->d_impl_sp`
+    - `reinterpret_cast<bsl::shared_ptr<bmqimp::Event>&>(__out) == d_impl_sp`
+- **src/groups/bmq/bmqa/bmqa_message.cpp**
+  - requires:
+    - `blob != nullptr`
+    - `buffer != 0`
+    - `data != 0 && isInitialized() && d_impl.d_event_p->putEventBuilder()`
+    - `data != 0 && length >= 0 && isInitialized() && d_impl.d_event_p->putEventBuilder()`
+    - `isInitialized()`
+    - `isInitialized() && d_impl.d_event_p->rawEvent().isAckEvent()`
+    - `isInitialized() && d_impl.d_event_p->rawEvent().isPushEvent()`
+    - `properties != 0`
+    - `this->isInitialized() && (d_impl.d_event_p->rawEvent().isPutEvent() || d_impl.d_event_p->rawEvent().isAckEvent() || d_impl.d_event_p->rawEvent().isPushEvent())`
+    - `true`
+  - ensures:
+    - `(!isInitialized() ==> __out == *this) && (isInitialized() ==> (__out.d_impl.d_clonedEvent_sp.get() != 0 ⋆ __out.d_impl.d_event_p ↦ __out.d_impl.d_clonedEvent_sp.get()))`
+    - `(__out == *this) && (d_impl.d_correlationId == correlationId)`
+    - `(__out >= 0 ==> buffer != 0) && (__out < 0 ==> true)`
+    - `(d_impl.d_event_p ↦ _) && ((d_impl.d_event_p->rawEvent().isPushEvent() ==> __out == d_impl.d_event_p->pushMessageIterator()->header().messageGUID()) && (d_impl.d_event_p->rawEvent().isAckEvent() ==> __out == d_impl.d_event_p->ackMessageIterator()->message().messageGUID()) && (d_impl.d_event_p->rawEvent().isPutEvent() ==> __out == d_impl.d_event_p->putMessageIterator()->header().messageGUID()))`
+    - `(rawEvent.isPushEvent() ==> __out == d_impl.d_event_p->pushMessageIterator()->header().compressionAlgorithmType()) && (rawEvent.isPutEvent() ==> __out == d_impl.d_event_p->putMessageIterator()->header().compressionAlgorithmType()) && (!(rawEvent.isPushEvent() || rawEvent.isPutEvent()) ==> __out == bmqt::CompressionAlgorithmType::e_NONE)`
+    - `(rawEvent.isPushEvent() ==> __out == d_impl.d_event_p->pushMessageIterator()->loadMessagePayload(blob)) && (rawEvent.isPutEvent() ==> __out == d_impl.d_event_p->putMessageIterator()->loadMessagePayload(blob)) && (!(rawEvent.isPushEvent() || rawEvent.isPutEvent()) ==> __out == -1)`
+    - `__out != bmqimp::Queue::k_INVALID_QUEUE_ID`
+    - `__out == (d_impl.d_event_p != 0)`
+    - `__out == *this`
+    - `__out == *this && (__out.d_impl.d_event_p->putEventBuilder()->getMessageProperties() == *properties)`
+    - `__out == *this && (d_impl.d_event_p->putEventBuilder()->getCompressionAlgorithmType() == value)`
+    - `__out == *this && d_impl.d_event_p->putEventBuilder()->getMessagePayload() == data`
+    - `__out == MessageConfirmationCookie(queueId(), messageGUID())`
+    - `__out == bmqp::ProtocolUtil::ackResultFromCode(d_impl.d_event_p->ackMessageIterator()->message().status())`
+    - `__out == d_impl.d_subscriptionHandle`
+    - `__out == isInitialized()`
+    - `__out == stream && (stream.bad() || stream.good())`
+    - `__out >= 0 || __out == -1`
+    - `true`
+- **src/groups/bmq/bmqa/bmqa_messageevent.cpp**
+  - requires:
+    - `true`
+  - ensures:
+    - `(d_impl_sp == nullptr ==> __out == stream) && (d_impl_sp != nullptr ==> __out == d_impl_sp->print(stream, level, spacesPerLevel))`
+    - `true`
+- **src/groups/bmq/bmqa/bmqa_mocksession.cpp**
+  - requires:
+    - `!acks.empty() && bufferFactory != nullptr`
+    - `!pushEventParams.empty() && bufferFactory && allocator`
+    - `(queueId == nullptr ==> true) && (queueId != nullptr ==> true)`
+    - `(sessionEventType == bmqt::SessionEventType::e_QUEUE_OPEN_RESULT || sessionEventType == bmqt::SessionEventType::e_QUEUE_REOPEN_RESULT || sessionEventType == bmqt::SessionEventType::e_QUEUE_CLOSE_RESULT || sessionEventType == bmqt::SessionEventType::e_QUEUE_CONFIGURE_RESULT) && queueId != NULL && allocator != NULL`
+    - `(uriCorrIdToQueues(d_twoKeyHashMapBuffer).findByKey2(correlationId) == uriCorrIdToQueues(d_twoKeyHashMapBuffer).end()) ==> res_tmp == bmqt::GenericResult::e_UNKNOWN) && ((uriCorrIdToQueues(d_twoKeyHashMapBuffer).findByKey2(correlationId) != uriCorrIdToQueues(d_twoKeyHashMapBuffer).end()) ==> res_tmp == 0`
+    - `builder != 0 && builder->blob().length() > 0`
+    - `d_unconfirmedGUIDs.count(cookie.messageGUID()) > 0`
+    - `message.isInitialized()`
+    - `numEvents > 0`
+    - `queueId != 0`
+    - `queueId != 0 && *reinterpret_cast<QueueImplSp*>(queueId) != 0`
+    - `queueId != 0 && queueId->uri() ↦ _ ⋆ queueId->impl() ↦ sep_v ⋆ sep_v->state() != bmqimp::QueueState::e_CLOSED ⋆ timeout >= bsls::TimeInterval(0)`
+    - `queueId != NULL`
+    - `sessionEventType != bmqt::SessionEventType::e_QUEUE_OPEN_RESULT && sessionEventType != bmqt::SessionEventType::e_QUEUE_REOPEN_RESULT && sessionEventType != bmqt::SessionEventType::e_QUEUE_CLOSE_RESULT && sessionEventType != bmqt::SessionEventType::e_QUEUE_CONFIGURE_RESULT`
+    - `true`
+  - ensures:
+    - `!pushEventParams.empty()`
+    - `&__out != NULL`
+    - `&__out == &d_calls.back()`
+    - `&__out == this`
+    - `(__out == bmqt::GenericResult::e_UNKNOWN ==> uriCorrIdToQueues(d_twoKeyHashMapBuffer).findByKey2(correlationId) == uriCorrIdToQueues(d_twoKeyHashMapBuffer).end()) && (__out == 0 ==> (*queueId ↦ iter->value()) ⋆ uriCorrIdToQueues(d_twoKeyHashMapBuffer).findByKey2(correlationId) != uriCorrIdToQueues(d_twoKeyHashMapBuffer).end())`
+    - `(__out == bmqt::GenericResult::e_UNKNOWN || __out == bmqt::GenericResult::e_REFUSED || (__out == 0 && *queueId == iter->value())) && (__out == 0 ==> *queueId == iter->value())`
+    - `(__out.d_file == file) && (__out.d_line == line)`
+    - `(__out.d_timeout == timeout) && (__out.d_allocator_p == d_allocator_p)`
+    - `(__out.d_timeout == timeout) && (d_calls.back().d_timeout == timeout)`
+    - `(__out.d_timeout ↦ timeout) && (d_calls.back().d_timeout ↦ timeout)`
+    - `(__out.result() == bmqt::OpenQueueResult::e_INVALID_ARGUMENT) || (__out.result() != bmqt::OpenQueueResult::e_INVALID_ARGUMENT)`
+    - `(numEvents > 0 && __out == true) || (numEvents <= 0 || eventsAndJobsCopy.empty() ==> __out == false)`
+    - `(queueId == nullptr ==> __out.result() == bmqt::CloseQueueResult::e_INVALID_ARGUMENT) && (queueId != nullptr ==> __out.result() != bmqt::CloseQueueResult::e_INVALID_ARGUMENT)`
+    - `__out == *this && d_returnEvent == event`
+    - `__out == 0`
+    - `__out == 0 && !d_unconfirmedGUIDs.count(cookie.messageGUID())`
+    - `__out == 0 && (queueId != 0)`
+    - `__out == 0 && (queueId->uri() ↦ _ ⋆ queueImpl ↦ sep_v ⋆ sep_v->state() == bmqimp::QueueState::e_CLOSED) ⋆ (d_eventsAndJobs.size() == d_eventsAndJobs.size() + call.d_emittedEvents.size())`
+    - `__out == 0 && (reinterpret_cast<QueueImplSp&>(*queueId)->state() == bmqimp::QueueState::e_CLOSED)`
+    - `__out == MockSession::toAscii(d_method)`
+    - `__out == confirmMessage(message.confirmationCookie())`
+    - `__out.d_closeQueueCallback.target_type() == callback.target_type() && __out.d_timeout == timeout && __out.d_allocator_p == d_allocator_p`
+    - `__out.d_method == e_STOP_ASYNC`
+    - `__out.d_queueOptions == options ⋆ __out.d_timeout == timeout`
+    - `__out.d_queueOptions == options ⋆ __out.d_timeout == timeout ⋆ __out.d_allocator_p == d_allocator_p`
+    - `__out.d_rc ↦ rc`
+    - `__out.d_timeout == timeout`
+    - `__out.d_timeout == timeout && &__out == &d_calls.back()`
+    - `__out.d_timeout == timeout && (&__out == &d_calls.back())`
+    - `__out.d_uri == uri && __out.d_flags == flags && __out.d_queueOptions == options && __out.d_timeout == timeout && __out.d_allocator_p == d_allocator_p`
+    - `__out.d_uri == uri ⋆ __out.d_flags == flags ⋆ __out.d_queueOptions == options ⋆ __out.d_timeout == timeout`
+    - `__out.d_uri == uri ⋆ __out.d_flags == flags ⋆ __out.d_queueOptions == options ⋆ __out.d_timeout == timeout ⋆ __out.d_allocator_p == d_allocator_p`
+    - `__out.queueId() == queueId && __out.errorDescription() == errorDescription`
+    - `d_closeQueueResult ↦ result`
+    - `d_configureQueueResult ↦ result`
+    - `d_openQueueResult ↦ result`
+    - `d_status ↦ status ⋆ d_correlationId ↦ correlationId ⋆ d_guid ↦ guid ⋆ d_queueId ↦ queueId`
+    - `true`
+- **src/groups/bmq/bmqa/bmqa_openqueuestatus.cpp**
+  - requires:
+    - `true`
+  - ensures:
+    - `__out == stream`
+- **src/groups/bmq/bmqa/bmqa_queueid.cpp**
+  - requires:
+    - `d_impl_sp != 0`
+    - `stream.good() && uri().size() >= 0 && correlationId().size() >= 0`
+    - `true`
+  - ensures:
+    - `(stream.bad() ==> __out == stream) && (stream.good() ==> (__out == stream && (SEPFORALL(0, uri().size(), j, stream + j ↦ uri().data()[j]) ⋆ SEPFORALL(0, correlationId().size(), i, stream + uri().size() + 1 + i ↦ correlationId().data()[i]))))`
+    - `__out == *this && d_impl_sp == rhs.d_impl_sp`
+    - `__out == d_impl_sp->correlationId()`
+    - `__out == d_impl_sp->isValid()`
+    - `__out == d_impl_sp->options()`
+    - `__out == d_impl_sp->uri()`
+    - `true`
+- **src/groups/bmq/bmqa/bmqa_sessionevent.cpp**
+  - requires:
+    - `d_impl_sp != 0 && d_impl_sp->type() == bmqimp::Event::EventType::e_SESSION`
+    - `d_impl_sp && d_impl_sp->type() == bmqimp::Event::EventType::e_SESSION`
+    - `lhs.d_impl_sp != 0 && rhs.d_impl_sp != 0`
+    - `true`
+  - ensures:
+    - `(d_impl_sp == nullptr ==> __out == stream) && (d_impl_sp != nullptr ==> __out == d_impl_sp->print(stream, level, spacesPerLevel))`
+    - `__out == (*lhs.d_impl_sp != *rhs.d_impl_sp)`
+    - `__out == (*lhs.d_impl_sp == *rhs.d_impl_sp)`
+    - `__out == *this && d_impl_sp == rhs.d_impl_sp`
+    - `__out == d_impl_sp->correlationId()`
+    - `__out == d_impl_sp->sessionEventType()`
+    - `__out == d_impl_sp->statusCode()`
+    - `true`
+- **src/groups/bmq/bmqc/bmqc_multiqueuethreadpool.cpp**
+  - requires:
+    - `true`
+  - ensures:
+    - `__out == d_context_mp`
+    - `__out == d_name`
+- **src/groups/bmq/bmqc/bmqc_orderedhashmap.cpp**
+  - requires:
+    - `true`
+  - ensures:
+    - `(__out == 0 ==> bsl::lower_bound(s_beginPrimes, s_endPrimes, n) == s_endPrimes) && (__out != 0 ==> *bsl::lower_bound(s_beginPrimes, s_endPrimes, n) == __out)`
+- **src/groups/bmq/bmqeval/bmqeval_simpleevaluator.cpp**
+  - requires:
+    - `!context.d_stop && context.d_lastError != ErrorType::e_TYPE`
+    - `context.d_propertiesReader != 0 && context.d_allocator != 0`
+    - `true`
+  - ensures:
+    - `(__out.isBoolean() || __out.isNull()) && (__out.isNull() ==> context.d_stop)`
+    - `(__out.isError() ==> context.d_stop == true)`
+    - `(context.d_stop == true ==> __out == bdld::Datum::createNull()) && (context.d_stop == false ==> __out.isBoolean())`
+    - `(context.d_stop == true ==> __out.isNull()) && (value.isBoolean() == false ==> (context.d_lastError == ErrorType::e_TYPE && __out.isNull())) && (value.isBoolean() == true ==> __out == bdld::Datum::createBoolean(!value.theBoolean()))`
+    - `(context.d_stop ==> __out.isNull()) && (!context.d_stop ==> __out.isInteger64())`
+    - `(context.d_stop || !context.d_lastError == ErrorType::e_TYPE) ==> __out == false || __out == value.theBoolean()`
+    - `__out == !context.hasError() && context.d_validationOnly == true`
+    - `__out == bdld::Datum::createBoolean(d_value)`
+    - `__out == bdld::Datum::createInteger64(d_value, context.d_allocator)`
+    - `__out == bdld::Datum::createStringRef(d_value.data(), d_value.length(), context.d_allocator)`
+    - `__out == context.lastError() && (context.d_validationOnly ↦ false ⋆ d_isCompiled ↦ true) && (context.hasError() ==> d_expression == nullptr) && (!context.hasError() ==> (d_expression ↦ context.d_expression))`
+    - `__out.isBoolean() && __out == bdld::Datum::createBoolean(!context.d_propertiesReader->get(d_name, context.d_allocator).isError())`
+- **src/groups/bmq/bmqex/bmqex_systemexecutor.cpp**
+  - requires:
+    - `wasInit != 0`
+  - ensures:
+    - `*wasInit == true && __out == s_context_p.load()`
+- **src/groups/bmq/bmqimp/bmqimp_application.cpp**
+  - requires:
+    - `(newState != bmqimp::BrokerSession::State::e_STARTING ==> true) && (newState == bmqimp::BrokerSession::State::e_STARTING ==> startChannel() == startChannel())`
+    - `channel != nullptr`
+    - `true`
+  - ensures:
+    - `(__out != 0 ==> __out == d_brokerSession.startAsync()) && (__out == 0 ==> __out == bmqt::GenericResult::e_SUCCESS)`
+    - `(newState != bmqimp::BrokerSession::State::e_STARTING ==> __out == bmqt::GenericResult::e_SUCCESS) && (newState == bmqimp::BrokerSession::State::e_STARTING ==> __out == startChannel())`
+    - `__out != 0`
+    - `__out != nullptr && __out->maxMissedHeartbeats() == maxMissedHeartbeats`
+    - `__out == bmqt::GenericResult::e_SUCCESS || __out == bmqt::GenericResult::e_UNKNOWN || __out == bmqt::GenericResult::e_INVALID_ARGUMENT`
+    - `__out == d_brokerSession.start(timeout)`
+    - `true`
+- **src/groups/bmq/bmqimp/bmqimp_brokersession.cpp**
+  - requires:
+    - `true`
+  - ensures:
+    - `(__out == true ==> (request.choice().isConfigureStreamValue() && response.choice().isConfigureStreamResponseValue()) || (request.choice().isConfigureQueueStreamValue() && response.choice().isConfigureQueueStreamResponseValue())) && (__out == false ==> !(request.choice().isConfigureStreamValue() && response.choice().isConfigureStreamResponseValue()) && !(request.choice().isConfigureQueueStreamValue() && response.choice().isConfigureQueueStreamResponseValue()))`
+    - `(__out == true) == (response.choice().isConfigureStreamResponseValue() || response.choice().isConfigureQueueStreamResponseValue())`
+    - `__out == (d_owner_p == rhs.d_owner_p)`
+    - `__out == (request.choice().isConfigureStreamValue() || request.choice().isConfigureQueueStreamValue())`
+- **src/groups/bmq/bmqimp/bmqimp_event.cpp**
+  - requires:
+    - `(type() == EventType::e_UNINITIALIZED) && (blobSpPool_p != 0)`
+    - `queue != 0`
+    - `queue != nullptr`
+    - `rawEvent.isCloned()`
+    - `rawEvent.isPushEvent() || rawEvent.isAckEvent() || rawEvent.isPutEvent()`
+    - `stream.good() || stream.bad()`
+    - `this->type() == EventType::e_MESSAGE`
+    - `true`
+    - `type() == EventType::e_MESSAGE && d_isPutEventBuilderConstructed`
+    - `type() == EventType::e_UNINITIALIZED`
+  - ensures:
+    - `&__out == this`
+    - `(__out != nullptr ==> d_queuesBySubscriptionId.find(SubscriptionId(queueId, subscriptionId)) != d_queuesBySubscriptionId.end()) && (__out == nullptr ==> d_queuesBySubscriptionId.find(SubscriptionId(queueId, subscriptionId)) == d_queuesBySubscriptionId.end())`
+    - `(__out == nullptr ==> d_queues.find(queueId) == d_queues.end()) && (__out != nullptr ==> d_queues.find(queueId) != d_queues.end())`
+    - `(__out.type() == EventType::e_MESSAGE) && (__out.d_msgEventMode == MessageEventMode::e_READ)`
+    - `(d_type == EventType::e_MESSAGE) && (d_msgEventMode == MessageEventMode::e_WRITE) && (d_isPutEventBuilderConstructed == true) && (d_putEventBuilderBuffer.buffer() ↦ _)`
+    - `__out == *this && (d_type ↦ EventType::e_RAW ⋆ d_rawEvent ↦ rawEvent)`
+    - `__out == *this && d_queuesBySubscriptionId.find(SubscriptionId(queue->id(), subscriptionId)) != d_queuesBySubscriptionId.end()`
+    - `__out == *this && d_type == EventType::e_REQUEST`
+    - `__out == stream && (stream.bad() || stream.good())`
+    - `__out.type() == EventType::e_MESSAGE && __out.d_msgEventMode == MessageEventMode::e_READ`
+- **src/groups/bmq/bmqimp/bmqimp_eventqueue.cpp**
+  - requires:
+    - `true`
+  - ensures:
+    - `(__out == 0) || (__out == -1)`
+    - `__out != nullptr`
+    - `__out == d_sessionId`
+- **src/groups/bmq/bmqimp/bmqimp_messagecorrelationidcontainer.cpp**
+  - requires:
+    - `cit != d_correlationIds.end()`
+    - `correlationId != 0`
+    - `keys.size() > 0`
+    - `true`
+  - ensures:
+    - `(__out == -1 ==> d_correlationIds.find(key) == d_correlationIds.end()) && (__out == 0 ==> (*correlationId == d_correlationIds.find(key)->second.d_correlationId))`
+    - `(__out == -1 ==> d_correlationIds.find(key) == d_correlationIds.end()) && (__out == 0 ==> d_correlationIds.find(key) == d_correlationIds.end())`
+    - `(__out == true ==> true) && (__out == false ==> true)`
+    - `(__out == true) || (__out == false && SEPEXISTS(0, keys.size(), i, callback(&removeItem, keys[i], d_correlationIds.find(keys[i])->second) == true))`
+    - `__out != cit`
+    - `__out == key && d_correlationIds.find(__out) != d_correlationIds.end() && d_numControls == old_d_numControls + 1`
+- **src/groups/bmq/bmqimp/bmqimp_messagedumper.cpp**
+  - requires:
+    - `dumpMessageType != nullptr && (messageTypeStr == "in" || messageTypeStr == "out" || messageTypeStr == "push" || messageTypeStr == "ack" || messageTypeStr == "put" || messageTypeStr == "confirm" || !(messageTypeStr == "in" || messageTypeStr == "out" || messageTypeStr == "push" || messageTypeStr == "ack" || messageTypeStr == "put" || messageTypeStr == "confirm"))`
+  - ensures:
+    - `(__out == rc_SUCCESS ==> bdlb::String::areEqualCaseless(messageTypeStr, "in") || bdlb::String::areEqualCaseless(messageTypeStr, "out") || bdlb::String::areEqualCaseless(messageTypeStr, "push") || bdlb::String::areEqualCaseless(messageTypeStr, "ack") || bdlb::String::areEqualCaseless(messageTypeStr, "put") || bdlb::String::areEqualCaseless(messageTypeStr, "confirm")) && (__out == rc_INVALID_MSGTYPE ==> !(bdlb::String::areEqualCaseless(messageTypeStr, "in") || bdlb::String::areEqualCaseless(messageTypeStr, "out") || bdlb::String::areEqualCaseless(messageTypeStr, "push") || bdlb::String::areEqualCaseless(messageTypeStr, "ack") || bdlb::String::areEqualCaseless(messageTypeStr, "put") || bdlb::String::areEqualCaseless(messageTypeStr, "confirm")))`
+- **src/groups/bmq/bmqimp/bmqimp_queue.cpp**
+  - requires:
+    - `(start <= endPlus) && (value.isValid(start)) && (value.isValid(endPlus))`
+    - `true`
+  - ensures:
+    - `(__out == 0.0) || (__out == (static_cast<double>(bmqst::StatUtil::valueDifference(value, start, endPlus)) / bmqst::StatUtil::incrementsDifference(value, start, endPlus)) / k_COMPRESSION_RATIO_PRECISION_FACTOR)`
+    - `(messageCount == 0 ==> __out == 0.0) && (messageCount != 0 ==> __out == (static_cast<double>(bmqst::StatUtil::value(value, start)) / messageCount) / k_COMPRESSION_RATIO_PRECISION_FACTOR)`
+    - `__out != 0`
+- **src/groups/bmq/bmqimp/bmqimp_queuemanager.cpp**
+  - requires:
+    - `eventInfos != 0 && messageCount != 0 && iterator.isValid()`
+    - `queue != 0 && queue->id() >= 0`
+    - `true`
+  - ensures:
+    - `(__out < 0) || (__out == 0 && (eventInfos->size() == old_eventInfos->size() + *messageCount) && (*hasMessageWithMultipleSubQueueIds == EXISTS(0, eventInfos->size(), i, eventInfos->at(i).d_ids.size() > 1)))`
+    - `(__out.get() == 0 ==> d_queues.findByKey2(correlationId) == d_queues.end()) && (__out.get() != 0 ==> __out.get() != 0)`
+    - `(__out.get() == 0) || (__out.get() != 0 && __out->uri() == uri)`
+    - `(__out.get() == nullptr ==> it == d_queues.end()) && (__out.get() != nullptr ==> it != d_queues.end())`
+    - `(__out.use_count() == 0) || (__out.use_count() != 0 && __out.get() == queue)`
+    - `__out == d_uris.find(canonicalUri)->second.d_subStreamCount`
+- **src/groups/bmq/bmqio/bmqio_channelutil.cpp**
+  - requires:
+    - `outPacket->length() == 0`
+    - `true`
+  - ensures:
+    - `(__out == 0 || __out == -1) && (__out == -1 ==> outPacket->length() == 0)`
+    - `(__out == true ==> (*packetLength > k_MINIMUM_PACKET_LENGTH)) && (__out == false ==> (*packetLength <= k_MINIMUM_PACKET_LENGTH))`
+    - `(__out == true ==> host == bsl::string_view(bsl::to_string(s_localIpAddress))) && (__out == false ==> (host != bsl::string_view(bsl::to_string(s_localIpAddress)) || s_localIpAddress == 0))`
+    - `__out == (std::find(s_localAddresses_p->begin(), s_localAddresses_p->end(), ip) != s_localAddresses_p->end())`
+- **src/groups/bmq/bmqio/bmqio_ntcchannel.cpp**
+  - requires:
+    - `(status == nullptr) || (status != nullptr)`
+    - `cb != nullptr`
+    - `true`
+  - ensures:
+    - `(__out == 0 || __out == 1 || __out == 2 || __out == 3) && (__out == 0 ==> d_state == e_STATE_OPEN) && (__out != 0 ==> d_state != e_STATE_OPEN)`
+    - `(__out == 0) || (__out != 0 && status != nullptr)`
+    - `(d_streamSocket_sp != NULL ==> __out == 0) && (d_streamSocket_sp == NULL ==> __out == -1)`
+    - `(d_streamSocket_sp != nullptr ==> __out == d_streamSocket_sp->remoteEndpoint()) && (d_streamSocket_sp == nullptr ==> __out == ntsa::Endpoint())`
+    - `(d_streamSocket_sp != nullptr ==> __out == d_streamSocket_sp->sourceEndpoint()) && (d_streamSocket_sp == nullptr ==> __out == ntsa::Endpoint())`
+    - `__out != bdlmt::SignalerConnection()`
+    - `__out == 0 && (foundColon.isEmpty() ==> (*port == str && *host == "") || (!foundColon.isEmpty() ==> *host == bslstl::StringRef(str.begin(), foundColon.begin()) && *port == bslstl::StringRef(foundColon.end(), str.end())))`
+    - `__out == bslstl::StringRef("tcp.listen.backlog", 18)`
+    - `__out == d_allocator_p`
+    - `__out == d_channelId`
+    - `__out == d_closeSignaler.connect(cb)`
+    - `__out == d_complete`
+    - `__out == d_list.empty()`
+    - `__out == d_list.front()`
+    - `__out == d_list.size()`
+    - `__out == d_localUri`
+    - `__out == d_numNeeded`
+    - `__out == d_peerUri`
+    - `__out == d_properties`
+    - `__out.data() == "tcp.listen.port" && __out.length() == 15`
+    - `d_callback ↦ __out`
+    - `d_properties ↦ __out`
+    - `true`
+- **src/groups/bmq/bmqio/bmqio_ntcchannelfactory.cpp**
+  - requires:
+    - `d_state == e_STATE_DEFAULT || d_state == e_STATE_STOPPED || d_state == e_STATE_STARTED || d_state == e_STATE_STOPPING`
+    - `true`
+  - ensures:
+    - `__out == bmqio::NtcListenerUtil::listenBacklogProperty()`
+    - `__out == d_limitSignaler.connect(cb)`
+    - `true`
+- **src/groups/bmq/bmqio/bmqio_reconnectingchannelfactory.cpp**
+  - requires:
+    - `true`
+  - ensures:
+    - `&__out == this`
+    - `__out == 0`
+    - `__out == d_baseConnectHandle->properties()`
+    - `__out.d_endpointResolveFn.target<void(bsl::vector<bsl::basic_string<char>>*, const BloombergLP::bmqio::ConnectOptions&)>() == value.target<void(bsl::vector<bsl::basic_string<char>>*, const BloombergLP::bmqio::ConnectOptions&)>()`
+- **src/groups/bmq/bmqio/bmqio_resolveutil.cpp**
+  - requires:
+    - `result != 0`
+    - `result != NULL`
+  - ensures:
+    - `(__out.code() == ntsa::Error::e_OK ==> (result != 0 && *result == ipAddresses.front().v4())) && (__out.code() != ntsa::Error::e_OK ==> true)`
+    - `true`
+- **src/groups/bmq/bmqio/bmqio_resolvingchannelfactory.cpp**
+  - requires:
+    - `d_peerUri != nullptr && d_peerUri ↦ _`
+    - `true`
+    - `value`
+  - ensures:
+    - `&__out == this && __out.d_resolutionFn.target<ResolutionFn>() == value.target<ResolutionFn>()`
+    - `__out == *d_peerUri`
+    - `__out == d_resolvedPeerUri`
+- **src/groups/bmq/bmqma/bmqma_countingallocator.cpp**
+  - requires:
+    - `context != 0`
+    - `true`
+  - ensures:
+    - `__out == ((context->isDeleted() && valueType == bmqst::StatContext::e_TOTAL_VALUE) || (bmqst::StatUtil::value(context->value(valueType, 0), 0) > 0))`
+    - `__out == ((rec.type() == bmqst::StatContext::e_TOTAL_VALUE && rec.context().isDeleted()) || (bmqst::StatUtil::increments(rec.context().value(rec.type(), 0), 0) > 0))`
+- **src/groups/bmq/bmqma/bmqma_countingallocatorutil.cpp**
+  - requires:
+    - `g_initialized`
+    - `true`
+  - ensures:
+    - `&__out == &g_topAllocatorStore.object()`
+    - `__out != 0 && (__out == &g_statContext.object())`
+- **src/groups/bmq/bmqp/bmqp_ackmessageiterator.cpp**
+  - requires:
+    - `blob != 0`
+    - `blob != 0 && blob->length() >= eventHeader.headerWords() * Protocol::k_WORD_SIZE + AckHeader::k_MIN_HEADER_SIZE`
+    - `true`
+  - ensures:
+    - `(__out == rc_SUCCESS) || (__out == rc_INVALID_EVENTHEADER) || (__out == rc_INVALID_ACKHEADER) || (__out == rc_NOT_ENOUGH_BYTES)`
+    - `__out == 0`
+    - `__out == 1 || __out == 0 || __out == -1 || __out == -2`
+- **src/groups/bmq/bmqp/bmqp_compression.cpp**
+  - requires:
+    - `opaque != 0 && items > 0 && size > 0`
+    - `output != NULL && factory != NULL && errorStream != NULL && allocator != NULL`
+    - `output != NULL && factory != NULL && stream != NULL && errorStream != NULL && &input != NULL`
+    - `true`
+  - ensures:
+    - `(__out == rc_STREAM_INIT_FAILURE) || (__out != rc_STREAM_INIT_FAILURE)`
+    - `(__out == rc_SUCCESS) || (__out == rc_STREAM_INIT_FAILURE) || (__out == rc_STREAM_PROCESS_FAILURE) || (__out == rc_STREAM_END_FAILURE)`
+    - `(__out == true ==> (stream->avail_in > 0 || *index < input.numDataBuffers() - 1)) && (__out == false ==> *index == input.numDataBuffers() - 1)`
+    - `__out != 0`
+    - `__out == 0 || __out == -1`
+- **src/groups/bmq/bmqp/bmqp_confirmmessageiterator.cpp**
+  - requires:
+    - `blob != nullptr`
+    - `true`
+  - ensures:
+    - `(__out == rc_SUCCESS) || (__out == rc_INVALID_EVENTHEADER) || (__out == rc_INVALID_CONFIRMHEADER) || (__out == rc_NOT_ENOUGH_BYTES)`
+    - `__out == rc_HAS_NEXT || __out == rc_AT_END || __out == rc_INVALID || __out == rc_NOT_ENOUGH_BYTES || __out == rc_INVALID_ADVANCE_LENGTH`
+- **src/groups/bmq/bmqp/bmqp_controlmessageutil.cpp**
+  - requires:
+    - `true`
+  - ensures:
+    - `__out == 0 || __out == -1 || __out == -2`
+- **src/groups/bmq/bmqp/bmqp_crc32c.cpp**
+  - requires:
+    - `(length == 0 ==> data == 0) && (length != 0 ==> data != 0)`
+    - `(length == 0 ==> data == nullptr) && (length != 0 ==> data != nullptr)`
+    - `blob.numDataBuffers() >= 0 && SEPFORALL(0, blob.numDataBuffers(), i, (blob.buffer(i).data() ↦ _ ⋆ blob.buffer(i).size() >= 0))`
+    - `data != NULL && length >= 0`
+    - `true`
+  - ensures:
+    - `(blob.numDataBuffers() == 0 ==> __out == crc) && (blob.numDataBuffers() > 0 ==> __out == calculate(blob, crc))`
+    - `(blob.numDataBuffers() == 0 ==> __out == crc) && (blob.numDataBuffers() > 0 ==> __out == calculateSoftware(blob, crc))`
+    - `(length == 0 ==> __out == crc) && (length != 0 ==> __out != crc)`
+    - `true`
+- **src/groups/bmq/bmqp/bmqp_event.cpp**
+  - requires:
+    - `!stream.bad()`
+  - ensures:
+    - `(stream.bad() ==> __out == stream) && (stream.good() ==> (__out == stream && (SEPFORALL(0, strlen("type"), i, stream + i ↦ "type"[i]) ⋆ (stream + strlen("type") ↦ ':') ⋆ (stream + strlen("type") + 1 ↦ ' ') ⋆ SEPFORALL(0, strlen(type()), j, stream + strlen("type") + 2 + j ↦ type()[j]))))`
+- **src/groups/bmq/bmqp/bmqp_eventutil.cpp**
+  - requires:
+    - `SEPFORALL(0, subQInfos.size(), i, (subQInfos[i] ↦ sep_v) && (sep_v != 0))`
+    - `subQInfo.size() == 1`
+    - `true`
+  - ensures:
+    - `(__out == rc_SUCCESS) || (__out != rc_SUCCESS ==> (SEPFORALL(0, subQInfos.size(), i, (subQInfos[i] ↦ sep_v) && (sep_v != 0))))`
+    - `(__out == rc_SUCCESS) || (__out != rc_SUCCESS)`
+    - `(__out.first != k_SUCCESS) || (__out.second == rc_SUCCESS || __out.second == rc_ADD_OPTION_ERROR || __out.second == rc_PACK_MESSAGE_ERROR)`
+    - `(subQInfo.size() == 1) ==> (__out == d_builder.packMessage(d_appData, d_msgIterator.header()))`
+    - `__out == (optionsView.find(OptionType::e_SUB_QUEUE_INFOS) != optionsView.end() || optionsView.find(OptionType::e_SUB_QUEUE_IDS_OLD) != optionsView.end())`
+    - `__out == 10 * error + context`
+    - `__out == packError(static_cast<int>(result), error)`
+    - `true`
+- **src/groups/bmq/bmqp/bmqp_messageguidgenerator.cpp**
+  - requires:
+    - `true`
+    - `version != NULL && counter != NULL && timerTick != NULL && clientId != NULL`
+  - ensures:
+    - `__out == 0 || __out == -1`
+    - `__out.clientId() == d_clientIdHex && __out.nanoSecondsFromEpoch() == d_nanoSecondsFromEpoch`
+    - `true`
+- **src/groups/bmq/bmqp/bmqp_messageproperties.cpp**
+  - requires:
+    - `blob.length() >= 0`
+    - `bufferFactory != nullptr`
+    - `d_properties_p != 0 && (d_first || (d_iterator != d_properties_p->d_properties.end()))`
+    - `name != "" && (buffer == nullptr || true)`
+    - `property != NULL && totalLength != NULL && start > 0 && index >= 0`
+    - `true`
+  - ensures:
+    - `&__out == this`
+    - `(__out == false ==> cit == d_properties.end()) && (__out == true ==> (cit != d_properties.end() && (type == nullptr || (*type == cit->second.d_type))))`
+    - `(__out == rc_SUCCESS) || (__out == rc_DUPLICATE_PROPERTY_NAME && isFirstTime) || (__out != rc_SUCCESS && __out != rc_DUPLICATE_PROPERTY_NAME)`
+    - `(__out == rc_SUCCESS) || (__out == rc_MISSING_MSG_PROPERTY_HEADERS) || (__out == streamInHeader(blob)) || (__out == loadProperties(true, isNewStyleProperties))`
+    - `(__out == true ==> (buffer == nullptr || *buffer != bmqt::PropertyType::e_UNDEFINED)) && (__out == false ==> (buffer == nullptr || *buffer == bmqt::PropertyType::e_UNDEFINED))`
+    - `(__out == true ==> (d_iterator != d_properties_p->d_properties.end() && bsl::isalnum(name()[0]) && d_iterator->second.d_isValid)) && (__out == false ==> (d_iterator == d_properties_p->d_properties.end() || (!bsl::isalnum(name()[0]) && d_iterator != d_properties_p->d_properties.end()) || (!d_iterator->second.d_isValid && d_iterator != d_properties_p->d_properties.end())))`
+    - `(__out == true ==> (p.d_value != old_p.d_value)) && (__out == false ==> (p.d_value == old_p.d_value))`
+    - `(schema != nullptr && __out == streamInHeader(blob) && (__out == 0 ==> d_schema == schema)) || (schema == nullptr && __out == streamIn(blob, info.isExtended()))`
+    - `__out == d_blob.object() && d_isDirty == false && d_isBlobConstructed == true`
+    - `__out == d_properties.at(name).d_type`
+    - `__out == property.d_value`
+    - `__out == rc_SUCCESS || __out == rc_NO_MSG_PROPERTIES_HEADER || __out == rc_INCOMPLETE_MSG_PROPERTIES_HEADER || __out == rc_INCORRECT_LENGTH || __out == rc_INVALID_MPH_SIZE || __out == rc_INVALID_NUM_PROPERTIES`
+    - `__out == rc_SUCCESS || __out == rc_NO_MSG_PROPERTY_HEADER || __out == rc_INCOMPLETE_MSG_PROPERTY_HEADER || __out == rc_INVALID_PROPERTY_TYPE || __out == rc_INVALID_PROPERTY_NAME_LENGTH || __out == rc_INVALID_PROPERTY_VALUE_LENGTH || __out == rc_MISSING_PROPERTY_AREA || __out == rc_PROPERTY_NAME_STREAMIN_FAILURE || __out == rc_INCORRECT_LENGTH`
+    - `__out == stream`
+- **src/groups/bmq/bmqp/bmqp_optionsview.cpp**
+  - requires:
+    - `blob != 0 && optionsAreaSize >= 0 && d_optionPositions.size() == (OptionHeader::k_MAX_TYPE + 1)`
+    - `msgGroupId != NULL && msgGroupId->empty()`
+    - `subQueueIdsOld != 0 && subQueueIdsOld->empty()`
+    - `subQueueInfos->empty()`
+    - `true`
+  - ensures:
+    - `(__out == 0 ==> !msgGroupId->empty()) && (__out != 0 ==> msgGroupId->empty())`
+    - `(__out == 0 ==> !subQueueInfos->empty()) && (__out == -1 || __out == -2 ==> subQueueInfos->empty())`
+    - `(__out == rc_SUCCESS ==> (d_blob_p == blob ⋆ d_isValid == true)) && (__out != rc_SUCCESS ==> d_isValid == false)`
+    - `(__out == rc_SUCCESS ==> (subQueueIdsOld->size() != 0)) && (__out == rc_LOAD_FAILURE ==> (subQueueIdsOld->size() == 0))`
+    - `__out == 0 || __out != 0`
+- **src/groups/bmq/bmqp/bmqp_optionutil.cpp**
+  - requires:
+    - `currentSize >= bmqp::Protocol::k_WORD_SIZE`
+    - `packed || (size % 4 == 0)`
+    - `true`
+    - `type != OptionType::e_UNDEFINED`
+  - ensures:
+    - `(__out == bmqt::EventBuilderResult::e_OPTION_TOO_BIG || __out == bmqt::EventBuilderResult::e_UNKNOWN || __out == bmqt::EventBuilderResult::e_SUCCESS)`
+    - `__out.type() == OptionType::e_UNDEFINED && __out.isNull()`
+    - `__out.type() == type && __out.payloadEffectiveSize() == (size + __out.padding()) && __out.padding() == (((size + 4) / 4) * 4 - size)`
+    - `__out.type() == type && __out.payloadEffectiveSize() == size && __out.packed() == packed && __out.packedValue() == packedValue && __out.padding() == 0`
+- **src/groups/bmq/bmqp/bmqp_protocol.cpp**
+  - requires:
+    - `out != 0`
+    - `out != 0 && str.data() != nullptr && str.length() >= 0`
+    - `out != 0 && str.length() >= 0`
+    - `true`
+  - ensures:
+    - `(__out != 0) && ((value == EncodingType::e_UNKNOWN ==> __out == "UNKNOWN") && (value == EncodingType::e_BER ==> __out == "BER") && (value == EncodingType::e_JSON ==> __out == "JSON") && (value != EncodingType::e_UNKNOWN && value != EncodingType::e_BER && value != EncodingType::e_JSON ==> __out == "(* UNKNOWN *)"))`
+    - `(__out == 0 ==> (out ↦ sep_v && SEPFORALL(0, bdlb::Tokenizer(str, ",").size(), i, (bdlb::Tokenizer(str, ",").begin() + i) != bdlb::Tokenizer(str, ",").end() && StorageHeaderFlags::fromAscii(&sep_v, *(bdlb::Tokenizer(str, ",").begin() + i)) == true && sep_v == (sep_v | *out)))) && (__out == -1 ==> EXISTS(0, bdlb::Tokenizer(str, ",").size(), i, (bdlb::Tokenizer(str, ",").begin() + i) != bdlb::Tokenizer(str, ",").end() && StorageHeaderFlags::fromAscii(&sep_v, *(bdlb::Tokenizer(str, ",").begin() + i)) == false && errorDescription.str().find(*(bdlb::Tokenizer(str, ",").begin() + i)) != std::string::npos))`
+    - `(__out == false ==> (isSet(flags, PutHeaderFlags::e_UNUSED3) || isSet(flags, PutHeaderFlags::e_UNUSED4))) && (__out == true ==> !(isSet(flags, PutHeaderFlags::e_UNUSED3) || isSet(flags, PutHeaderFlags::e_UNUSED4)))`
+    - `(__out == false ==> (isSet(flags, StorageHeaderFlags::e_UNUSED2) || isSet(flags, StorageHeaderFlags::e_UNUSED3) || isSet(flags, StorageHeaderFlags::e_UNUSED4))) && (__out == true ==> !(isSet(flags, StorageHeaderFlags::e_UNUSED2) || isSet(flags, StorageHeaderFlags::e_UNUSED3) || isSet(flags, StorageHeaderFlags::e_UNUSED4)))`
+    - `(__out == false ==> isSet(flags, PushHeaderFlags::e_UNUSED4)) && (__out == true ==> !isSet(flags, PushHeaderFlags::e_UNUSED4))`
+    - `(__out == true ==> ((out ↦ PushHeaderFlags::e_IMPLICIT_PAYLOAD) || (out ↦ PushHeaderFlags::e_MESSAGE_PROPERTIES) || (out ↦ PushHeaderFlags::e_OUT_OF_ORDER) || (out ↦ PushHeaderFlags::e_UNUSED4))) && (__out == false ==> true)`
+    - `(__out == true ==> ((out ↦ PutHeaderFlags::e_ACK_REQUESTED) || (out ↦ PutHeaderFlags::e_MESSAGE_PROPERTIES) || (out ↦ PutHeaderFlags::e_UNUSED3) || (out ↦ PutHeaderFlags::e_UNUSED4))) && (__out == false ==> true)`
+    - `(__out == true ==> ((out ↦ StorageHeaderFlags::e_RECEIPT_REQUESTED) || (out ↦ StorageHeaderFlags::e_UNUSED2) || (out ↦ StorageHeaderFlags::e_UNUSED3) || (out ↦ StorageHeaderFlags::e_UNUSED4))) && (__out == false ==> true)`
+    - `(value == OptionType::e_UNDEFINED ==> __out == "UNDEFINED") && (value == OptionType::e_SUB_QUEUE_IDS_OLD ==> __out == "SUB_QUEUE_IDS_OLD") && (value == OptionType::e_MSG_GROUP_ID ==> __out == "MSG_GROUP_ID") && (value == OptionType::e_SUB_QUEUE_INFOS ==> __out == "SUB_QUEUE_INFOS") && (value != OptionType::e_UNDEFINED && value != OptionType::e_SUB_QUEUE_IDS_OLD && value != OptionType::e_MSG_GROUP_ID && value != OptionType::e_SUB_QUEUE_INFOS ==> __out == "(* UNKNOWN *)")`
+    - `(value == PushHeaderFlags::Enum::e_IMPLICIT_PAYLOAD ==> __out == "IMPLICIT_PAYLOAD") && (value == PushHeaderFlags::Enum::e_MESSAGE_PROPERTIES ==> __out == "MESSAGE_PROPERTIES") && (value == PushHeaderFlags::Enum::e_OUT_OF_ORDER ==> __out == "OUT_OF_ORDER") && (value == PushHeaderFlags::Enum::e_UNUSED4 ==> __out == "UNUSED4") && (value != PushHeaderFlags::Enum::e_IMPLICIT_PAYLOAD && value != PushHeaderFlags::Enum::e_MESSAGE_PROPERTIES && value != PushHeaderFlags::Enum::e_OUT_OF_ORDER && value != PushHeaderFlags::Enum::e_UNUSED4 ==> __out == "(* UNKNOWN *)")`
+    - `(value == RecoveryFileChunkType::e_UNDEFINED ==> __out == "UNDEFINED") && (value == RecoveryFileChunkType::e_DATA ==> __out == "DATA") && (value == RecoveryFileChunkType::e_JOURNAL ==> __out == "JOURNAL") && (value == RecoveryFileChunkType::e_QLIST ==> __out == "QLIST") && (value != RecoveryFileChunkType::e_UNDEFINED && value != RecoveryFileChunkType::e_DATA && value != RecoveryFileChunkType::e_JOURNAL && value != RecoveryFileChunkType::e_QLIST ==> __out == "(* UNKNOWN *)")`
+    - `(value == StorageHeaderFlags::Enum::e_RECEIPT_REQUESTED ==> __out == "RECEIPT_REQUESTED") && (value == StorageHeaderFlags::Enum::e_UNUSED2 ==> __out == "UNUSED2") && (value == StorageHeaderFlags::Enum::e_UNUSED3 ==> __out == "UNUSED3") && (value == StorageHeaderFlags::Enum::e_UNUSED4 ==> __out == "UNUSED4") && (value != StorageHeaderFlags::Enum::e_RECEIPT_REQUESTED && value != StorageHeaderFlags::Enum::e_UNUSED2 && value != StorageHeaderFlags::Enum::e_UNUSED3 && value != StorageHeaderFlags::Enum::e_UNUSED4 ==> __out == "(* UNKNOWN *)")`
+    - `__out != 0 && (value == EventType::e_UNDEFINED ==> __out == "UNDEFINED") && (value == EventType::e_CONTROL ==> __out == "CONTROL") && (value == EventType::e_PUT ==> __out == "PUT") && (value == EventType::e_CONFIRM ==> __out == "CONFIRM") && (value == EventType::e_REJECT ==> __out == "REJECT") && (value == EventType::e_PUSH ==> __out == "PUSH") && (value == EventType::e_ACK ==> __out == "ACK") && (value == EventType::e_CLUSTER_STATE ==> __out == "CLUSTER_STATE") && (value == EventType::e_ELECTOR ==> __out == "ELECTOR") && (value == EventType::e_STORAGE ==> __out == "STORAGE") && (value == EventType::e_RECOVERY ==> __out == "RECOVERY") && (value == EventType::e_PARTITION_SYNC ==> __out == "PARTITION_SYNC") && (value == EventType::e_HEARTBEAT_REQ ==> __out == "HEARTBEAT_REQ") && (value == EventType::e_HEARTBEAT_RSP ==> __out == "HEARTBEAT_RSP") && (value == EventType::e_REPLICATION_RECEIPT ==> __out == "REPLICATION_RECEIPT") && (true ==> __out == "(* UNKNOWN *)")`
+    - `__out != 0 && (value == PutHeaderFlags::e_ACK_REQUESTED ==> __out == "ACK_REQUESTED") && (value == PutHeaderFlags::e_MESSAGE_PROPERTIES ==> __out == "MESSAGE_PROPERTIES") && (value == PutHeaderFlags::e_UNUSED3 ==> __out == "UNUSED3") && (value == PutHeaderFlags::e_UNUSED4 ==> __out == "UNUSED4") && (value != PutHeaderFlags::e_ACK_REQUESTED && value != PutHeaderFlags::e_MESSAGE_PROPERTIES && value != PutHeaderFlags::e_UNUSED3 && value != PutHeaderFlags::e_UNUSED4 ==> __out == "(* UNKNOWN *)")`
+    - `__out != 0 && (value == StorageMessageType::e_UNDEFINED ==> __out == "UNDEFINED") && (value == StorageMessageType::e_DATA ==> __out == "DATA") && (value == StorageMessageType::e_QLIST ==> __out == "QLIST") && (value == StorageMessageType::e_CONFIRM ==> __out == "CONFIRM") && (value == StorageMessageType::e_DELETION ==> __out == "DELETION") && (value == StorageMessageType::e_JOURNAL_OP ==> __out == "JOURNAL_OP") && (value == StorageMessageType::e_QUEUE_OP ==> __out == "QUEUE_OP") && (value != StorageMessageType::e_UNDEFINED && value != StorageMessageType::e_DATA && value != StorageMessageType::e_QLIST && value != StorageMessageType::e_CONFIRM && value != StorageMessageType::e_DELETION && value != StorageMessageType::e_JOURNAL_OP && value != StorageMessageType::e_QUEUE_OP ==> __out == "(* UNKNOWN *)")`
+    - `__out == stream`
+- **src/groups/bmq/bmqp/bmqp_protocolutil.cpp**
+  - requires:
+    - `fieldName != 0 && featureName != 0 && featureSet.size() >= 0`
+    - `true`
+  - ensures:
+    - `(__out == 0) || (__out == -1) || (__out == -2) || (__out == -3) || (__out == 1)`
+    - `(__out == true ==> bsl::find(featureSet.begin(), featureSet.end(), featureName) != featureSet.end()) && (__out == false ==> bsl::find(featureSet.begin(), featureSet.end(), featureName) == featureSet.end())`
+    - `(ci.consumerPriority() == bmqp::Protocol::k_CONSUMER_PRIORITY_INVALID ==> __out == (ci.consumerPriorityCount() == 0)) && (ci.consumerPriority() != bmqp::Protocol::k_CONSUMER_PRIORITY_INVALID ==> __out == (ci.consumerPriorityCount() > 0))`
+    - `(value == 0 ==> __out == bmqt::AckResult::e_SUCCESS) && (value == 1 ==> __out == bmqt::AckResult::e_LIMIT_MESSAGES) && (value == 2 ==> __out == bmqt::AckResult::e_LIMIT_BYTES) && (value == 6 ==> __out == bmqt::AckResult::e_STORAGE_FAILURE) && (value == 7 ==> __out == bmqt::AckResult::e_NOT_READY) && (value != 0 && value != 1 && value != 2 && value != 6 && value != 7 ==> __out == bmqt::AckResult::e_UNKNOWN)`
+    - `__out == 0 || __out == -1 || __out == -2`
+    - `__out == 0 || __out == 1 || __out == 2 || __out == 5 || __out == 6 || __out == 7`
+    - `__out == FORALL(0, parameters.subscriptions().size(), i, FORALL(0, parameters.subscriptions()[i].consumers().size(), n, verify(parameters.subscriptions()[i].consumers()[n])))`
+    - `__out == g_heartbeatReqBlob.object()`
+    - `__out == g_heartbeatRspBlob.object()`
+    - `__out == length - blob.buffer(pos.first).data()[pos.second]`
+- **src/groups/bmq/bmqp/bmqp_pushmessageiterator.cpp**
+  - requires:
+    - `blob != 0`
+    - `blob != 0 && (hasOptions() ==> isValid())`
+    - `blob != 0 && eventHeader.headerWords() * Protocol::k_WORD_SIZE <= blob->length()`
+    - `blob != NULL`
+    - `blob != nullptr`
+    - `isValid()`
+    - `isValid() && d_decompressFlag`
+    - `position != nullptr`
+    - `true`
+  - ensures:
+    - `(__out == -1 ==> rc != 0) && (__out != -1 ==> __out == ((d_header.messageWords() - d_header.optionsWords() - d_header.headerWords()) * Protocol::k_WORD_SIZE - d_blobIter.blob()->buffer(lastBytePos.buffer()).data()[lastBytePos.byte()]))`
+    - `(__out == 0 ==> !hasOptions()) && (__out != 0 ==> __out == bmqu::BlobUtil::appendToBlob(blob, *d_blobIter.blob(), d_optionsPosition, d_optionsSize))`
+    - `(__out == 0) || (__out == -1) || (__out == -2) || (__out < -2)`
+    - `(__out == rc_HAS_NEXT) || (__out == rc_AT_END) || (__out == rc_INVALID) || (__out == rc_NO_PUSH_HEADER) || (__out == rc_NOT_ENOUGH_BYTES) || (__out == rc_INVALID_APPLICATION_DATA_OFFSET) || (__out == rc_PARSING_ERROR) || (__out == rc_INVALID_OPTIONS_OFFSET) || (__out == rc_INVALID_MESSAGE_SIZE)`
+    - `(__out == rc_IMPLICIT_APP_DATA ==> isApplicationDataImplicit()) && (__out == rc_SUCCESS ==> (*position ↦ d_applicationDataPosition))`
+    - `(__out == rc_SUCCESS ==> (d_decompressFlag == decompressFlag ⋆ d_advanceLength == 0)) && (__out == rc_INVALID_EVENTHEADER ==> d_advanceLength == -1)`
+    - `(__out == rc_SUCCESS) ==> (d_lazyMessagePayloadPosition != bmqu::BlobPosition()) && (__out != rc_SUCCESS) ==> (d_lazyMessagePayloadPosition == bmqu::BlobPosition())`
+    - `(__out == rc_SUCCESS) || (__out == rc_IMPLICIT_APP_DATA) || (__out == rc_BLOB_FAILURE) || (__out == rc_STREAMIN_FAILURE)`
+    - `(__out == rc_SUCCESS) || (__out == rc_IMPLICIT_APP_DATA) || (__out == rc_INVALID_APP_DATA_OFFSET) || (__out == rc_INVALID_APP_DATA_LENGTH)`
+    - `(__out == rc_SUCCESS) || (__out == rc_IMPLICIT_APP_DATA) || (__out == rc_INVALID_PAYLOAD_OFFSET) || (__out == rc_INVALID_PAYLOAD_LENGTH)`
+    - `(isApplicationDataImplicit() ==> __out == 0) && (!isApplicationDataImplicit() ==> __out == d_applicationDataSize)`
+    - `__out == 0 && (d_blobIter.position() == other.d_blobIter.position()) && (d_blobIter.remaining() == other.d_blobIter.remaining())`
+    - `__out == d_lazyMessagePayloadSize`
+- **src/groups/bmq/bmqp/bmqp_putmessageiterator.cpp**
+  - requires:
+    - `(!hasOptions() || (hasOptions() && blob != nullptr))`
+    - `blob != 0`
+    - `blob != 0 && eventHeader.headerWords() * Protocol::k_WORD_SIZE <= blob->length()`
+    - `blob != 0 && other.d_blobIter.position() == other.d_blobIter.position() && other.d_blobIter.remaining() == other.d_blobIter.remaining()`
+    - `isValid() && (d_applicationDataSize == -1 ==> d_applicationDataSize == compressedApplicationDataSize())`
+    - `isValid() && d_blobIter.remaining() >= 0`
+    - `isValid() && d_decompressFlag && (d_lazyMessagePayloadSize == -1 || d_lazyMessagePayloadSize == (applicationDataSize() - messagePropertiesSize()))`
+    - `msgGroupId != nullptr`
+    - `position != nullptr`
+    - `position != nullptr && isValid()`
+    - `true`
+    - `view != 0`
+  - ensures:
+    - `(__out == -1) || (__out == ((d_header.messageWords() - d_header.optionsWords() - d_header.headerWords()) * Protocol::k_WORD_SIZE - d_blobIter.blob()->buffer(lastBytePos.buffer()).data()[lastBytePos.byte()]))`
+    - `(__out == 0) || (__out < 0)`
+    - `(__out == 0) || (__out == -10) || (__out == -20)`
+    - `(__out == rc_HAS_NEXT) || (__out == rc_AT_END) || (__out == rc_INVALID) || (__out == rc_NO_PUTHEADER) || (__out == rc_NOT_ENOUGH_BYTES) || (__out == rc_INVALID_ADVANCE_LENGTH) || (__out == rc_INVALID_OPTIONS_OFFSET) || (__out == rc_INVALID_APPLICATION_DATA_OFFSET) || (__out == rc_INVALID_MESSAGE_PROPERTIES_FLAGS) || (__out == rc_INVALID_APPLICATION_DATA_SIZE) || (__out == rc_PARSING_ERROR)`
+    - `(__out == rc_NO_MSG_PROPERTIES ==> (*position == bmqu::BlobPosition())) && (__out == rc_SUCCESS ==> (*position == d_applicationDataPosition))`
+    - `(__out == rc_SUCCESS && (!hasOptions() || (hasOptions() && blob != nullptr))) || (__out != rc_SUCCESS && hasOptions())`
+    - `(__out == rc_SUCCESS && (hasMessageProperties() == false ==> blob->length() == 0) && (hasMessageProperties() == true ==> blob->length() == old_blob->length() + d_messagePropertiesSize)) || (__out != rc_SUCCESS)`
+    - `(__out == rc_SUCCESS && d_decompressFlag == decompressFlag && d_advanceLength == 0) || (__out == rc_INVALID_EVENTHEADER && d_advanceLength == -1)`
+    - `(__out == rc_SUCCESS ==> (*position ↦ d_lazyMessagePayloadPosition)) && (__out != rc_SUCCESS ==> (*position ↦ bmqu::BlobPosition()))`
+    - `(__out == rc_SUCCESS) && (position ↦ d_applicationDataPosition)`
+    - `(__out == true ==> (value == 1 || value == 2 || value == 3 || value == 4)) && (__out == false ==> !(value == 1 || value == 2 || value == 3 || value == 4))`
+    - `(__out == true ==> msgGroupId != NULL) && (__out == false ==> msgGroupId == NULL)`
+    - `__out == 0 && (d_blobIter.position() == other.d_blobIter.position()) && (d_blobIter.remaining() == other.d_blobIter.remaining())`
+    - `__out == d_applicationDataSize && (d_applicationDataSize == -1 ==> __out == compressedApplicationDataSize())`
+    - `__out == d_lazyMessagePayloadSize && (d_lazyMessagePayloadSize != -1 ==> d_lazyMessagePayloadSize == (applicationDataSize() - messagePropertiesSize()))`
+    - `__out == view->reset(d_blobIter.blob(), d_optionsPosition, d_optionsSize)`
+- **src/groups/bmq/bmqp/bmqp_queueid.cpp**
+  - requires:
+    - `stream.good() && d_id[strlen(d_id)] == '\0' && d_subId[strlen(d_subId)] == '\0'`
+  - ensures:
+    - `__out == stream && (stream.bad() || (stream.good() && (SEPFORALL(0, strlen(d_id), i, stream + i ↦ d_id[i]) ⋆ SEPFORALL(0, strlen(d_subId), j, stream + strlen(d_id) + j ↦ d_subId[j]))))`
+- **src/groups/bmq/bmqp/bmqp_recoverymessageiterator.cpp**
+  - requires:
+    - `blob != 0 && eventHeader.headerWords() * Protocol::k_WORD_SIZE <= blob->length()`
+    - `true`
+  - ensures:
+    - `(__out == rc_HAS_NEXT) || (__out == rc_AT_END) || (__out == rc_INVALID) || (__out == rc_NO_RECOVERYHEADER) || (__out == rc_NOT_ENOUGH_BYTES)`
+    - `(__out == rc_SUCCESS ==> d_advanceLength == 0) && (__out == rc_INVALID_EVENTHEADER ==> d_advanceLength == -1)`
+- **src/groups/bmq/bmqp/bmqp_rejectmessageiterator.cpp**
+  - requires:
+    - `blob != nullptr`
+    - `true`
+  - ensures:
+    - `(__out == rc_INVALID ==> !isValid()) && (__out == rc_AT_END ==> d_blobIter.advance(d_advanceLength) == false) && (__out == rc_NOT_ENOUGH_BYTES ==> !d_message.isSet()) && (__out == rc_HAS_NEXT ==> d_message.isSet())`
+    - `(__out == rc_SUCCESS) || (__out == rc_INVALID_EVENTHEADER) || (__out == rc_INVALID_REJECTHEADER) || (__out == rc_NOT_ENOUGH_BYTES)`
+- **src/groups/bmq/bmqp/bmqp_schemagenerator.cpp**
+  - requires:
+    - `mps == nullptr || (mps != nullptr && mps->numProperties() > 0)`
+  - ensures:
+    - `(mps == nullptr || mps->numProperties() == 0) ==> __out.schemaId() == k_NO_SCHEMA || (!__out.schemaId() == k_NO_SCHEMA && __out.schemaId() != k_NO_SCHEMA)`
+- **src/groups/bmq/bmqp/bmqp_schemalearner.cpp**
+  - requires:
+    - `(input.schemaId() == 0 || !isPresentAndValid(input.schemaId())) ==> true && (input.schemaId() != 0 && isPresentAndValid(input.schemaId())) ==> true`
+    - `input.isPresent() ==> input.schemaId() != k_NO_SCHEMA`
+    - `isPresentAndValid(input.schemaId()`
+    - `mps != 0 && context != 0`
+    - `true`
+  - ensures:
+    - `(__out == 0 ==> !isPresentAndValid(input.schemaId())) && (__out != 0 ==> (__out == &context->d_handles[input.schemaId()].d_schema_sp))`
+    - `(__out == 0) || (__out == -1) || (__out < 0)`
+    - `(d_servers.find(foreignId) != d_servers.end() ==> __out == d_servers.find(foreignId)->second) && (d_servers.find(foreignId) == d_servers.end() ==> __out != nullptr)`
+    - `(input.schemaId() == 0 || !isPresentAndValid(input.schemaId())) ==> __out == input && (input.schemaId() != 0 && isPresentAndValid(input.schemaId())) ==> (__out.isPresent() == input.isPresent() && __out.schemaId() == input.schemaId())`
+    - `(schemaId > k_MAX_SCHEMA || schemaId == k_NO_SCHEMA) ==> __out == false && (schemaId <= k_MAX_SCHEMA && schemaId != k_NO_SCHEMA) ==> __out == true`
+    - `__out.isPresent() == input.isPresent() && (input.schemaId() == k_NO_SCHEMA ==> __out.schemaId() == k_NO_SCHEMA) && (input.schemaId() != k_NO_SCHEMA ==> __out.schemaId() != k_NO_SCHEMA)`
+    - `true`
+- **src/groups/bmq/bmqp/bmqp_storagemessageiterator.cpp**
+  - requires:
+    - `blob != 0`
+  - ensures:
+    - `(__out == rc_HAS_NEXT) || (__out == rc_AT_END) || (__out == rc_INVALID) || (__out == rc_NO_STORAGEHEADER) || (__out == rc_NOT_ENOUGH_BYTES) ==> true`
+    - `(__out == rc_SUCCESS ==> d_advanceLength == 0) && (__out == rc_INVALID_EVENTHEADER ==> d_advanceLength == -1)`
+- **src/groups/bmq/bmqst/bmqst_printutil.cpp**
+  - requires:
+    - `groupSize > 0`
+    - `num != 0 && remainder != 0`
+    - `precision >= 0`
+    - `stream.good() && groupSize >= 0`
+    - `stream.good() && precision >= 0`
+    - `strlen(buf) >= ((value == 0) ? 1 : (int)log10(abs(value)) + 1 + ((int)log10(abs(value)) / groupSize))`
+    - `true`
+  - ensures:
+    - `(__out == TIME_INTERVAL_NS_UNITS[level]) && (num ↦ (ns / div)) && (remainder ↦ static_cast<int>(bsl::floor(((ns - (ns / div) * div) / static_cast<double>(div)) * bsl::pow(10.0, precision))))`
+    - `__out <= buf && strlen(buf) >= (value == 0 ? 1 : (int)log10(abs(value)) + 1 + ((int)log10(abs(value)) / groupSize))`
+    - `__out == (printedValueLength(value) + static_cast<int>(bsl::strlen(unit)) + 1 + (unit != MEMORY_UNITS[0] && precision > 0 ? 1 + precision : 0))`
+    - `__out == bmqst::PrintUtil::printedValueLength((bsls::Types::Int64)value) + precision + 1`
+    - `__out == bmqst::PrintUtil::printedValueLengthWithSeparator((bsls::Types::Int64)value, groupSize) + precision + (precision > 0 ? 1 : 0)`
+    - `__out == ret`
+    - `__out == stream`
+    - `__out == stream && (SEPFORALL(0, strlen(buf), i, stream + i ↦ buf[i]))`
+    - `__out == stream && (stream.bad() || (stream.good() && (SEPFORALL(0, 64, i, (buf + i) ↦ sep_v) ⋆ printValueWithSeparatorImp(buf + 63, value, groupSize, separator))))`
+    - `__out == stream && (stream.good() ==> __out.good())`
+    - `__out == stream && SEPFORALL(0, strlen(buf), i, stream + i ↦ buf[i])`
+    - `__out > 0`
+    - `__out >= 0 && (value < 0 ==> __out == printedValueLength(value) + printedValueLength(value) / groupSize) && (value >= 0 ==> __out == printedValueLength(value) + printedValueLength(value) / groupSize - ((printedValueLength(value) % groupSize) == 0))`
+- **src/groups/bmq/bmqst/bmqst_statcontext.cpp**
+  - requires:
+    - `!stream.bad()`
+    - `true`
+  - ensures:
+    - `(__out != -1 ==> SEPEXISTS(0, d_valueDefs_p->size(), i, (*d_valueDefs_p)[i].d_name == name)) && (__out == -1 ==> FORALL(0, d_valueDefs_p->size(), i, (*d_valueDefs_p)[i].d_name != name))`
+    - `(d_totalValues_p.ptr() != 0 ==> __out == d_totalValues_p.ptr()) && (d_totalValues_p.ptr() == 0 ==> __out == d_directValues_p.ptr())`
+    - `__out == epochOffset() + timerTime`
+    - `__out == epochTime - epochOffset()`
+    - `__out == offset`
+    - `__out == stream && (stream.bad() || (stream.good() && (stream != old_stream)))`
+    - `__out >= 0`
+    - `__out.get() != NULL`
+- **src/groups/bmq/bmqst/bmqst_stringkey.cpp**
+  - requires:
+    - `true`
+  - ensures:
+    - `__out == stream`
+- **src/groups/bmq/bmqst/bmqst_tableutil.cpp**
+  - requires:
+    - `true`
+  - ensures:
+    - `(__out == -1 ==> info.numHeaderLevels() < 1) && (__out == 0 ==> info.numHeaderLevels() >= 1)`
+- **src/groups/bmq/bmqsys/bmqsys_mocktime.cpp**
+  - requires:
+    - `true`
+  - ensures:
+    - `(__out.d_realtimeClock ↦ bsls::TimeInterval(0, 0)) ⋆ (__out.d_monotonicClock ↦ bsls::TimeInterval(0, 0)) ⋆ (__out.d_highResTimer ↦ 0)`
+    - `__out == *this && (d_highResTimer ↦ value)`
+    - `__out == *this && (d_monotonicClock ↦ old_d_monotonicClock + offset)`
+    - `__out == *this && (d_realtimeClock ↦ old_d_realtimeClock + offset)`
+    - `__out == *this && d_highResTimer == old_d_highResTimer + offset`
+    - `__out == d_highResTimer`
+    - `__out == d_monotonicClock`
+    - `__out == d_realtimeClock`
+    - `__out.d_monotonicClock ↦ value`
+    - `__out.d_realtimeClock == value`
+- **src/groups/bmq/bmqsys/bmqsys_statmonitor.cpp**
+  - requires:
+    - `true`
+  - ensures:
+    - `(__out == 0 ==> d_isStarted == true) && (__out != 0 ==> errorDescription.fail())`
+    - `(__out == 0.0 ==> (value != value)) && (__out != 0.0 ==> (__out == value / k_CPU_MULTIPLIER))`
+    - `(subContext == nullptr ==> __out == 0) && (subContext != nullptr ==> __out == accessorMethod(*subContext, snapshotId, statId))`
+    - `__out == &d_systemStatContext`
+    - `__out == accessorMethod(statContext, snapshotId, statId)`
+    - `__out == bmqst::StatUtil::valueDifference(statContext.value(bmqst::StatContext::e_TOTAL_VALUE, statId), bmqst::StatValue::SnapshotLocation(0, 0), bmqst::StatValue::SnapshotLocation(0, snapshotId))`
+- **src/groups/bmq/bmqsys/bmqsys_statmonitorsnapshotrecorder.cpp**
+  - requires:
+    - `true`
+  - ensures:
+    - `__out == bmqsys::Time::highResolutionTimer() - d_impl_sp->d_startTimeNs`
+- **src/groups/bmq/bmqsys/bmqsys_time.cpp**
+  - requires:
+    - `g_initialized`
+  - ensures:
+    - `__out == g_highResTimer.object()()`
+    - `__out == g_realTimeClock.object()()`
+    - `true`
+- **src/groups/bmq/bmqt/bmqt_compressionalgorithmtype.cpp**
+  - requires:
+    - `out != 0 && str.size() >= 0`
+    - `str != 0`
+    - `true`
+  - ensures:
+    - `(__out == true ==> ((out ↦ CompressionAlgorithmType::e_NONE) || (out ↦ CompressionAlgorithmType::e_ZLIB))) && (__out == false ==> !bdlb::String::areEqualCaseless(toAscii(CompressionAlgorithmType::e_NONE), str) && !bdlb::String::areEqualCaseless(toAscii(CompressionAlgorithmType::e_ZLIB), str))`
+    - `(__out == true ==> EXISTS(0, 1, dummy, fromAscii(str) == true)) && (__out == false ==> EXISTS(0, 1, dummy, fromAscii(str) == false))`
+    - `(value == CompressionAlgorithmType::e_UNKNOWN ==> strcmp(__out, "UNKNOWN") == 0) && (value == CompressionAlgorithmType::e_NONE ==> strcmp(__out, "NONE") == 0) && (value == CompressionAlgorithmType::e_ZLIB ==> strcmp(__out, "ZLIB") == 0) && (value != CompressionAlgorithmType::e_UNKNOWN && value != CompressionAlgorithmType::e_NONE && value != CompressionAlgorithmType::e_ZLIB ==> strcmp(__out, "(* UNKNOWN *)") == 0)`
+- **src/groups/bmq/bmqt/bmqt_correlationid.cpp**
+  - requires:
+    - `!stream.bad()`
+    - `true`
+  - ensures:
+    - `(stream.bad() ==> __out == stream) && (stream.good() ==> (__out == stream && (SEPFORALL(0, printer.outputSize(), i, stream + i ↦ printer.output()[i]))))`
+    - `__out != CorrelationId() && (g_id_p != 0 && (g_id_p ↦ sep_v))`
+- **src/groups/bmq/bmqt/bmqt_encodingtype.cpp**
+  - requires:
+    - `string != 0`
+    - `true`
+  - ensures:
+    - `(__out == true ==> EXISTS(0, 1, dummy, fromAscii(string) == true)) && (__out == false ==> EXISTS(0, 1, dummy, fromAscii(string) == false))`
+    - `(value == EncodingType::e_UNDEFINED ==> __out == "UNDEFINED") && (value == EncodingType::e_RAW ==> __out == "RAW") && (value == EncodingType::e_BER ==> __out == "BER") && (value == EncodingType::e_BDEX ==> __out == "BDEX") && (value == EncodingType::e_XML ==> __out == "XML") && (value == EncodingType::e_JSON ==> __out == "JSON") && (value == EncodingType::e_TEXT ==> __out == "TEXT") && (value == EncodingType::e_MULTIPARTS ==> __out == "MULTIPARTS") && (value != EncodingType::e_UNDEFINED && value != EncodingType::e_RAW && value != EncodingType::e_BER && value != EncodingType::e_BDEX && value != EncodingType::e_XML && value != EncodingType::e_JSON && value != EncodingType::e_TEXT && value != EncodingType::e_MULTIPARTS ==> __out == "(* UNKNOWN *)")`
+- **src/groups/bmq/bmqt/bmqt_hosthealthstate.cpp**
+  - requires:
+    - `true`
+  - ensures:
+    - `(__out == true ==> ((*out == HostHealthState::e_UNKNOWN) || (*out == HostHealthState::e_HEALTHY) || (*out == HostHealthState::e_UNHEALTHY))) && (__out == false ==> (*out == old_out))`
+    - `(value == HostHealthState::Enum::e_UNKNOWN ==> __out == "UNKNOWN") && (value == HostHealthState::Enum::e_HEALTHY ==> __out == "HEALTHY") && (value == HostHealthState::Enum::e_UNHEALTHY ==> __out == "UNHEALTHY") && (value != HostHealthState::Enum::e_UNKNOWN && value != HostHealthState::Enum::e_HEALTHY && value != HostHealthState::Enum::e_UNHEALTHY ==> __out == "(* UNKNOWN *)")`
+- **src/groups/bmq/bmqt/bmqt_messageeventtype.cpp**
+  - requires:
+    - `true`
+  - ensures:
+    - `(__out == true ==> (*out == MessageEventType::e_UNDEFINED || *out == MessageEventType::e_PUT || *out == MessageEventType::e_PUSH || *out == MessageEventType::e_ACK)) && (__out == false ==> *out == old_out)`
+    - `(value == MessageEventType::e_UNDEFINED ==> __out == "UNDEFINED") && (value == MessageEventType::e_PUT ==> __out == "PUT") && (value == MessageEventType::e_PUSH ==> __out == "PUSH") && (value == MessageEventType::e_ACK ==> __out == "ACK") && (value != MessageEventType::e_UNDEFINED && value != MessageEventType::e_PUT && value != MessageEventType::e_PUSH && value != MessageEventType::e_ACK ==> __out == "(* UNKNOWN *)")`
+- **src/groups/bmq/bmqt/bmqt_messageguid.cpp**
+  - requires:
+    - `buffer != NULL && strlen((const char*)buffer) >= MessageGUID::e_SIZE_BINARY`
+    - `strlen(buffer) >= 2 * MessageGUID::e_SIZE_BINARY && FORALL(0, 2 * MessageGUID::e_SIZE_BINARY, i, (buffer[i] >= '0' && buffer[i] <= '9') || (buffer[i] >= 'A' && buffer[i] <= 'F') || (buffer[i] >= 'a' && buffer[i] <= 'f'))`
+    - `true`
+  - ensures:
+    - `EXISTS(0, MessageGUID::e_SIZE_BINARY, i, __out.d_buffer[i] == ((k_HEX_INT_TABLE[buffer[2 * i] - '0'] << 4) | (k_HEX_INT_TABLE[buffer[2 * i + 1] - '0'])))`
+    - `__out == FORALL(0, MessageGUID::e_SIZE_HEX, i, (buffer[i] >= '0' && buffer[i] <= '9') || (buffer[i] >= 'A' && buffer[i] <= 'F'))`
+    - `bsl::memcmp(__out.d_buffer, buffer, MessageGUID::e_SIZE_BINARY) == 0`
+- **src/groups/bmq/bmqt/bmqt_propertytype.cpp**
+  - requires:
+    - `true`
+  - ensures:
+    - `(__out == true ==> (*out == PropertyType::e_UNDEFINED || *out == PropertyType::e_BOOL || *out == PropertyType::e_CHAR || *out == PropertyType::e_SHORT || *out == PropertyType::e_INT32 || *out == PropertyType::e_INT64 || *out == PropertyType::e_STRING || *out == PropertyType::e_BINARY)) && (__out == false ==> (*out == old_out))`
+    - `(value == PropertyType::e_UNDEFINED ==> __out == "UNDEFINED") && (value == PropertyType::e_BOOL ==> __out == "BOOL") && (value == PropertyType::e_CHAR ==> __out == "CHAR") && (value == PropertyType::e_SHORT ==> __out == "SHORT") && (value == PropertyType::e_INT32 ==> __out == "INT32") && (value == PropertyType::e_INT64 ==> __out == "INT64") && (value == PropertyType::e_STRING ==> __out == "STRING") && (value == PropertyType::e_BINARY ==> __out == "BINARY") && (value != PropertyType::e_UNDEFINED && value != PropertyType::e_BOOL && value != PropertyType::e_CHAR && value != PropertyType::e_SHORT && value != PropertyType::e_INT32 && value != PropertyType::e_INT64 && value != PropertyType::e_STRING && value != PropertyType::e_BINARY ==> __out == "(* UNKNOWN *)")`
+- **src/groups/bmq/bmqt/bmqt_queueflags.cpp**
+  - requires:
+    - `(!isSet(flags, QueueFlags::e_ADMIN) || /* valid for BlazingMQ admin tasks */) && (isSet(flags, QueueFlags::e_READ) || isSet(flags, QueueFlags::e_WRITE))`
+    - `true`
+  - ensures:
+    - `(__out == false ==> SEPEXISTS(0, errorDescription.tellp(), i, errorDescription + i ↦ _)) && (__out == true ==> SEPFORALL(0, errorDescription.tellp(), i, errorDescription + i ↦ old_errorDescription[i]))`
+    - `(__out == true ==> ((*out == QueueFlags::e_ADMIN) || (*out == QueueFlags::e_READ) || (*out == QueueFlags::e_WRITE) || (*out == QueueFlags::e_ACK))) && (__out == false ==> true)`
+    - `(value == QueueFlags::e_ADMIN ==> __out == "ADMIN") && (value == QueueFlags::e_READ ==> __out == "READ") && (value == QueueFlags::e_WRITE ==> __out == "WRITE") && (value == QueueFlags::e_ACK ==> __out == "ACK") && (value != QueueFlags::e_ADMIN && value != QueueFlags::e_READ && value != QueueFlags::e_WRITE && value != QueueFlags::e_ACK ==> __out == "(* UNKNOWN *)")`
+    - `__out == (~newFlags & oldFlags)`
+    - `__out == (~oldFlags & newFlags)`
+- **src/groups/bmq/bmqt/bmqt_queueoptions.cpp**
+  - requires:
+    - `(subscription.expression().isValid()) || (errorDescription != nullptr && subscription.expression().text().size() > 0)`
+    - `stream.good()`
+    - `subscription != 0`
+    - `true`
+  - ensures:
+    - `&__out == this`
+    - `(__out == false ==> !subscription.expression().isValid() || (errorDescription != nullptr && errorDescription->size() > 0)) && (__out == true ==> true)`
+    - `(__out == false ==> d_subscriptions.find(handle) == d_subscriptions.end()) && (__out == true ==> (*subscription == cit->second))`
+    - `__out == (d_subscriptions.erase(handle) > 0)`
+    - `__out == stream && (stream.bad() || (stream.good() && (SEPFORALL(0, strlen("maxUnconfirmedMessages"), i, stream + i ↦ "maxUnconfirmedMessages"[i]) ⋆ SEPFORALL(0, strlen("maxUnconfirmedBytes"), i, stream + strlen("maxUnconfirmedMessages") + 1 + i ↦ "maxUnconfirmedBytes"[i]) ⋆ SEPFORALL(0, strlen("consumerPriority"), i, stream + strlen("maxUnconfirmedMessages") + strlen("maxUnconfirmedBytes") + 2 + i ↦ "consumerPriority"[i]) ⋆ SEPFORALL(0, strlen("suspendsOnBadHostHealth"), i, stream + strlen("maxUnconfirmedMessages") + strlen("maxUnconfirmedBytes") + strlen("consumerPriority") + 3 + i ↦ "suspendsOnBadHostHealth"[i]) ⋆ (SEPEXISTS(0, d_subscriptions.size(), j, stream + offset + j ↦ "Subscriptions:"[j])))))`
+- **src/groups/bmq/bmqt/bmqt_resultcode.cpp**
+  - requires:
+    - `out != 0 && str.length() >= 0`
+    - `out != nullptr && str.length() > 0`
+    - `out != nullptr && str.length() >= 0`
+    - `str.length() >= 0 && out != 0`
+    - `true`
+  - ensures:
+    - `(__out == true ==> (*out == AckResult::e_SUCCESS || *out == AckResult::e_UNKNOWN || *out == AckResult::e_TIMEOUT || *out == AckResult::e_NOT_CONNECTED || *out == AckResult::e_CANCELED || *out == AckResult::e_NOT_SUPPORTED || *out == AckResult::e_REFUSED || *out == AckResult::e_INVALID_ARGUMENT || *out == AckResult::e_NOT_READY || *out == AckResult::e_LIMIT_MESSAGES || *out == AckResult::e_LIMIT_BYTES || *out == AckResult::e_LIMIT_DOMAIN_MESSAGES || *out == AckResult::e_LIMIT_DOMAIN_BYTES || *out == AckResult::e_LIMIT_QUEUE_MESSAGES || *out == AckResult::e_LIMIT_QUEUE_BYTES || *out == AckResult::e_STORAGE_FAILURE)) && (__out == false ==> true)`
+    - `(__out == true ==> (*out == CloseQueueResult::e_SUCCESS || *out == CloseQueueResult::e_UNKNOWN || *out == CloseQueueResult::e_TIMEOUT || *out == CloseQueueResult::e_NOT_CONNECTED || *out == CloseQueueResult::e_CANCELED || *out == CloseQueueResult::e_NOT_SUPPORTED || *out == CloseQueueResult::e_REFUSED || *out == CloseQueueResult::e_INVALID_ARGUMENT || *out == CloseQueueResult::e_NOT_READY || *out == CloseQueueResult::e_ALREADY_CLOSED || *out == CloseQueueResult::e_ALREADY_IN_PROGRESS || *out == CloseQueueResult::e_UNKNOWN_QUEUE || *out == CloseQueueResult::e_INVALID_QUEUE)) && (__out == false ==> true)`
+    - `(__out == true ==> (*out == ConfigureQueueResult::e_SUCCESS || *out == ConfigureQueueResult::e_UNKNOWN || *out == ConfigureQueueResult::e_TIMEOUT || *out == ConfigureQueueResult::e_NOT_CONNECTED || *out == ConfigureQueueResult::e_CANCELED || *out == ConfigureQueueResult::e_NOT_SUPPORTED || *out == ConfigureQueueResult::e_REFUSED || *out == ConfigureQueueResult::e_INVALID_ARGUMENT || *out == ConfigureQueueResult::e_NOT_READY || *out == ConfigureQueueResult::e_ALREADY_IN_PROGRESS || *out == ConfigureQueueResult::e_INVALID_QUEUE)) && (__out == false ==> true)`
+    - `(__out == true ==> (*out == EventBuilderResult::e_SUCCESS || *out == EventBuilderResult::e_UNKNOWN || *out == EventBuilderResult::e_QUEUE_INVALID || *out == EventBuilderResult::e_QUEUE_READONLY || *out == EventBuilderResult::e_MISSING_CORRELATION_ID || *out == EventBuilderResult::e_EVENT_TOO_BIG || *out == EventBuilderResult::e_PAYLOAD_TOO_BIG || *out == EventBuilderResult::e_PAYLOAD_EMPTY || *out == EventBuilderResult::e_OPTION_TOO_BIG || *out == EventBuilderResult::e_QUEUE_SUSPENDED)) && (__out == false ==> (*out == old_out))`
+    - `(__out == true ==> (*out == GenericResult::e_SUCCESS || *out == GenericResult::e_UNKNOWN || *out == GenericResult::e_TIMEOUT || *out == GenericResult::e_NOT_CONNECTED || *out == GenericResult::e_CANCELED || *out == GenericResult::e_NOT_SUPPORTED || *out == GenericResult::e_REFUSED || *out == GenericResult::e_INVALID_ARGUMENT || *out == GenericResult::e_NOT_READY)) && (__out == false ==> (*out == old_out))`
+    - `(__out == true ==> (*out == OpenQueueResult::e_SUCCESS || *out == OpenQueueResult::e_UNKNOWN || *out == OpenQueueResult::e_TIMEOUT || *out == OpenQueueResult::e_NOT_CONNECTED || *out == OpenQueueResult::e_CANCELED || *out == OpenQueueResult::e_NOT_SUPPORTED || *out == OpenQueueResult::e_REFUSED || *out == OpenQueueResult::e_INVALID_ARGUMENT || *out == OpenQueueResult::e_NOT_READY || *out == OpenQueueResult::e_ALREADY_OPENED || *out == OpenQueueResult::e_ALREADY_IN_PROGRESS || *out == OpenQueueResult::e_INVALID_URI || *out == OpenQueueResult::e_INVALID_FLAGS || *out == OpenQueueResult::e_CORRELATIONID_NOT_UNIQUE)) && (__out == false ==> true)`
+    - `(__out == true ==> (*out == PostResult::e_SUCCESS || *out == PostResult::e_UNKNOWN || *out == PostResult::e_TIMEOUT || *out == PostResult::e_NOT_CONNECTED || *out == PostResult::e_CANCELED || *out == PostResult::e_NOT_SUPPORTED || *out == PostResult::e_REFUSED || *out == PostResult::e_INVALID_ARGUMENT || *out == PostResult::e_NOT_READY || *out == PostResult::e_BW_LIMIT)) && (__out == false ==> true)`
+    - `(value == ConfigureQueueResult::e_SUCCESS ==> __out == "SUCCESS") && (value == ConfigureQueueResult::e_UNKNOWN ==> __out == "UNKNOWN") && (value == ConfigureQueueResult::e_TIMEOUT ==> __out == "TIMEOUT") && (value == ConfigureQueueResult::e_NOT_CONNECTED ==> __out == "NOT_CONNECTED") && (value == ConfigureQueueResult::e_CANCELED ==> __out == "CANCELED") && (value == ConfigureQueueResult::e_NOT_SUPPORTED ==> __out == "NOT_SUPPORTED") && (value == ConfigureQueueResult::e_REFUSED ==> __out == "REFUSED") && (value == ConfigureQueueResult::e_INVALID_ARGUMENT ==> __out == "INVALID_ARGUMENT") && (value == ConfigureQueueResult::e_NOT_READY ==> __out == "NOT_READY") && (value == ConfigureQueueResult::e_ALREADY_IN_PROGRESS ==> __out == "ALREADY_IN_PROGRESS") && (value == ConfigureQueueResult::e_INVALID_QUEUE ==> __out == "INVALID_QUEUE") && (value != ConfigureQueueResult::e_SUCCESS && value != ConfigureQueueResult::e_UNKNOWN && value != ConfigureQueueResult::e_TIMEOUT && value != ConfigureQueueResult::e_NOT_CONNECTED && value != ConfigureQueueResult::e_CANCELED && value != ConfigureQueueResult::e_NOT_SUPPORTED && value != ConfigureQueueResult::e_REFUSED && value != ConfigureQueueResult::e_INVALID_ARGUMENT && value != ConfigureQueueResult::e_NOT_READY && value != ConfigureQueueResult::e_ALREADY_IN_PROGRESS && value != ConfigureQueueResult::e_INVALID_QUEUE ==> __out == "(* UNKNOWN *)")`
+    - `__out != 0 && ((value == AckResult::Enum::e_SUCCESS && __out == "SUCCESS") || (value == AckResult::Enum::e_UNKNOWN && __out == "UNKNOWN") || (value == AckResult::Enum::e_TIMEOUT && __out == "TIMEOUT") || (value == AckResult::Enum::e_NOT_CONNECTED && __out == "NOT_CONNECTED") || (value == AckResult::Enum::e_CANCELED && __out == "CANCELED") || (value == AckResult::Enum::e_NOT_SUPPORTED && __out == "NOT_SUPPORTED") || (value == AckResult::Enum::e_REFUSED && __out == "REFUSED") || (value == AckResult::Enum::e_INVALID_ARGUMENT && __out == "INVALID_ARGUMENT") || (value == AckResult::Enum::e_NOT_READY && __out == "NOT_READY") || (value == AckResult::Enum::e_LIMIT_MESSAGES && __out == "LIMIT_MESSAGES") || (value == AckResult::Enum::e_LIMIT_BYTES && __out == "LIMIT_BYTES") || (value == AckResult::Enum::e_LIMIT_QUEUE_MESSAGES && __out == "LIMIT_QUEUE_MESSAGES") || (value == AckResult::Enum::e_LIMIT_QUEUE_BYTES && __out == "LIMIT_QUEUE_BYTES") || (value == AckResult::Enum::e_STORAGE_FAILURE && __out == "STORAGE_FAILURE") || (__out == "(* UNKNOWN *)"))`
+    - `__out != 0 && ((value == CloseQueueResult::e_SUCCESS ==> __out == "SUCCESS") || (value == CloseQueueResult::e_UNKNOWN ==> __out == "UNKNOWN") || (value == CloseQueueResult::e_TIMEOUT ==> __out == "TIMEOUT") || (value == CloseQueueResult::e_NOT_CONNECTED ==> __out == "NOT_CONNECTED") || (value == CloseQueueResult::e_CANCELED ==> __out == "CANCELED") || (value == CloseQueueResult::e_NOT_SUPPORTED ==> __out == "NOT_SUPPORTED") || (value == CloseQueueResult::e_REFUSED ==> __out == "REFUSED") || (value == CloseQueueResult::e_INVALID_ARGUMENT ==> __out == "INVALID_ARGUMENT") || (value == CloseQueueResult::e_NOT_READY ==> __out == "NOT_READY") || (value == CloseQueueResult::e_ALREADY_CLOSED ==> __out == "ALREADY_CLOSED") || (value == CloseQueueResult::e_ALREADY_IN_PROGRESS ==> __out == "ALREADY_IN_PROGRESS") || (value == CloseQueueResult::e_UNKNOWN_QUEUE ==> __out == "UNKNOWN_QUEUE") || (value == CloseQueueResult::e_INVALID_QUEUE ==> __out == "INVALID_QUEUE") || (value != CloseQueueResult::e_SUCCESS && value != CloseQueueResult::e_UNKNOWN && value != CloseQueueResult::e_TIMEOUT && value != CloseQueueResult::e_NOT_CONNECTED && value != CloseQueueResult::e_CANCELED && value != CloseQueueResult::e_NOT_SUPPORTED && value != CloseQueueResult::e_REFUSED && value != CloseQueueResult::e_INVALID_ARGUMENT && value != CloseQueueResult::e_NOT_READY && value != CloseQueueResult::e_ALREADY_CLOSED && value != CloseQueueResult::e_ALREADY_IN_PROGRESS && value != CloseQueueResult::e_UNKNOWN_QUEUE && value != CloseQueueResult::e_INVALID_QUEUE ==> __out == "(* UNKNOWN *)"))`
+    - `__out != 0 && ((value == PostResult::e_SUCCESS ==> __out == "SUCCESS") || (value == PostResult::e_UNKNOWN ==> __out == "UNKNOWN") || (value == PostResult::e_TIMEOUT ==> __out == "TIMEOUT") || (value == PostResult::e_NOT_CONNECTED ==> __out == "NOT_CONNECTED") || (value == PostResult::e_CANCELED ==> __out == "CANCELED") || (value == PostResult::e_NOT_SUPPORTED ==> __out == "NOT_SUPPORTED") || (value == PostResult::e_REFUSED ==> __out == "REFUSED") || (value == PostResult::e_INVALID_ARGUMENT ==> __out == "INVALID_ARGUMENT") || (value == PostResult::e_NOT_READY ==> __out == "NOT_READY") || (value == PostResult::e_BW_LIMIT ==> __out == "BW_LIMIT") || (value != PostResult::e_SUCCESS && value != PostResult::e_UNKNOWN && value != PostResult::e_TIMEOUT && value != PostResult::e_NOT_CONNECTED && value != PostResult::e_CANCELED && value != PostResult::e_NOT_SUPPORTED && value != PostResult::e_REFUSED && value != PostResult::e_INVALID_ARGUMENT && value != PostResult::e_NOT_READY && value != PostResult::e_BW_LIMIT ==> __out == "(* UNKNOWN *)"))`
+    - `__out != 0 && (__out == "SUCCESS" || __out == "UNKNOWN" || __out == "TIMEOUT" || __out == "NOT_CONNECTED" || __out == "CANCELED" || __out == "NOT_SUPPORTED" || __out == "REFUSED" || __out == "(* UNKNOWN *)")`
+    - `__out != 0 && (value == GenericResult::e_SUCCESS ==> strcmp(__out, "SUCCESS") == 0) && (value == GenericResult::e_UNKNOWN ==> strcmp(__out, "UNKNOWN") == 0) && (value == GenericResult::e_TIMEOUT ==> strcmp(__out, "TIMEOUT") == 0) && (value == GenericResult::e_NOT_CONNECTED ==> strcmp(__out, "NOT_CONNECTED") == 0) && (value == GenericResult::e_CANCELED ==> strcmp(__out, "CANCELED") == 0) && (value == GenericResult::e_NOT_SUPPORTED ==> strcmp(__out, "NOT_SUPPORTED") == 0) && (value == GenericResult::e_REFUSED ==> strcmp(__out, "REFUSED") == 0) && (value == GenericResult::e_INVALID_ARGUMENT ==> strcmp(__out, "INVALID_ARGUMENT") == 0) && (value == GenericResult::e_NOT_READY ==> strcmp(__out, "NOT_READY") == 0) && (value != GenericResult::e_SUCCESS && value != GenericResult::e_UNKNOWN && value != GenericResult::e_TIMEOUT && value != GenericResult::e_NOT_CONNECTED && value != GenericResult::e_CANCELED && value != GenericResult::e_NOT_SUPPORTED && value != GenericResult::e_REFUSED && value != GenericResult::e_INVALID_ARGUMENT && value != GenericResult::e_NOT_READY ==> strcmp(__out, "(* UNKNOWN *)") == 0)`
+    - `__out != NULL`
+- **src/groups/bmq/bmqt/bmqt_sessioneventtype.cpp**
+  - requires:
+    - `out ↦ _`
+    - `true`
+  - ensures:
+    - `(__out == true ==> (out ↦ sep_v && (sep_v == SessionEventType::e_UNDEFINED || sep_v == SessionEventType::e_CONNECTED || sep_v == SessionEventType::e_DISCONNECTED || sep_v == SessionEventType::e_CONNECTION_LOST || sep_v == SessionEventType::e_RECONNECTED || sep_v == SessionEventType::e_STATE_RESTORED || sep_v == SessionEventType::e_CONNECTION_TIMEOUT || sep_v == SessionEventType::e_QUEUE_OPEN_RESULT || sep_v == SessionEventType::e_QUEUE_REOPEN_RESULT || sep_v == SessionEventType::e_QUEUE_CLOSE_RESULT || sep_v == SessionEventType::e_SLOWCONSUMER_NORMAL || sep_v == SessionEventType::e_SLOWCONSUMER_HIGHWATERMARK || sep_v == SessionEventType::e_QUEUE_CONFIGURE_RESULT || sep_v == SessionEventType::e_HOST_UNHEALTHY || sep_v == SessionEventType::e_HOST_HEALTH_RESTORED || sep_v == SessionEventType::e_QUEUE_SUSPENDED || sep_v == SessionEventType::e_QUEUE_RESUMED || sep_v == SessionEventType::e_ERROR || sep_v == SessionEventType::e_TIMEOUT || sep_v == SessionEventType::e_CANCELED))) && (__out == false ==> out ↦ old_out)`
+    - `__out != NULL && strlen(__out) > 0`
+- **src/groups/bmq/bmqt/bmqt_sessionoptions.cpp**
+  - requires:
+    - `true`
+  - ensures:
+    - `__out == stream && (stream.bad() || stream.good())`
+- **src/groups/bmq/bmqt/bmqt_uri.cpp**
+  - requires:
+    - `result != 0 && errorDescription != 0`
+    - `uriString.data() != NULL && uriString.length() > 0 && result != NULL`
+  - ensures:
+    - `(__out == rc_SUCCESS || __out == rc_INVALID_FORMAT || __out == rc_BAD_QUERY || __out == rc_MISSING_DOMAIN || __out == rc_MISSING_QUEUE || __out == rc_MISSING_TIER) && (__out != rc_SUCCESS ==> (errorDescription != nullptr && !errorDescription->empty()))`
+    - `__out == UriParser::parse(result, errorDescription, os.str())`
+- **src/groups/bmq/bmqt/bmqt_version.cpp**
+  - requires:
+    - `true`
+  - ensures:
+    - `__out == stream`
+- **src/groups/bmq/bmqtsk/bmqtsk_logcontroller.cpp**
+  - requires:
+    - `true`
+  - ensures:
+    - `(__out == -1) || (__out == -2) || (__out == 0)`
+    - `(__out == 0 ==> SEPEXISTS(0, d_registeredObservers.size(), i, d_registeredObservers[i] ↦ observer)) && (__out != 0 ==> d_registeredObservers.empty())`
+    - `__out == 0`
+- **src/groups/bmq/bmqtst/bmqtst_blobtestutil.cpp**
+  - requires:
+    - `blob != NULL && allocator != NULL`
+    - `str != NULL && blob.length() >= 0 && blob.totalSize() >= 0`
+  - ensures:
+    - `(__out == *str) && (__out.length() == blob.totalSize()) && (blob.length() < blob.totalSize() ==> EXISTS(__out.length() - (blob.totalSize() - blob.length()), __out.length(), i, __out[i] == 'X'))`
+    - `(format.empty() ==> __out.length() == 0) && (!format.empty() ==> __out.length() > 0)`
+- **src/groups/bmq/bmqtst/bmqtst_scopedlogobserver.cpp**
+  - requires:
+    - `pattern != nullptr && allocator != nullptr`
+    - `true`
+  - ensures:
+    - `__out == (regex.match(msg.data(), msg.length()) == 0)`
+    - `__out == (severityThreshold() != ball::Severity::e_OFF)`
+    - `__out == d_records`
+    - `__out == d_severityThreshold`
+    - `d_severityThreshold == value`
+- **src/groups/bmq/bmqu/bmqu_atomicstate.cpp**
+  - requires:
+    - `(d_value & e_CANCEL) == 0`
+  - ensures:
+    - `(__out == true ==> (d_value & e_CANCEL) == 0) && (__out == false ==> (d_value & e_CANCEL) != 0)`
+- **src/groups/bmq/bmqu/bmqu_atomicvalidator.cpp**
+  - requires: _none_
+  - ensures:
+    - `(__out != 0 ==> d_isAcquired == false) && (__out == 0 ==> d_isAcquired == false)`
+- **src/groups/bmq/bmqu/bmqu_blob.cpp**
+  - requires:
+    - `(section.end() >= section.start() ==> (isValidPos(blob, section.start()) && isValidPos(blob, section.end()))) && (section.end() < section.start() ==> true)`
+    - `cmpResult != NULL && data != NULL && length >= 0`
+    - `isValidSection(src, section)`
+    - `offset != NULL`
+    - `pos.buffer() >= 0 && pos.byte() >= 0`
+    - `pos.byte() + length <= bufferSize(*blob, pos.buffer())`
+    - `size != 0 && (isValidSection(blob, section) ==> true)`
+    - `stream.good()`
+    - `true`
+  - ensures:
+    - `(__out != 0) || (__out == 0 && SEPFORALL(0, length, i, (blob->buffer((pos.buffer() + i / bufferSize(*blob, pos.buffer()))).data() + (pos.byte() + i % bufferSize(*blob, pos.buffer()))) ↦ buf[i]))`
+    - `(__out == -1 ==> !isValidSection(blob, section)) && (__out == 0 ==> (isValidSection(blob, section) && (*size == section.end().byte() - section.start().byte())))`
+    - `(__out == -1) || (__out == 0) || (__out < 0 && __out != -1)`
+    - `(__out == -1) || (__out == 0) || (__out == (__out / 10 + 2) && __out != 0)`
+    - `(__out == 0 && (*cmpResult == 0 || *cmpResult == -1 || *cmpResult == 1)) || (__out == -1)`
+    - `(__out == 0 ==> __out == 0) && (__out < 0 && __out != -2 ==> true) && (__out == -2 ==> true)`
+    - `(__out == 0 || __out == -3)`
+    - `(__out == 0) || (__out != 0)`
+    - `(__out == 0) || (__out == -1) || (__out < -1 && (((__out + 2) % 10 == 0) || ((__out + 3) % 10 == 0))) ==> true`
+    - `(__out == 0) || (__out == storage) || ((start.buffer() == end.buffer() || (start.buffer() + 1 == end.buffer() && end.byte() == 0)) && bsls::AlignmentUtil::calculateAlignmentOffset(blob.buffer(start.buffer()).data() + start.byte(), alignment) == 0 ==> __out == (blob.buffer(start.buffer()).data() + start.byte()))`
+    - `(__out == false ==> (section.end() < section.start() || !isValidPos(blob, section.start()) || !isValidPos(blob, section.end()))) && (__out == true ==> (section.end() >= section.start() && isValidPos(blob, section.start()) && isValidPos(blob, section.end())))`
+    - `(pos.buffer() > blob.numDataBuffers() ==> __out == false) && (pos.buffer() == blob.numDataBuffers() && pos.byte() != 0 ==> __out == false) && (pos.buffer() < blob.numDataBuffers() && pos.byte() >= 0 && pos.byte() < bufferSize(blob, pos.buffer()) ==> __out == true)`
+    - `(stream.bad() ==> __out == stream) && (stream.good() ==> (__out == stream && (SEPFORALL(0, d_buffer.size(), i, stream + i ↦ d_buffer.data()[i]) ⋆ SEPFORALL(0, d_byte.size(), j, stream + d_buffer.size() + j ↦ d_byte.data()[j]))))`
+    - `__out == 0`
+    - `__out == stream && (stream.bad() || (stream.good() && (SEPFORALL(0, strlen("start"), i, stream + i ↦ "start"[i]) ⋆ SEPFORALL(0, strlen(d_start), j, stream + strlen("start") + j ↦ d_start[j]) ⋆ SEPFORALL(0, strlen("end"), k, stream + strlen("start") + strlen(d_start) + k ↦ "end"[k]) ⋆ SEPFORALL(0, strlen(d_end), l, stream + strlen("start") + strlen(d_start) + strlen("end") + l ↦ d_end[l]))))`
+- **src/groups/bmq/bmqu/bmqu_printutil.cpp**
+  - requires:
+    - `buf != nullptr && groupSize > 0 && (separator >= 0 && separator <= 127)`
+    - `stream.good() && precision >= 0`
+    - `true`
+  - ensures:
+    - `(__out == buf) && SEPFORALL(0, strlen(buf), i, buf + i ↦ buf[i])`
+    - `__out == stream`
+    - `__out == stream && (SEPFORALL(0, temp.str().size(), i, stream + i ↦ temp.str().data()[i]))`
+    - `__out == stream && stream.good() && (SEPFORALL(0, temp.str().size(), i, stream + i ↦ temp.str()[i]))`
+- **src/groups/bmq/bmqu/bmqu_stringutil.cpp**
+  - requires:
+    - `(offset <= str.length()) && SEPFORALL(0, str.length(), i, str.data() + i ↦ _) && SEPFORALL(0, prefix.length(), i, prefix.data() + i ↦ _)`
+    - `begin <= end && allowlistBegin <= allowlistEnd && SEPFORALL(0, end - begin, i, (begin + i ↦ _)) && SEPFORALL(0, allowlistEnd - allowlistBegin, j, (allowlistBegin + j ↦ _))`
+    - `str != 0 && SEPFORALL(0, str->size(), i, ((str->begin() + i) ↦ _))`
+    - `str != nullptr`
+    - `str != nullptr && (SEPFORALL(0, str->size(), i, (*str)[i] ↦ _)) && (characters.size() >= 0)`
+    - `true`
+  - ensures:
+    - `(__out == true ==> (str.length() >= suffix.length() && SEPFORALL(0, suffix.length(), i, str[str.length() - 1 - i] == suffix[suffix.length() - 1 - i]))) && (__out == false ==> (str.length() < suffix.length() || SEPEXISTS(0, suffix.length(), i, str[str.length() - 1 - i] != suffix[suffix.length() - 1 - i])))`
+    - `(__out == true ==> SEPFORALL(0, prefix.length(), i, str.data() + offset + i ↦ prefix.data()[i])) && (__out == false ==> ((offset > str.length()) || ((str.length() - offset) < prefix.length()) || SEPEXISTS(0, prefix.length(), i, str.data() + offset + i ↦ sep_v && sep_v != prefix.data()[i])))`
+    - `(__out == true ==> str.find(substr, 0) != bsl::string::npos) && (__out == false ==> str.find(substr, 0) == bsl::string::npos)`
+    - `(__out == true) || (__out == false)`
+    - `(__out >= begin && __out <= end) && SEPFORALL(0, __out - begin, i, (begin + i ↦ sep_v) && (!SEPEXISTS(allowlistBegin, allowlistEnd, j, allowlistBegin + j ↦ sep_v) || (i == 0 || *(begin + i - 1) != sep_v)))`
+    - `(str.empty() ==> __out.empty()) && (delims.length() == 0 && !str.empty() ==> __out.size() == 1) && (!(str.empty()) && delims.length() > 0 ==> !__out.empty())`
+    - `__out == (!bsl::isspace(c))`
+    - `__out == *str`
+    - `__out == *str && !(SEPEXISTS(0, __out.size() - 1, i, (__out[i] == __out[i + 1]) && (characters.find(__out[i]) != bslstl::StringRef::npos)))`
+    - `__out == *str && SEPFORALL(0, __out.size(), i, (__out[i] ↦ sep_v && (sep_v != ' ' || i > 0)))`
+- **src/groups/bmq/bmqvt/bmqvt_propertybag.cpp**
+  - requires:
+    - `dest != 0 && key.length() > 0`
+    - `dest != nullptr`
+    - `stream.good()`
+    - `true`
+    - `values.size() >= 0 && SEPFORALL(0, values.size(), i, values[i] != nullptr)`
+  - ensures:
+    - `&__out == this`
+    - `(__out == false ==> (d_values.find(key) == d_values.end() || !d_values.find(key)->second->isDatum() || !d_values.find(key)->second->theDatum().isInteger())) && (__out == true ==> (*dest == d_values.find(key)->second->theDatum().theInteger()))`
+    - `(__out == false ==> (d_values.find(key) == d_values.end() || !d_values.find(key)->second->isDatum() || !d_values.find(key)->second->theDatum().isInteger64())) && (__out == true ==> (*dest ↦ d_values.find(key)->second->theDatum().theInteger64()))`
+    - `(__out == true ==> (*dest ↦ iter->second->theDatum().theString())) && (__out == false ==> (d_values.find(key) == d_values.end() || !iter->second->isDatum() || !iter->second->theDatum().isString()))`
+    - `(stream.bad() ==> __out == stream) && (stream.good() ==> __out == stream)`
+    - `__out == *this && SEPFORALL(0, values.size(), i, EXISTS(newVal, (newVal.createInplace(allocator(), *values[i], allocator()) && insertValueImp(newVal))))`
+    - `__out == stream && (stream.bad() || (stream.good() && (d_name.c_str() != nullptr && SEPFORALL(0, d_name.size(), i, stream + i ↦ d_name.c_str()[i]) ⋆ (stream + d_name.size() ↦ d_value))))`
+    - `d_values.find(key) == d_values.end()`
