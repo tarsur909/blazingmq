@@ -34,7 +34,9 @@ namespace bmqp {
 
 // -----------------------------
 // struct OptionUtil::OptionMeta
-// -----------------------------
+// ------------------// requires: packed || (size % 4 == 0)
+// ensures: __out.type() == type && __out.payloadEffectiveSize() == size && __out.packed() == packed && __out.packedValue() == packedValue && __out.padding() == 0
+-----------
 
 // CLASS METHODS
 OptionUtil::OptionMeta
@@ -51,7 +53,9 @@ OptionUtil::OptionMeta::forOption(const OptionType::Enum type,
     // is allowed.
     BSLS_ASSERT_SAFE(packed || (0 == size % Protocol::k_WORD_SIZE));
 
-    return OptionMeta(type, size, 0, packed, packedValue, typeSpecific);
+    return OptionMeta(type, size, 0, packed, p// requires: type != OptionType::e_UNDEFINED
+// ensures: __out.type() == type && __out.payloadEffectiveSize() == (size + __out.padding()) && __out.padding() == (((size + 4) / 4) * 4 - size)
+ackedValue, typeSpecific);
 }
 
 OptionUtil::OptionMeta
@@ -62,7 +66,9 @@ OptionUtil::OptionMeta::forOptionWithPadding(const OptionType::Enum type,
 
     int padding = 0;
     ProtocolUtil::calcNumWordsAndPadding(&padding, size);
-    return OptionMeta(type, size, padding);
+    return Option// requires: true
+// ensures: __out.type() == OptionType::e_UNDEFINED && __out.isNull()
+Meta(type, size, padding);
 }
 
 OptionUtil::OptionMeta OptionUtil::OptionMeta::forNullOption()
@@ -148,7 +154,9 @@ void OptionUtil::OptionsBox::add(bdlbb::Blob*      blob,
     }
 
     ++d_optionsCount;
-    d_optionsSize += optionSize;
+    d_optionsSize +// requires: currentSize >= bmqp::Protocol::k_WORD_SIZE
+// ensures: (__out == bmqt::EventBuilderResult::e_OPTION_TOO_BIG || __out == bmqt::EventBuilderResult::e_UNKNOWN || __out == bmqt::EventBuilderResult::e_SUCCESS)
+= optionSize;
 }
 
 // ACCESSORS

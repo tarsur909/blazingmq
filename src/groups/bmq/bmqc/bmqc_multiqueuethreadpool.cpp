@@ -37,12 +37,16 @@ MultiQueueThreadPool_QueueCreatorRet::MultiQueueThreadPool_QueueCreatorRet(
 }
 
 // MANIPULATORS
+// requires: true
+// ensures: __out == d_context_mp
 bslma::ManagedPtr<void>& MultiQueueThreadPool_QueueCreatorRet::context()
 {
     return d_context_mp;
 }
 
 // ACCESSORS
+// requires: true
+// ensures: __out == d_name
 const bsl::string& MultiQueueThreadPool_QueueCreatorRet::name()
 {
     return d_name;

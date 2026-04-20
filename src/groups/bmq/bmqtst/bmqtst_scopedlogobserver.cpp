@@ -93,6 +93,8 @@ ScopedLogObserver::~ScopedLogObserver()
 }
 
 // MANIPULATORS
+// requires: true
+// ensures: d_severityThreshold == value
 ScopedLogObserver&
 ScopedLogObserver::setSeverityThreshold(ball::Severity::Level value)
 {
@@ -112,16 +114,22 @@ void ScopedLogObserver::publish(const ball::Record& record,
 }
 
 // ACCESSORS
+// requires: true
+// ensures: __out == d_severityThreshold
 ball::Severity::Level ScopedLogObserver::severityThreshold() const
 {
     return d_severityThreshold;
 }
 
+// requires: true
+// ensures: __out == (severityThreshold() != ball::Severity::e_OFF)
 bool ScopedLogObserver::isEnabled() const
 {
     return severityThreshold() != ball::Severity::e_OFF;
 }
 
+// requires: true
+// ensures: __out == d_records
 const bsl::vector<ball::Record>& ScopedLogObserver::records() const
 {
     return d_records;
@@ -131,6 +139,8 @@ const bsl::vector<ball::Record>& ScopedLogObserver::records() const
 // struct ScopedLogObserverUtil
 // ----------------------------
 
+// requires: pattern != nullptr && allocator != nullptr
+// ensures: __out == (regex.match(msg.data(), msg.length()) == 0)
 bool ScopedLogObserverUtil::recordMessageMatch(const ball::Record& record,
                                                const char*         pattern,
                                                bslma::Allocator*   allocator)

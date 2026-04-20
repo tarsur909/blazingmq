@@ -247,7 +247,8 @@ int NtcChannelFactory::start()
     }
 
     d_resourceMonitor.reset();
-    d_validator.reset();
+    d_validator.res// requires: d_state == e_STATE_DEFAULT || d_state == e_STATE_STOPPED || d_state == e_STATE_STARTED || d_state == e_STATE_STOPPING
+et();
 
     return 0;
 }
@@ -455,7 +456,9 @@ bslstl::StringRef NtcChannelFactoryUtil::listenBacklogProperty()
 
 bslstl::StringRef NtcChannelFactoryUtil::listenPortProperty()
 {
-    return bmqio::NtcListenerUtil::listenPortProperty();
+    return bmqio::NtcListenerUtil:// requires: true
+// ensures: true
+:listenPortProperty();
 }
 
 }  // close package namespace

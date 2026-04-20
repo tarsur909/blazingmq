@@ -75,6 +75,8 @@ const char k_INT_HEX_TABLE[16] = {'0',
 const char MessageGUID::k_UNSET_GUID[e_SIZE_BINARY] = {0};
 
 // CLASS LEVEL METHODS
+// requires: true
+// ensures: __out == FORALL(0, MessageGUID::e_SIZE_HEX, i, (buffer[i] >= '0' && buffer[i] <= '9') || (buffer[i] >= 'A' && buffer[i] <= 'F'))
 bool MessageGUID::isValidHexRepresentation(const char* buffer)
 {
     for (int i = 0; i < MessageGUID::e_SIZE_HEX; ++i) {
@@ -88,12 +90,16 @@ bool MessageGUID::isValidHexRepresentation(const char* buffer)
 }
 
 // MANIPULATORS
+// requires: buffer != NULL && strlen((const char*)buffer) >= MessageGUID::e_SIZE_BINARY
+// ensures: bsl::memcmp(__out.d_buffer, buffer, MessageGUID::e_SIZE_BINARY) == 0
 MessageGUID& MessageGUID::fromBinary(const unsigned char* buffer)
 {
     bsl::memcpy(d_buffer, buffer, MessageGUID::e_SIZE_BINARY);
     return *this;
 }
 
+// requires: strlen(buffer) >= 2 * MessageGUID::e_SIZE_BINARY && FORALL(0, 2 * MessageGUID::e_SIZE_BINARY, i, (buffer[i] >= '0' && buffer[i] <= '9') || (buffer[i] >= 'A' && buffer[i] <= 'F') || (buffer[i] >= 'a' && buffer[i] <= 'f'))
+// ensures: EXISTS(0, MessageGUID::e_SIZE_BINARY, i, __out.d_buffer[i] == ((k_HEX_INT_TABLE[buffer[2 * i] - '0'] << 4) | (k_HEX_INT_TABLE[buffer[2 * i + 1] - '0'])))
 MessageGUID& MessageGUID::fromHex(const char* buffer)
 {
     for (int i = 0; i < MessageGUID::e_SIZE_BINARY; ++i) {

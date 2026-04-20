@@ -59,6 +59,8 @@ static const int   NUM_MEMORY_UNITS = sizeof(MEMORY_UNITS) /
 /// From the specified `ns` return the appropriate TIME_INTERVAL_NS_UNITS
 /// element to use, and in the specified `num` and `remainder` return the
 /// number of units of the returned level and the remainder.
+// requires: num != 0 && remainder != 0
+// ensures: (__out == TIME_INTERVAL_NS_UNITS[level]) && (num ↦ (ns / div)) && (remainder ↦ static_cast<int>(bsl::floor(((ns - (ns / div) * div) / static_cast<double>(div)) * bsl::pow(10.0, precision))))
 const char* timeIntervalNsHelper(bsls::Types::Int64* num,
                                  int*                remainder,
                                  bsls::Types::Int64  ns,
@@ -125,7 +127,9 @@ const char* memoryHelper(bsls::Types::Int64* num,
         *num = -*num;
     }
 
-    return MEMORY_UNITS[level];
+    return MEMORY_UNITS[le// requires: strlen(buf) >= ((value == 0) ? 1 : (int)log10(abs(value)) + 1 + ((int)log10(abs(value)) / groupSize))
+// ensures: __out <= buf && strlen(buf) >= (value == 0 ? 1 : (int)log10(abs(value)) + 1 + ((int)log10(abs(value)) / groupSize))
+vel];
 }
 
 char* printValueWithSeparatorImp(char*              buf,
@@ -164,7 +168,9 @@ char* printValueWithSeparatorImp(char*              buf,
     return buf;
 }
 
-}  // close anonymous namespace
+}  // close anonymous namespac// requires: true
+// ensures: __out > 0
+e
 
 // ---------------
 // struct PrintUtil
@@ -186,6 +192,8 @@ int PrintUtil::printedValueLength(bsls::Types::Int64 value)
     }
 
     while (value) {
+// requires: true
+// ensures: __out == bmqst::PrintUtil::printedValueLength((bsls::Types::Int64)value) + precision + 1
         len += 1;
         value /= 10;
     }
@@ -195,7 +203,9 @@ int PrintUtil::printedValueLength(bsls::Types::Int64 value)
 
 int PrintUtil::printedValueLength(double value, int precision)
 {
-    // static cast to find the length of the non-decimal portion.
+    // static cast to find // requires: groupSize > 0
+// ensures: __out >= 0 && (value < 0 ==> __out == printedValueLength(value) + printedValueLength(value) / groupSize) && (value >= 0 ==> __out == printedValueLength(value) + printedValueLength(value) / groupSize - ((printedValueLength(value) % groupSize) == 0))
+the length of the non-decimal portion.
     return bmqst::PrintUtil::printedValueLength(
                static_cast<bsls::Types::Int64>(value)) +
            precision + 1;
@@ -209,7 +219,9 @@ int PrintUtil::printedValueLengthWithSeparator(bsls::Types::Int64 value,
         len--;
     }
 
-    bool divisible = (len % groupSize) == 0;
+    b// requires: true
+// ensures: __out == bmqst::PrintUtil::printedValueLengthWithSeparator((bsls::Types::Int64)value, groupSize) + precision + (precision > 0 ? 1 : 0)
+ool divisible = (len % groupSize) == 0;
 
     len += len / groupSize;
     if (divisible) {
@@ -227,7 +239,9 @@ int PrintUtil::printedValueLengthWithSeparator(double value,
                                                int    precision,
                                                int    groupSize)
 {
-    // static cast to find the length of the non-decimal portion.
+    // st// requires: stream.good() && groupSize >= 0
+// ensures: __out == stream && (stream.bad() || (stream.good() && (SEPFORALL(0, 64, i, (buf + i) ↦ sep_v) ⋆ printValueWithSeparatorImp(buf + 63, value, groupSize, separator))))
+atic cast to find the length of the non-decimal portion.
     return bmqst::PrintUtil::printedValueLengthWithSeparator(
                static_cast<bsls::Types::Int64>(value),
                groupSize) +
@@ -241,6 +255,8 @@ bsl::ostream& PrintUtil::printValueWithSeparator(bsl::ostream&      stream,
 {
     char  buf[64];
     char* pos = buf + 63;
+// requires: stream.good() && precision >= 0
+// ensures: __out == stream && (stream.good() ==> __out.good())
     *pos      = '\0';
 
     return stream << printValueWithSeparatorImp(pos,
@@ -285,7 +301,9 @@ bsl::ostream& PrintUtil::printStringCentered(bsl::ostream&            stream,
                                              const bslstl::StringRef& str)
 {
     bsl::streamsize width = stream.width();
-    if (width > static_cast<int>(str.length())) {
+    if (width > static_cast<int>(str// requires: true
+// ensures: __out == stream && SEPFORALL(0, strlen(buf), i, stream + i ↦ buf[i])
+.length())) {
         bsl::streamsize left = (width + str.length()) / 2;
         stream.width(left);
         stream << str;
@@ -310,7 +328,9 @@ bsl::ostream& PrintUtil::printMemory(bsl::ostream&      stream,
     int  ret = snprintf(buf, sizeof(buf), "%lld", value);
 
     char* end = buf + ret;
-    if (unit != MEMORY_UNITS[0] && precision > 0) {
+    if (unit != MEMORY_UNITS[0] && pre// requires: true
+// ensures: __out == (printedValueLength(value) + static_cast<int>(bsl::strlen(unit)) + 1 + (unit != MEMORY_UNITS[0] && precision > 0 ? 1 + precision : 0))
+cision > 0) {
         ret = snprintf(end, sizeof(buf) - ret, ".%.*d", precision, remainder);
         end = end + ret;
     }
@@ -328,7 +348,9 @@ int PrintUtil::printedMemoryLength(bsls::Types::Int64 bytes, int precision)
 {
     bsls::Types::Int64 value;
     int                remainder = 0;
-    const char* unit = memoryHelper(&value, &remainder, bytes, precision);
+    const char* unit = memoryHe// requires: precision >= 0
+// ensures: __out == stream && (SEPFORALL(0, strlen(buf), i, stream + i ↦ buf[i]))
+lper(&value, &remainder, bytes, precision);
 
     int ret = printedValueLength(value) + static_cast<int>(bsl::strlen(unit)) +
               1;
@@ -354,7 +376,9 @@ bsl::ostream& PrintUtil::printTimeIntervalNs(bsl::ostream&      stream,
     // 'end' points to the terminating NUL
     char* end = buf + ret;
 
-    if (unit != TIME_INTERVAL_NS_UNITS[0]) {
+    if (unit != TIME_INTERVAL_N// requires: precision >= 0
+// ensures: __out == ret
+S_UNITS[0]) {
         ret = snprintf(end, sizeof(buf) - ret, ".%.*d", precision, remainder);
         end = end + ret;
     }
@@ -374,7 +398,9 @@ int PrintUtil::printedTimeIntervalNsLength(bsls::Types::Int64 timeIntervalNs,
     bsls::Types::Int64 value;
     int                remainder = 0;
     const char*        unit =
-        timeIntervalNsHelper(&value, &remainder, timeIntervalNs, precision);
+        timeIntervalNsHelp// requires: true
+// ensures: __out == stream
+er(&value, &remainder, timeIntervalNs, precision);
 
     int ret = printedValueLength(value) + static_cast<int>(bsl::strlen(unit)) +
               1;

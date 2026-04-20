@@ -44,6 +44,8 @@ Event::Event()
     // NOTHING
 }
 
+// requires: true
+// ensures: reinterpret_cast<bsl::shared_ptr<bmqimp::Event>&>(__out) == d_impl_sp
 SessionEvent Event::sessionEvent() const
 {
     // PRECONDITIONS
@@ -58,6 +60,8 @@ SessionEvent Event::sessionEvent() const
     return event;
 }
 
+// requires: true
+// ensures: __out.d_impl_sp == this->d_impl_sp
 MessageEvent Event::messageEvent() const
 {
     // PRECONDITIONS
@@ -72,18 +76,24 @@ MessageEvent Event::messageEvent() const
     return event;
 }
 
+// requires: (d_impl_sp == nullptr) || (d_impl_sp != nullptr && d_impl_sp->type() == d_impl_sp->type())
+// ensures: (__out == true ==> (d_impl_sp != nullptr && d_impl_sp->type() == bmqimp::Event::EventType::e_SESSION)) && (__out == false ==> (d_impl_sp == nullptr || d_impl_sp->type() != bmqimp::Event::EventType::e_SESSION))
 bool Event::isSessionEvent() const
 {
     return d_impl_sp &&
            d_impl_sp->type() == bmqimp::Event::EventType::e_SESSION;
 }
 
+// requires: (d_impl_sp == nullptr) || (d_impl_sp != nullptr && d_impl_sp->type() == bmqimp::Event::EventType::e_MESSAGE || d_impl_sp->type() != bmqimp::Event::EventType::e_MESSAGE)
+// ensures: (__out == true ==> (d_impl_sp != nullptr && d_impl_sp->type() == bmqimp::Event::EventType::e_MESSAGE)) && (__out == false ==> (d_impl_sp == nullptr || d_impl_sp->type() != bmqimp::Event::EventType::e_MESSAGE))
 bool Event::isMessageEvent() const
 {
     return d_impl_sp &&
            d_impl_sp->type() == bmqimp::Event::EventType::e_MESSAGE;
 }
 
+// requires: true
+// ensures: (d_impl_sp == nullptr ==> __out == stream) && (d_impl_sp != nullptr ==> __out == d_impl_sp->print(stream, level, spacesPerLevel))
 bsl::ostream&
 Event::print(bsl::ostream& stream, int level, int spacesPerLevel) const
 {

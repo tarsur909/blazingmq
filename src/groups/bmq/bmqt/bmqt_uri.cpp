@@ -252,7 +252,9 @@ void UriParser::shutdown()
 
     BSLS_ASSERT(s_initialized > 0);
     if (--s_initialized != 0) {
-        return;  // RETURN
+        return;  //// requires: uriString.data() != NULL && uriString.length() > 0 && result != NULL
+// ensures: (__out == rc_SUCCESS || __out == rc_INVALID_FORMAT || __out == rc_BAD_QUERY || __out == rc_MISSING_DOMAIN || __out == rc_MISSING_QUEUE || __out == rc_MISSING_TIER) && (__out != rc_SUCCESS ==> (errorDescription != nullptr && !errorDescription->empty()))
+ RETURN
     }
 
     s_regex.object().~RegEx();
@@ -450,7 +452,9 @@ int UriBuilder::uri(Uri* result, bsl::string* errorDescription) const
     }
     os << "/" << d_uri.d_path;
     if (!d_uri.d_query_id.isEmpty()) {
-        os << "?" << k_QUERY_ID << "=" << d_uri.d_query_id;
+ // requires: result != 0 && errorDescription != 0
+// ensures: __out == UriParser::parse(result, errorDescription, os.str())
+       os << "?" << k_QUERY_ID << "=" << d_uri.d_query_id;
     }
 
     // Parse and populate the result

@@ -44,6 +44,8 @@ bsl::ostream& HostHealthState::print(bsl::ostream&         stream,
     return stream;
 }
 
+// requires: true
+// ensures: (value == HostHealthState::Enum::e_UNKNOWN ==> __out == "UNKNOWN") && (value == HostHealthState::Enum::e_HEALTHY ==> __out == "HEALTHY") && (value == HostHealthState::Enum::e_UNHEALTHY ==> __out == "UNHEALTHY") && (value != HostHealthState::Enum::e_UNKNOWN && value != HostHealthState::Enum::e_HEALTHY && value != HostHealthState::Enum::e_UNHEALTHY ==> __out == "(* UNKNOWN *)")
 const char* HostHealthState::toAscii(HostHealthState::Enum value)
 {
 #define BMQT_CASE(X)                                                          \
@@ -59,6 +61,8 @@ const char* HostHealthState::toAscii(HostHealthState::Enum value)
 #undef BMQT_CASE
 }
 
+// requires: true
+// ensures: (__out == true ==> ((*out == HostHealthState::e_UNKNOWN) || (*out == HostHealthState::e_HEALTHY) || (*out == HostHealthState::e_UNHEALTHY))) && (__out == false ==> (*out == old_out))
 bool HostHealthState::fromAscii(HostHealthState::Enum*   out,
                                 const bslstl::StringRef& str)
 {

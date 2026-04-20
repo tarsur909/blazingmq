@@ -31,6 +31,8 @@ namespace bmqtst {
 // -------------------
 
 // CLASS METHODS
+// requires: blob != NULL && allocator != NULL
+// ensures: (format.empty() ==> __out.length() == 0) && (!format.empty() ==> __out.length() > 0)
 bdlbb::Blob& BlobTestUtil::fromString(bdlbb::Blob*             blob,
                                       const bslstl::StringRef& format,
                                       bslma::Allocator*        allocator)
@@ -80,6 +82,8 @@ bdlbb::Blob& BlobTestUtil::fromString(bdlbb::Blob*             blob,
     return *blob;
 }
 
+// requires: str != NULL && blob.length() >= 0 && blob.totalSize() >= 0
+// ensures: (__out == *str) && (__out.length() == blob.totalSize()) && (blob.length() < blob.totalSize() ==> EXISTS(__out.length() - (blob.totalSize() - blob.length()), __out.length(), i, __out[i] == 'X'))
 bsl::string& BlobTestUtil::toString(bsl::string*       str,
                                     const bdlbb::Blob& blob,
                                     bool               toFormat)

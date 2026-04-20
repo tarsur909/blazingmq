@@ -28,7 +28,9 @@ namespace BloombergLP {
 namespace bmqu {
 
 // ------------------
-// class BlobPosition
+// class BlobPosition// requires: stream.good()
+// ensures: (stream.bad() ==> __out == stream) && (stream.good() ==> (__out == stream && (SEPFORALL(0, d_buffer.size(), i, stream + i ↦ d_buffer.data()[i]) ⋆ SEPFORALL(0, d_byte.size(), j, stream + d_buffer.size() + j ↦ d_byte.data()[j]))))
+
 // ------------------
 
 bsl::ostream&
@@ -48,7 +50,9 @@ BlobPosition::print(bsl::ostream& stream, int level, int spacesPerLevel) const
 }
 
 // -----------------
-// class BlobSection
+// class BlobSectio// requires: stream.good()
+// ensures: __out == stream && (stream.bad() || (stream.good() && (SEPFORALL(0, strlen("start"), i, stream + i ↦ "start"[i]) ⋆ SEPFORALL(0, strlen(d_start), j, stream + strlen("start") + j ↦ d_start[j]) ⋆ SEPFORALL(0, strlen("end"), k, stream + strlen("start") + strlen(d_start) + k ↦ "end"[k]) ⋆ SEPFORALL(0, strlen(d_end), l, stream + strlen("start") + strlen(d_start) + strlen("end") + l ↦ d_end[l]))))
+n
 // -----------------
 
 bsl::ostream&
@@ -67,7 +71,9 @@ BlobSection::print(bsl::ostream& stream, int level, int spacesPerLevel) const
 }
 
 // --------------
-// class BlobUtil
+// class Blob// requires: pos.buffer() >= 0 && pos.byte() >= 0
+// ensures: (pos.buffer() > blob.numDataBuffers() ==> __out == false) && (pos.buffer() == blob.numDataBuffers() && pos.byte() != 0 ==> __out == false) && (pos.buffer() < blob.numDataBuffers() && pos.byte() >= 0 && pos.byte() < bufferSize(blob, pos.buffer()) ==> __out == true)
+Util
 // --------------
 
 bool BlobUtil::isValidPos(const bdlbb::Blob& blob, const BlobPosition& pos)
@@ -86,7 +92,8 @@ bool BlobUtil::isValidPos(const bdlbb::Blob& blob, const BlobPosition& pos)
         return pos.byte() == 0;  // RETURN
     }
 
-    return pos.byte() >= 0 && pos.byte() < bufferSize(blob, pos.buffer());
+    return pos.byte() >= 0 && pos.byte() < bufferSize(// ensures: (__out == 0 || __out == -3)
+blob, pos.buffer());
 }
 
 int BlobUtil::findOffset(BlobPosition*       pos,
@@ -124,7 +131,9 @@ int BlobUtil::findOffset(BlobPosition*       pos,
     }
 
     // Looking past the end of the blob (return -3 since the 'safe' version
-    // already uses -1 for invalid 'start' and -2 for invalid 'offset').
+    // already uses -1 for invalid 'start' and -2 for invalid 'offs// requires: (section.end() >= section.start() ==> (isValidPos(blob, section.start()) && isValidPos(blob, section.end()))) && (section.end() < section.start() ==> true)
+// ensures: (__out == false ==> (section.end() < section.start() || !isValidPos(blob, section.start()) || !isValidPos(blob, section.end()))) && (__out == true ==> (section.end() >= section.start() && isValidPos(blob, section.start()) && isValidPos(blob, section.end())))
+et').
     return -3;
 }
 
@@ -147,7 +156,9 @@ bool BlobUtil::isValidSection(const bdlbb::Blob& blob,
             !isValidPos(blob, section.end()))) {
         BSLS_PERFORMANCEHINT_UNLIKELY_HINT;
         return false;  // RETURN
-    }
+   // requires: size != 0 && (isValidSection(blob, section) ==> true)
+// ensures: (__out == -1 ==> !isValidSection(blob, section)) && (__out == 0 ==> (isValidSection(blob, section) && (*size == section.end().byte() - section.start().byte())))
+ }
 
     return true;
 }
@@ -174,7 +185,9 @@ int BlobUtil::sectionSize(int*               size,
         pos.setByte(0);
     }
 
-    *size += section.end().byte() - pos.byte();
+    *size += section.end().byte() - pos.by// requires: offset != NULL
+// ensures: __out == 0
+te();
 
     return 0;
 }
@@ -214,7 +227,9 @@ void BlobUtil::reserve(BlobPosition* pos, bdlbb::Blob* blob, int length)
         pos->setByte(lastDataBufferLength);
     }
 
-    blob->setLength(blob->length() + length);
+    blob->setLength(blob-// requires: pos.byte() + length <= bufferSize(*blob, pos.buffer())
+// ensures: (__out != 0) || (__out == 0 && SEPFORALL(0, length, i, (blob->buffer((pos.buffer() + i / bufferSize(*blob, pos.buffer()))).data() + (pos.byte() + i % bufferSize(*blob, pos.buffer()))) ↦ buf[i]))
+>length() + length);
 }
 
 int BlobUtil::writeBytes(const bdlbb::Blob*  blob,
@@ -267,7 +282,9 @@ void BlobUtil::appendBlobFromIndex(bdlbb::Blob*       destination,
             dataToCopy -= copyLength;
             offsetInBufferInt = 0;
         }
-        ++buffer;
+   // requires: isValidSection(src, section)
+// ensures: (__out == -1) || (__out == 0) || (__out < 0 && __out != -1)
+     ++buffer;
     }
 }
 
@@ -364,6 +381,7 @@ int BlobUtil::appendToBlob(bdlbb::Blob*       dest,
             const bdlbb::BlobBuffer     appendBuf(srcBuf, size);
             dest->appendDataBuffer(appendBuf);
         }
+// ensures: (__out == 0) || (__out == -1) || (__out < -1 && (((__out + 2) % 10 == 0) || ((__out + 3) % 10 == 0))) ==> true
     }
 
     return 0;
@@ -393,6 +411,8 @@ int BlobUtil::appendToBlob(bdlbb::Blob*        dest,
     if (BSLS_PERFORMANCEHINT_PREDICT_UNLIKELY(ret != 0)) {
         BSLS_PERFORMANCEHINT_UNLIKELY_HINT;
         return (ret * 10) - 3;  // RETURN
+// requires: true
+// ensures: (__out == -1) || (__out == 0) || (__out == (__out / 10 + 2) && __out != 0)
     }
 
     return 0;
@@ -447,7 +467,9 @@ void BlobUtil::copyToRawBufferFromIndex(char*              destination,
             length -= toCopy;
         }
         curPos.setBuffer(curPos.buffer() + 1);
-        curPos.setByte(0);
+        curP// requires: cmpResult != NULL && data != NULL && length >= 0
+// ensures: (__out == 0 && (*cmpResult == 0 || *cmpResult == -1 || *cmpResult == 1)) || (__out == -1)
+os.setByte(0);
     }
 }
 
@@ -523,7 +545,9 @@ int BlobUtil::readUpToNBytes(char*               buf,
         cursor.setByte(0);
     }
 
-    return static_cast<int>(outPosition - buf);
+    return static_cast<int>// requires: true
+// ensures: (__out == 0 ==> __out == 0) && (__out < 0 && __out != -2 ==> true) && (__out == -2 ==> true)
+(outPosition - buf);
 }
 
 int BlobUtil::readNBytes(char*               buf,
@@ -540,7 +564,8 @@ int BlobUtil::readNBytes(char*               buf,
         return (ret * 10) - 1;  // RETURN
     }
     else {
-        return -2;  // RETURN
+        return // ensures: (__out == 0) || (__out == storage) || ((start.buffer() == end.buffer() || (start.buffer() + 1 == end.buffer() && end.byte() == 0)) && bsls::AlignmentUtil::calculateAlignmentOffset(blob.buffer(start.buffer()).data() + start.byte(), alignment) == 0 ==> __out == (blob.buffer(start.buffer()).data() + start.byte()))
+-2;  // RETURN
     }
 }
 
@@ -574,6 +599,8 @@ char* BlobUtil::getAlignedSectionSafe(char*               storage,
             return 0;  // RETURN
         }
     }
+// requires: true
+// ensures: (__out == 0) || (__out != 0)
 
     return storage;
 }

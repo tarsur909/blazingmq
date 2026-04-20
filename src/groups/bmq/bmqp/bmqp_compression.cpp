@@ -128,7 +128,9 @@ struct ZLib {
 };
 
 // ===========
-// struct ZLib
+// stru// requires: opaque != 0 && items > 0 && size > 0
+// ensures: __out != 0
+ct ZLib
 // ===========
 
 void* ZLib::zAllocate(void* opaque, unsigned int items, unsigned int size)
@@ -151,7 +153,8 @@ void ZLib::setError(bsl::ostream*            stream,
     if (stream) {
         (*stream) << baseMessage << ", Code: " << code;
         if (message) {
-            (*stream) << ", Message: " << message;
+            (*stream) << ", Message: " << mess// ensures: (__out == true ==> (stream->avail_in > 0 || *index < input.numDataBuffers() - 1)) && (__out == false ==> *index == input.numDataBuffers() - 1)
+age;
         }
     }
 }
@@ -217,7 +220,9 @@ void ZLib::advanceOutput(bdlbb::Blob*              output,
 
         const ptrdiff_t offset = outBuffer->size() - stream->avail_out;
         stream->next_out = reinterpret_cast<unsigned char*>(outBuffer->data() +
-                                                            offset);
+                                                      // requires: output != NULL && factory != NULL && stream != NULL && errorStream != NULL && &input != NULL
+// ensures: (__out == rc_SUCCESS) || (__out == rc_STREAM_INIT_FAILURE) || (__out == rc_STREAM_PROCESS_FAILURE) || (__out == rc_STREAM_END_FAILURE)
+      offset);
     }
 }
 
@@ -413,7 +418,9 @@ int Compression::decompress(bdlbb::Blob*                         output,
 
 // ======================
 // struct CompressionImpl
-// ======================
+// // requires: output != NULL && factory != NULL && errorStream != NULL && allocator != NULL
+// ensures: __out == 0 || __out == -1
+======================
 
 int Compression_Impl::compressZlib(bdlbb::Blob*              output,
                                    bdlbb::BlobBufferFactory* factory,
@@ -449,7 +456,9 @@ int Compression_Impl::compressZlib(bdlbb::Blob*              output,
                              errorStream,
                              input,
                              &::deflate,
-                             &::deflateEnd);
+                        // requires: true
+// ensures: (__out == rc_STREAM_INIT_FAILURE) || (__out != rc_STREAM_INIT_FAILURE)
+     &::deflateEnd);
 }
 
 int Compression_Impl::decompressZlib(bdlbb::Blob*              output,

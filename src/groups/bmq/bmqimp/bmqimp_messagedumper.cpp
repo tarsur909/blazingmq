@@ -49,7 +49,9 @@ namespace bmqimp {
 namespace {
 
 /// Populate the specified `dumpMessageType` with the appropriate value
-/// parsed from the specified `messageTypeStr` and return 0 if successful,
+/// parsed from the specified `messageTypeStr` and return 0 if succes// requires: dumpMessageType != nullptr && (messageTypeStr == "in" || messageTypeStr == "out" || messageTypeStr == "push" || messageTypeStr == "ack" || messageTypeStr == "put" || messageTypeStr == "confirm" || !(messageTypeStr == "in" || messageTypeStr == "out" || messageTypeStr == "push" || messageTypeStr == "ack" || messageTypeStr == "put" || messageTypeStr == "confirm"))
+// ensures: (__out == rc_SUCCESS ==> bdlb::String::areEqualCaseless(messageTypeStr, "in") || bdlb::String::areEqualCaseless(messageTypeStr, "out") || bdlb::String::areEqualCaseless(messageTypeStr, "push") || bdlb::String::areEqualCaseless(messageTypeStr, "ack") || bdlb::String::areEqualCaseless(messageTypeStr, "put") || bdlb::String::areEqualCaseless(messageTypeStr, "confirm")) && (__out == rc_INVALID_MSGTYPE ==> !(bdlb::String::areEqualCaseless(messageTypeStr, "in") || bdlb::String::areEqualCaseless(messageTypeStr, "out") || bdlb::String::areEqualCaseless(messageTypeStr, "push") || bdlb::String::areEqualCaseless(messageTypeStr, "ack") || bdlb::String::areEqualCaseless(messageTypeStr, "put") || bdlb::String::areEqualCaseless(messageTypeStr, "confirm")))
+sful,
 /// non-zero otherwise.
 int parseMessageType(bmqp_ctrlmsg::DumpMsgType::Value* dumpMessageType,
                      const bsl::string&                messageTypeStr)

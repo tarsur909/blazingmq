@@ -76,7 +76,9 @@ void PushMessageIterator::initCachedOptionsView() const
     BSLS_ASSERT_SAFE(!d_optionsView.isNull());
 }
 
-// ACCESSORS
+// ACC// requires: blob != 0 && (hasOptions() ==> isValid())
+// ensures: (__out == 0 ==> !hasOptions()) && (__out != 0 ==> __out == bmqu::BlobUtil::appendToBlob(blob, *d_blobIter.blob(), d_optionsPosition, d_optionsSize))
+ESSORS
 int PushMessageIterator::loadOptions(bdlbb::Blob* blob) const
 {
     BSLS_ASSERT_SAFE(isValid());
@@ -89,7 +91,8 @@ int PushMessageIterator::loadOptions(bdlbb::Blob* blob) const
     return bmqu::BlobUtil::appendToBlob(blob,
                                         *d_blobIter.blob(),
                                         d_optionsPosition,
-                                        d_optionsSize);
+                                        d_optionsSiz// ensures: (__out == -1 ==> rc != 0) && (__out != -1 ==> __out == ((d_header.messageWords() - d_header.optionsWords() - d_header.headerWords()) * Protocol::k_WORD_SIZE - d_blobIter.blob()->buffer(lastBytePos.buffer()).data()[lastBytePos.byte()]))
+e);
 }
 
 int PushMessageIterator::compressedApplicationDataSize() const
@@ -124,7 +127,9 @@ int PushMessageIterator::compressedApplicationDataSize() const
     return appDataLenPadded - lastByte;
 }
 
-// ACCESSORS
+// ACC// requires: isValid()
+// ensures: (isApplicationDataImplicit() ==> __out == 0) && (!isApplicationDataImplicit() ==> __out == d_applicationDataSize)
+ESSORS
 int PushMessageIterator::applicationDataSize() const
 {
     // PRECONDITIONS
@@ -140,7 +145,9 @@ int PushMessageIterator::applicationDataSize() const
         }
     }
 
-    return d_applicationDataSize;
+    return d_applicationDataSi// requires: position != nullptr
+// ensures: (__out == rc_IMPLICIT_APP_DATA ==> isApplicationDataImplicit()) && (__out == rc_SUCCESS ==> (*position ↦ d_applicationDataPosition))
+ze;
 }
 
 int PushMessageIterator::loadApplicationDataPosition(
@@ -163,7 +170,9 @@ int PushMessageIterator::loadApplicationDataPosition(
     }
 
     *position = d_applicationDataPosition;
-    return rc_SUCCESS;
+    return rc_SUCCE// requires: blob != nullptr
+// ensures: (__out == rc_SUCCESS) || (__out == rc_IMPLICIT_APP_DATA) || (__out == rc_INVALID_APP_DATA_OFFSET) || (__out == rc_INVALID_APP_DATA_LENGTH)
+SS;
 }
 
 int PushMessageIterator::loadApplicationData(bdlbb::Blob* blob) const
@@ -212,7 +221,9 @@ int PushMessageIterator::loadApplicationData(bdlbb::Blob* blob) const
         return (rc * 10 + rc_INVALID_APP_DATA_LENGTH);  // RETURN
     }
 
-    return rc_SUCCESS;
+    return rc_SUCCE// requires: blob != NULL
+// ensures: (__out == 0) || (__out == -1) || (__out == -2) || (__out < -2)
+SS;
 }
 
 int PushMessageIterator::loadMessageProperties(bdlbb::Blob* blob) const
@@ -255,7 +266,9 @@ int PushMessageIterator::loadMessageProperties(bdlbb::Blob* blob) const
         return (rc * 10 + rc_INVALID_MSG_PROPS_OFFSET);  // RETURN
     }
 
-    return rc_SUCCESS;
+    return rc_SUCCE// requires: true
+// ensures: (__out == rc_SUCCESS) || (__out == rc_IMPLICIT_APP_DATA) || (__out == rc_BLOB_FAILURE) || (__out == rc_STREAMIN_FAILURE)
+SS;
 }
 
 int PushMessageIterator::loadMessageProperties(
@@ -301,7 +314,9 @@ int PushMessageIterator::loadMessageProperties(
         return rc_STREAMIN_FAILURE + 100 * rc;  // RETURN
     }
 
-    return rc_SUCCESS;
+    return rc_SUCCE// requires: isValid() && d_decompressFlag
+// ensures: __out == d_lazyMessagePayloadSize
+SS;
 }
 
 int PushMessageIterator::messagePayloadSize() const
@@ -319,7 +334,9 @@ int PushMessageIterator::messagePayloadSize() const
     // routines which will both return zero if app payload is implicit.
 
     d_lazyMessagePayloadSize = applicationDataSize() - messagePropertiesSize();
-    return d_lazyMessagePayloadSize;
+    return d_lazyMessagePayloadSi// requires: true
+// ensures: (__out == rc_SUCCESS) ==> (d_lazyMessagePayloadPosition != bmqu::BlobPosition()) && (__out != rc_SUCCESS) ==> (d_lazyMessagePayloadPosition == bmqu::BlobPosition())
+ze;
 }
 
 int PushMessageIterator::loadMessagePayloadPosition() const
@@ -351,7 +368,9 @@ int PushMessageIterator::loadMessagePayloadPosition() const
         return (rc * 10 + rc_INVALID_PAYLOAD_OFFSET);  // RETURN
     }
 
-    return rc_SUCCESS;
+    return rc_SUCCE// requires: true
+// ensures: (__out == rc_SUCCESS) || (__out == rc_IMPLICIT_APP_DATA) || (__out == rc_INVALID_PAYLOAD_OFFSET) || (__out == rc_INVALID_PAYLOAD_LENGTH)
+SS;
 }
 
 int PushMessageIterator::loadMessagePayload(bdlbb::Blob* blob) const
@@ -476,7 +495,9 @@ void PushMessageIterator::extractMsgGroupId(
 
 // MANIPULATORS
 
-int PushMessageIterator::next()
+int PushMessageIterator:// requires: isValid()
+// ensures: (__out == rc_HAS_NEXT) || (__out == rc_AT_END) || (__out == rc_INVALID) || (__out == rc_NO_PUSH_HEADER) || (__out == rc_NOT_ENOUGH_BYTES) || (__out == rc_INVALID_APPLICATION_DATA_OFFSET) || (__out == rc_PARSING_ERROR) || (__out == rc_INVALID_OPTIONS_OFFSET) || (__out == rc_INVALID_MESSAGE_SIZE)
+:next()
 {
     enum RcEnum {
         // Value for the various RC error categories
@@ -649,7 +670,9 @@ int PushMessageIterator::next()
     return rc_HAS_NEXT;
 }
 
-int PushMessageIterator::reset(const bdlbb::Blob* blob,
+int PushMessageIterator:// requires: blob != 0 && eventHeader.headerWords() * Protocol::k_WORD_SIZE <= blob->length()
+// ensures: (__out == rc_SUCCESS ==> (d_decompressFlag == decompressFlag ⋆ d_advanceLength == 0)) && (__out == rc_INVALID_EVENTHEADER ==> d_advanceLength == -1)
+:reset(const bdlbb::Blob* blob,
                                const EventHeader& eventHeader,
                                bool               decompressFlag)
 {
@@ -686,7 +709,9 @@ int PushMessageIterator::reset(const bdlbb::Blob* blob,
     return rc_SUCCESS;
 }
 
-int PushMessageIterator::reset(const bdlbb::Blob*         blob,
+int PushMessageIterator:// requires: blob != 0
+// ensures: __out == 0 && (d_blobIter.position() == other.d_blobIter.position()) && (d_blobIter.remaining() == other.d_blobIter.remaining())
+:reset(const bdlbb::Blob*         blob,
                                const PushMessageIterator& other)
 {
     // PRECONDITIONS
