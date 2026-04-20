@@ -60,6 +60,8 @@ bsls::ObjectBuffer<SystemExecutor_Context> s_contextBuffer;
 /// Return a reference to the singleton object. The behavior id undefined if
 /// the singleton has already been destroyed via a call to
 /// `shutdownSingletonImpl`.
+// requires: wasInit != 0
+// ensures: *wasInit == true && __out == s_context_p.load()
 SystemExecutor_Context&
 initSingletonImpl(bool* wasInit, bslma::Allocator* globalAllocator = 0)
 {

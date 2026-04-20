@@ -28,6 +28,8 @@ namespace bmqt {
 // -------------
 
 // ACCESSORS
+// requires: true
+// ensures: __out == stream
 bsl::ostream&
 Version::print(bsl::ostream& stream, int level, int spacesPerLevel) const
 {

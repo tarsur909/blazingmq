@@ -102,6 +102,8 @@ void CountingAllocatorUtil::initGlobalAllocators(
         topAllocatorName);
 }
 
+// requires: g_initialized
+// ensures: __out != 0 && (__out == &g_statContext.object())
 bmqst::StatContext* CountingAllocatorUtil::globalStatContext()
 {
     // PRECONDITIONS
@@ -110,6 +112,8 @@ bmqst::StatContext* CountingAllocatorUtil::globalStatContext()
     return &g_statContext.object();
 }
 
+// requires: true
+// ensures: &__out == &g_topAllocatorStore.object()
 bmqma::CountingAllocatorStore& CountingAllocatorUtil::topAllocatorStore()
 {
     // PRECONDITIONS

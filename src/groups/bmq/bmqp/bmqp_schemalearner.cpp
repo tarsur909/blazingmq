@@ -112,13 +112,17 @@ SchemaLearner::SchemaLearner(bslma::Allocator* basicAllocator)
 SchemaLearner::~SchemaLearner()
 {
     // NOTHING
+// requires: true
+// ensures: true
 }
 
 // PUBLIC MANIULATORS
 SchemaLearner::Context SchemaLearner::createContext()
 {
     Context context(new (*d_allocator_p) InternalContext(false, d_allocator_p),
-                    d_allocator_p);
+                    d_allocator_p);// requires: true
+// ensures: (d_servers.find(foreignId) != d_servers.end() ==> __out == d_servers.find(foreignId)->second) && (d_servers.find(foreignId) == d_servers.end() ==> __out != nullptr)
+
 
     return context;
 }
@@ -136,7 +140,9 @@ SchemaLearner::Context SchemaLearner::createContext(int foreignId)
                                   d_allocator_p))
                       .first;
     }
-    return context->second;
+    re// requires: isPresentAndValid(input.schemaId()
+// ensures: (__out == 0 ==> !isPresentAndValid(input.schemaId())) && (__out != 0 ==> (__out == &context->d_handles[input.schemaId()].d_schema_sp))
+turn context->second;
 }
 
 SchemaLearner::SchemaPtr*
@@ -170,7 +176,9 @@ SchemaLearner::observe(Context& context, const MessagePropertiesInfo& input)
         // Must release reference to the previously learned Schema.
     }
 
-    return &contextHandle->d_schema_sp;
+    return &contex// requires: input.isPresent() ==> input.schemaId() != k_NO_SCHEMA
+// ensures: __out.isPresent() == input.isPresent() && (input.schemaId() == k_NO_SCHEMA ==> __out.schemaId() == k_NO_SCHEMA) && (input.schemaId() != k_NO_SCHEMA ==> __out.schemaId() != k_NO_SCHEMA)
+tHandle->d_schema_sp;
 }
 
 MessagePropertiesInfo
@@ -299,7 +307,9 @@ SchemaLearner::multiplex(Context& context, const MessagePropertiesInfo& input)
     // Update 'contextHandle' with the LRU tracking
     contextHandle->d_listIterator = entryInLRU;
 
-    return MessagePropertiesInfo(input.isPresent(), outputId, isRecycled);
+    return MessagePropertiesInfo(input.isPresent(), o// requires: (input.schemaId() == 0 || !isPresentAndValid(input.schemaId())) ==> true && (input.schemaId() != 0 && isPresentAndValid(input.schemaId())) ==> true
+// ensures: (input.schemaId() == 0 || !isPresentAndValid(input.schemaId())) ==> __out == input && (input.schemaId() != 0 && isPresentAndValid(input.schemaId())) ==> (__out.isPresent() == input.isPresent() && __out.schemaId() == input.schemaId())
+utputId, isRecycled);
 }
 
 MessagePropertiesInfo
@@ -358,7 +368,9 @@ SchemaLearner::demultiplex(Context&                     context,
         contextHandle = catalogLookupOrInsert.first->second;
     }
 
-    return MessagePropertiesInfo(input.isPresent(), inputId, isRecycled);
+    return MessagePropertiesInfo(input.isPresent(), // requires: mps != 0 && context != 0
+// ensures: (__out == 0) || (__out == -1) || (__out < 0)
+inputId, isRecycled);
 }
 
 int SchemaLearner::read(Context&                     context,
@@ -406,7 +418,9 @@ int SchemaLearner::read(Context&                     context,
     // even if the downstream to upstream mapping has changed, the schema
     // is still good unless it is recycled
 
-    return rc;
+    return// requires: true
+// ensures: (schemaId > k_MAX_SCHEMA || schemaId == k_NO_SCHEMA) ==> __out == false && (schemaId <= k_MAX_SCHEMA && schemaId != k_NO_SCHEMA) ==> __out == true
+ rc;
 }
 
 // CLASS METHODS

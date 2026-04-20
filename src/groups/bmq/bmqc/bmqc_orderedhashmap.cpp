@@ -27,6 +27,8 @@ namespace bmqc {
 // struct OrderedHashMap_ImpDetails
 // --------------------------------
 
+// requires: true
+// ensures: (__out == 0 ==> bsl::lower_bound(s_beginPrimes, s_endPrimes, n) == s_endPrimes) && (__out != 0 ==> *bsl::lower_bound(s_beginPrimes, s_endPrimes, n) == __out)
 size_t OrderedHashMap_ImpDetails::nextPrime(size_t n)
 {
     // This routine is copied from bslstl_hashtable.h, which cannot be included

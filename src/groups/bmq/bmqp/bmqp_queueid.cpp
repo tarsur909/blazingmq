@@ -59,6 +59,8 @@ const unsigned int QueueId::k_UNASSIGNED_SUBQUEUE_ID;
 const unsigned int QueueId::k_DEFAULT_SUBQUEUE_ID;
 
 // FREE OPERATORS
+// requires: stream.good() && d_id[strlen(d_id)] == '\0' && d_subId[strlen(d_subId)] == '\0'
+// ensures: __out == stream && (stream.bad() || (stream.good() && (SEPFORALL(0, strlen(d_id), i, stream + i ↦ d_id[i]) ⋆ SEPFORALL(0, strlen(d_subId), j, stream + strlen(d_id) + j ↦ d_subId[j]))))
 bsl::ostream&
 QueueId::print(bsl::ostream& stream, int level, int spacesPerLevel) const
 {

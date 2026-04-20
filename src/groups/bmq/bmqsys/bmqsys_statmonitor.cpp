@@ -124,6 +124,8 @@ typedef bsl::function<bsls::Types::Int64(const bmqst::StatContext& statCtx,
 /// the specified `statContext` and has the specified `subCtxName` name. Use
 /// the specified `accessorMethod` to extract this value. The behaviour for
 /// invalid stat contexts or invalid names is undefined.
+// requires: true
+// ensures: (subContext == nullptr ==> __out == 0) && (subContext != nullptr ==> __out == accessorMethod(*subContext, snapshotId, statId))
 double genericAccessor(const bmqst::StatContext& statContext,
                        int                       snapshotId,
                        const bslstl::StringRef&  subCtxName,
@@ -145,6 +147,8 @@ double genericAccessor(const bmqst::StatContext& statContext,
 /// the specified `statContext` and has the specified `subCtxName` name. Use
 /// the specified `accessorMethod` to extract this value. The behaviour for
 /// invalid stat contexts or invalid names is undefined.
+// requires: true
+// ensures: (subContext == nullptr ==> __out == 0) && (subContext != nullptr ==> __out == accessorMethod(*subContext, snapshotId, statId))
 bsls::Types::Int64 genericAccessor(const bmqst::StatContext& statContext,
                                    int                       snapshotId,
                                    const bslstl::StringRef&  subCtxName,
@@ -165,6 +169,8 @@ bsls::Types::Int64 genericAccessor(const bmqst::StatContext& statContext,
 /// to its value at `snapshotId`. Use the specified `accessorMethod` to
 /// extract this value.  The behaviour for invalid stat contexts is
 /// undefined.
+// requires: true
+// ensures: __out == accessorMethod(statContext, snapshotId, statId)
 bsls::Types::Int64 genericAccessor(const bmqst::StatContext& statContext,
                                    int                       snapshotId,
                                    int                       statId,
@@ -218,6 +224,8 @@ StatMonitor::~StatMonitor()
 }
 
 // MANIPULATORS
+// requires: true
+// ensures: (__out == 0 ==> d_isStarted == true) && (__out != 0 ==> errorDescription.fail())
 int StatMonitor::start(bsl::ostream& errorDescription)
 {
     // Register process pid in performance monitor
@@ -243,6 +251,8 @@ void StatMonitor::stop()
     statContext()->clearValues();
 }
 
+// requires: true
+// ensures: __out == &d_systemStatContext
 bmqst::StatContext* StatMonitor::statContext()
 {
     return &d_systemStatContext;
@@ -341,7 +351,9 @@ StatMonitorUtil::getSystemStat(const bmqst::StatContext& statContext,
     if (BSLS_PERFORMANCEHINT_PREDICT_UNLIKELY(
             value == bsl::numeric_limits<bsls::Types::Int64>::min())) {
         BSLS_PERFORMANCEHINT_UNLIKELY_HINT;
-        return static_cast<bsls::Types::Int64>(0);  // RETURN
+        return static_cast<bsls::Types::In// requires: true
+// ensures: (__out == 0.0 ==> (value != value)) && (__out != 0.0 ==> (__out == value / k_CPU_MULTIPLIER))
+t64>(0);  // RETURN
     }
 
     return value;
@@ -386,7 +398,9 @@ StatMonitorUtil::getMemStat(const bmqst::StatContext& statContext,
     if (BSLS_PERFORMANCEHINT_PREDICT_UNLIKELY(
             value == bsl::numeric_limits<bsls::Types::Int64>::min())) {
         BSLS_PERFORMANCEHINT_UNLIKELY_HINT;
-        return static_cast<bsls::Types::Int64>(0);  // RETURN
+        return static_cast<bsls::Types::In// requires: true
+// ensures: __out == bmqst::StatUtil::valueDifference(statContext.value(bmqst::StatContext::e_TOTAL_VALUE, statId), bmqst::StatValue::SnapshotLocation(0, 0), bmqst::StatValue::SnapshotLocation(0, snapshotId))
+t64>(0);  // RETURN
     }
 
     return value;

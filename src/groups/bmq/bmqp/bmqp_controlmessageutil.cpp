@@ -44,6 +44,8 @@ void ControlMessageUtil::makeStatus(
     status.message().assign(message.data(), message.length());
 }
 
+// requires: true
+// ensures: __out == 0 || __out == -1 || __out == -2
 int ControlMessageUtil::validate(
     const bmqp_ctrlmsg::ControlMessage& controlMessage)
 {

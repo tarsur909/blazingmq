@@ -204,6 +204,8 @@ LogControllerConfig::operator=(const LogControllerConfig& rhs)
     return *this;
 }
 
+// requires: true
+// ensures: (__out == -1) || (__out == -2) || (__out == 0)
 int LogControllerConfig::addCategoryProperties(const bsl::string& properties)
 {
     // NOTE:
@@ -282,6 +284,8 @@ void LogController::updateLastLogSymlink()
     }
 }
 
+// requires: true
+// ensures: __out == 0
 int LogController::processInfoCommand(BSLA_UNUSED bsl::istream& cmd,
                                       bsl::ostream&             os)
 {
@@ -414,6 +418,8 @@ int LogController::processCategoryCommand(bsl::istream& cmd, bsl::ostream& os)
     return 0;
 }
 
+// requires: true
+// ensures: (__out == 0 ==> SEPEXISTS(0, d_registeredObservers.size(), i, d_registeredObservers[i] ↦ observer)) && (__out != 0 ==> d_registeredObservers.empty())
 int LogController::tryRegisterObserver(ball::Observer* observer)
 {
     int rc = d_multiplexObserver.registerObserver(observer);

@@ -44,6 +44,8 @@ bsl::ostream& EncodingType::print(bsl::ostream&      stream,
     return stream;
 }
 
+// requires: true
+// ensures: (value == EncodingType::e_UNDEFINED ==> __out == "UNDEFINED") && (value == EncodingType::e_RAW ==> __out == "RAW") && (value == EncodingType::e_BER ==> __out == "BER") && (value == EncodingType::e_BDEX ==> __out == "BDEX") && (value == EncodingType::e_XML ==> __out == "XML") && (value == EncodingType::e_JSON ==> __out == "JSON") && (value == EncodingType::e_TEXT ==> __out == "TEXT") && (value == EncodingType::e_MULTIPARTS ==> __out == "MULTIPARTS") && (value != EncodingType::e_UNDEFINED && value != EncodingType::e_RAW && value != EncodingType::e_BER && value != EncodingType::e_BDEX && value != EncodingType::e_XML && value != EncodingType::e_JSON && value != EncodingType::e_TEXT && value != EncodingType::e_MULTIPARTS ==> __out == "(* UNKNOWN *)")
 const char* EncodingType::toAscii(EncodingType::Enum value)
 {
 #define BMQT_CASE(X)                                                          \
@@ -90,6 +92,8 @@ bool EncodingType::fromAscii(EncodingType::Enum*      out,
 #undef BMQT_CHECKVALUE
 }
 
+// requires: string != 0
+// ensures: (__out == true ==> EXISTS(0, 1, dummy, fromAscii(string) == true)) && (__out == false ==> EXISTS(0, 1, dummy, fromAscii(string) == false))
 bool EncodingType::isValid(const bsl::string* string, bsl::ostream& stream)
 {
     EncodingType::Enum value;

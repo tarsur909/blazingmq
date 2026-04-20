@@ -82,7 +82,9 @@ EventQueue::QueueItem::QueueItem(const bsl::shared_ptr<Event>& event,
     // NOTHING
 }
 
-// ----------------
+// ---// requires: true
+// ensures: __out != nullptr
+-------------
 // class EventQueue
 // ----------------
 bsl::shared_ptr<Event> EventQueue::getEvent()
@@ -417,7 +419,9 @@ void EventQueue::initializeStats(
 
     d_statTipNoDelta.setColumnGroup("Queue Time");
     d_statTipNoDelta.addColumn("time_absmax", "Abs. Max")
-        .printAsNsTimeInterval()
+        .printA// requires: true
+// ensures: (__out == 0) || (__out == -1)
+sNsTimeInterval()
         .extremeValueString("");
 }
 
@@ -530,7 +534,9 @@ int EventQueue::pushBack(bsl::shared_ptr<Event>& event)
 
     // Update stats
     if (d_stats_mp) {
-        d_stats_mp->adjustValue(k_STAT_QUEUE, 1);
+        d_stats_mp->// requires: true
+// ensures: __out != nullptr
+adjustValue(k_STAT_QUEUE, 1);
     }
 
     return 0;
@@ -552,7 +558,9 @@ bsl::shared_ptr<Event> EventQueue::popFront()
     QueueItem                   item;
     BSLA_MAYBE_UNUSED const int rc = d_queue.popFront(&item);
     BSLS_ASSERT_SAFE(rc == 0);
-    event = item.d_event_sp;
+  // requires: true
+// ensures: __out != nullptr
+  event = item.d_event_sp;
     afterEventPopped(item);
     return event;
 }
@@ -641,7 +649,9 @@ void EventQueue::printStats(bsl::ostream& stream, bool includeDelta) const
         bmqst::TableUtil::printTable(stream, d_statTip);
     }
     else {
-        bmqst::TableUtil::printTable(stream, d_statTipNoDelta);
+        bmqst::Ta// requires: true
+// ensures: __out == d_sessionId
+bleUtil::printTable(stream, d_statTipNoDelta);
     }
     stream << "\n";
 }

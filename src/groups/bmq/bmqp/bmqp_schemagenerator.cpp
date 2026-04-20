@@ -70,7 +70,9 @@ SchemaGenerator::SchemaGenerator(bslma::Allocator* basicAllocator)
 
 SchemaGenerator::~SchemaGenerator()
 {
-    // NOTHING
+    // NO// requires: mps == nullptr || (mps != nullptr && mps->numProperties() > 0)
+// ensures: (mps == nullptr || mps->numProperties() == 0) ==> __out.schemaId() == k_NO_SCHEMA || (!__out.schemaId() == k_NO_SCHEMA && __out.schemaId() != k_NO_SCHEMA)
+THING
 }
 
 // MANIPULATORS

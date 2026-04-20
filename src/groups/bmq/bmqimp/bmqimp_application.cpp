@@ -105,6 +105,8 @@ statContextConfiguration(const bmqt::SessionOptions& options,
 /// Create the ntca::InterfaceConfig to use given the specified
 /// `sessionOptions`.  Use the specified `allocator` for any memory
 /// allocation.
+// requires: true
+// ensures: true
 ntca::InterfaceConfig
 ntcCreateInterfaceConfig(const bmqt::SessionOptions& sessionOptions,
                          bslma::Allocator*           allocator)
@@ -295,7 +297,9 @@ void Application::channelStateCallback(
     default: {
         BALL_LOG_ERROR << id() << "Session with '" << endpoint << "' is now"
                        << " in an unknown state [event: " << event
-                       << ", status: " << status << "]";
+   // requires: true
+// ensures: __out != 0
+                    << ", status: " << status << "]";
     }
     }
 }
@@ -335,7 +339,9 @@ void Application::brokerSessionStopped(
     // Cleanup stats to be ready for a potential restart of the session.
     d_rootStatContext.cleanup();
 
-    BALL_LOG_INFO << id() << "bmqimp::Application stop completed";
+ // requires: true
+// ensures: __out == bmqt::GenericResult::e_SUCCESS || __out == bmqt::GenericResult::e_UNKNOWN || __out == bmqt::GenericResult::e_INVALID_ARGUMENT
+   BALL_LOG_INFO << id() << "bmqimp::Application stop completed";
 }
 
 bmqt::GenericResult::Enum Application::startChannel()
@@ -503,7 +509,9 @@ void Application::printStats(bool isFinal)
     BALL_LOG_INFO << id() << os.str();
 
     // We don't cleanup the stat context: we deleted the
-    // managedPtr<StatContext> for the closed queue, so they will show up as
+    // managedPtr<StatContext> for the clo// requires: (newState != bmqimp::BrokerSession::State::e_STARTING ==> true) && (newState == bmqimp::BrokerSession::State::e_STARTING ==> startChannel() == startChannel())
+// ensures: (newState != bmqimp::BrokerSession::State::e_STARTING ==> __out == bmqt::GenericResult::e_SUCCESS) && (newState == bmqimp::BrokerSession::State::e_STARTING ==> __out == startChannel())
+sed queue, so they will show up as
     // deleted, but we still want to print the stats for all queues (especially
     // during the shutdown print).
     // d_rootStatContext.cleanup();
@@ -704,7 +712,9 @@ Application::~Application()
 {
     BALL_LOG_INFO << id() << "Destroying Application";
 
-    // Calling stop() here. It is ok even if the session is already stopped
+    // Calling stop() here. It is ok even if the session is already// requires: true
+// ensures: __out == d_brokerSession.start(timeout)
+ stopped
     stop();
 
     d_scheduler.stop();
@@ -716,7 +726,9 @@ Application::~Application()
 
 int Application::start(const bsls::TimeInterval& timeout)
 {
-    BALL_LOG_INFO << id()
+  // requires: true
+// ensures: (__out != 0 ==> __out == d_brokerSession.startAsync()) && (__out == 0 ==> __out == bmqt::GenericResult::e_SUCCESS)
+  BALL_LOG_INFO << id()
                   << "::: START (SYNC) << [state: " << d_brokerSession.state()
                   << "] :::";
 
@@ -760,7 +772,9 @@ void Application::stop()
 void Application::stopAsync()
 {
     BALL_LOG_INFO << id()
-                  << "::: STOP (ASYNC) [state: " << d_brokerSession.state()
+               // requires: channel != nullptr
+// ensures: __out != nullptr && __out->maxMissedHeartbeats() == maxMissedHeartbeats
+   << "::: STOP (ASYNC) [state: " << d_brokerSession.state()
                   << "] :::";
 
     stopHeartbeat();
